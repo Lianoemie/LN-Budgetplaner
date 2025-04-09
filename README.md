@@ -1,1 +1,1 @@
-# LN-Budgetrechner
+# Inf-LN-Budgetrechner
