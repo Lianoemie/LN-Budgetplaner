@@ -15,3 +15,6 @@ Der Budgetplaner richtet sich an alle, die ihre Finanzen besser organisieren und
 
 ### Installation und Nutzung:
 Weitere Informationen zur Installation und Nutzung finden Sie in der Dokumentation.
+
+## Autoren:
+Lia Müller (muelli6@students.zhaw.ch), Elena Stevanovic (stevaele@students.zhaw.ch), Selina Rüdisüli (ruedisel@students.zhaw.ch)
