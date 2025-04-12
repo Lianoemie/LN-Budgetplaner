@@ -1,8 +1,9 @@
-# BMLD-Informatik-2-LN-App: Budgetplaner für Studenten "Studibudget"
+# BMLD-Informatik-2-LN-App: Budgetplaner für Studierende – "Studibudget"
 
-## Über den Budgetplaner
+## Über die App
 
-Der LN-Budgetrechner ist ein Tool zur einfachen und effizienten Verwaltung persönlicher Finanzen. Mit diesem Budgetplaner können Benutzer ihre Einnahmen und Ausgaben erfassen, analysieren und optimieren, um ihre finanziellen Ziele zu erreichen.
+**Studibudget** ist eine benutzerfreundliche App zur strukturierten Verwaltung der eigenen Finanzen – speziell entwickelt für Studierende.  
+Mit wenigen Klicks lassen sich Einnahmen und Ausgaben erfassen, kategorisieren und auswerten. Ziel ist es, finanzielle Transparenz zu schaffen und Studierenden zu helfen, ihre Ausgaben zu kontrollieren, Budgets einzuhalten und langfristige Sparziele zu erreichen.
 
 ### Funktionen:
 - **Einnahmen und Ausgaben erfassen**: Halten Sie Ihre monatlichen Finanzen übersichtlich fest.
