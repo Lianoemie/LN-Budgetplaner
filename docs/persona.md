@@ -1,4 +1,5 @@
 # Persona
+![Nathalie Meyer – stilbewusste Wirtschaftsstudentin](../Fotos/nathalie.png)
 
 - **Name**: Nathalie Meyer
 - **Wohnort**: Zürich
