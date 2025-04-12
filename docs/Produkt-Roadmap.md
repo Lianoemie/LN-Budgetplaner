@@ -1,7 +1,7 @@
 # Produkt-Roadmap – Studibudget
 
 ## Ziel der App
-Studibudget unterstützt Studierende dabei, ihre monatlichen Einnahmen und Ausgaben im Blick zu behalten. Die App soll ihnen helfen, ihre finanzielle Situation besser zu verstehen und ihre Ausgaben zu optimieren.
+**Studibudget** unterstützt Studierende dabei, ihre monatlichen Einnahmen und Ausgaben im Blick zu behalten. Die App soll ihnen helfen, ihre finanzielle Situation besser zu verstehen und ihre Ausgaben zu optimieren.
 
 
 ## Funktionen & Priorisierung
