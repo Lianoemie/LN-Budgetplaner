@@ -6,20 +6,18 @@
 2. Ausgaben erfassen  
 3. Transaktionen Kategorien zuordnen (z. B. Wohnen, Freizeit, Sparen)  
 4. Monatliches Budget berechnen  
-5. Einfache Visualisierung der Ausgaben (z. B. Kreisdiagramm)  
-
-
+ 
 
 ## Version 2.0
 - Datenspeicherung auf SwitchDrive, User Login und Multi-User
 - Budgetziele setzen (z. B. Sparziele, evtl. Limit pro Kategorie)  
-- Monatsvergleich: Ausgaben im Vergleich zu Vormonaten  
-- Export der Finanzübersicht (z. B. als PDF)  
+- Monatsvergleich: Ausgaben im Vergleich zu Vormonaten
+- Einfache Visualisierung der Ausgaben (z. B. Kreisdiagramm)
 
-
-
+  
 ## Version 3.0
 - Wiederkehrende Einnahmen/Ausgaben automatisch erkennen  
+- Export der Finanzübersicht (z. B. als PDF)
 - Passwort vergessen-Funktion im Login  
 - Nach Registrierung automatisch eingeloggt  
 
