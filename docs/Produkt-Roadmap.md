@@ -9,7 +9,7 @@ Studibudget unterstützt Studierende dabei, ihre monatlichen Einnahmen und Ausga
 
 | Funktion                     | Beschreibung                                                                                 | Priorität | Bestandteil des MVP |
 |------------------------------|----------------------------------------------------------------------------------------------|-----------|----------------------|
-| Registrierung & Login und Datenspeicherung       | Datenspeicherung auf SwitchDrive, User Login und Multi-User                     | Hoch      | ✅                    |
+| Registrierung / Login und Datenspeicherung       | Datenspeicherung auf SwitchDrive, User Login und Multi-User                     | Hoch      | ✅                    |
 | Einnahmen & Ausgaben erfassen | Nutzer:innen können Einnahmen und Ausgaben erfassen und bearbeiten                           | Hoch      | ✅                    |
 | Kategorisierung              | Transaktionen können Kategorien wie Wohnen, Freizeit oder Sparen zugeordnet werden           | Hoch      | ✅                    |
 | Berichte & Analysen         | Visualisierung der Finanzen durch Diagramme und Berichte                                     | Mittel    | ✅                    |
