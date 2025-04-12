@@ -1,4 +1,5 @@
 # Persona
+![Uploading grafik.png…]()
 
 - **Name**: Nathalie Meyer
 - **Wohnort**: Zürich
