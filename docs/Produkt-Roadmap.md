@@ -28,23 +28,3 @@ Der MVP (Minimum Viable Product) von **Studibudget** umfasst folgende Kernfunkti
 
 Diese Funktionen ermöglichen es den Nutzenden, ihre Finanzen im Alltag einfach und strukturiert zu verwalten.
 
----
-
-## Zeitplan
-
-| Kalenderwoche | Meilenstein                                                    |
-|---------------|----------------------------------------------------------------|
-| KW 15         | MVP-Planung, Feature-Definition, UI-Skizzen                    |
-| KW 16–17      | Umsetzung: Registrierung, Einnahmen-/Ausgabeneingabe           |
-| KW 18         | Budgetübersicht und erste Visualisierungen                     |
-| KW 19         | Feinschliff, Testing, Bugfixing                                |
-| KW 20         | MVP-Release                                                     |
-| KW 21–22      | Planung & Integration weiterer Funktionen (Reminder, Export)   |
-
----
-
-## 📌 Hinweise
-
-- Die Erweiterung um zusätzliche Features erfolgt basierend auf Nutzerfeedback nach dem MVP-Release.
-- Fokus liegt zunächst auf Stabilität, einfacher Bedienung und klarer Übersicht der Finanzen.
-
