@@ -2,7 +2,7 @@
 <img src="Fotos/Nathalie_Meyer.png" alt="Nathalie Meyer" width="300">
 (Bild mit ChatGPT anhand einer Personenbeschreibung generiert)
 
-***
+##
 
 - **Name**: Nathalie Meyer
 - **Wohnort**: Zürich
