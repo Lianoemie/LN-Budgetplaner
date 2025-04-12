@@ -1,18 +1,28 @@
 # Produkt-Roadmap – Studibudget
 
-## Ziel der App
-**Studibudget** unterstützt Studierende dabei, ihre monatlichen Einnahmen und Ausgaben im Blick zu behalten. Die App soll ihnen helfen, ihre finanzielle Situation besser zu verstehen und ihre Ausgaben zu optimieren.
 
+## Version 1.0 – Basisfunktionen für Budgetübersicht
+1. Einnahmen erfassen  
+2. Ausgaben erfassen  
+3. Transaktionen Kategorien zuordnen (z. B. Wohnen, Freizeit, Sparen)  
+4. Monatliches Budget berechnen  
+5. Einfache Visualisierung der Ausgaben (z. B. Kreisdiagramm)  
 
-## Funktionen & Priorisierung
+---
 
-| Funktion                     | Beschreibung                                                                                 | Priorität | Bestandteil des MVP |
-|------------------------------|----------------------------------------------------------------------------------------------|-----------|----------------------|
-| Registrierung / Login und Datenspeicherung       | Datenspeicherung auf SwitchDrive, User Login und Multi-User                     | Hoch      | ✅                    |
-| Einnahmen & Ausgaben erfassen | Nutzer:innen können Einnahmen und Ausgaben erfassen und bearbeiten                           | Hoch      | ✅                    |
-| Kategorisierung              | Transaktionen können Kategorien wie Wohnen, Freizeit oder Sparen zugeordnet werden           | Hoch      | ✅                    |
-| Berichte & Analysen         | Visualisierung der Finanzen durch Diagramme und Berichte                                     | Mittel    | ✅                    |
-| Budgetziele setzen           | Nutzer:innen können Sparziele oder Budgetlimits definieren und deren Fortschritt verfolgen   | Mittel    | ❌                    |
+## Version 2.0 – Erweiterte Nutzerfunktionen & Warnhinweise
+- Budgetziele setzen (z. B. Sparziele, Limit pro Kategorie)  
+- Warnung bei Überschreitung des Budgetlimits  
+- Monatsvergleich: Ausgaben im Vergleich zu Vormonaten  
+- Export der Finanzübersicht (z. B. als PDF)  
+
+---
+
+## Version 3.0 – Automatisierungen & Prognosen
+- Wiederkehrende Einnahmen/Ausgaben automatisch erkennen  
+- Prognose zukünftiger Budgets auf Basis bisheriger Daten  
+- Passwort vergessen-Funktion im Login  
+- Nach Registrierung automatisch eingeloggt  
 
 
 ## MVP – Minimum Viable Product
