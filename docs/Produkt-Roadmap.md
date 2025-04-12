@@ -5,19 +5,14 @@ Studibudget unterstützt Studierende dabei, ihre monatlichen Einnahmen und Ausga
 
 ---
 
-## Funktionen & Priorisierung
+## ✅ Funktionen & Priorisierung
 
-| Funktion                             | Beschreibung                                                                | Priorität | Bestandteil des MVP |
-|--------------------------------------|-----------------------------------------------------------------------------|-----------|---------------------|
-| Registrierung & Login                | Benutzer können ein Konto erstellen und ihre Daten sicher speichern         | Hoch      | ✅                  |
-| Einnahmen- und Ausgabenerfassung     | Manuelle Erfassung von Einnahmen und Ausgaben mit Kategorien                | Hoch      | ✅                  |
-| Budgetübersicht                      | Monatliche Anzeige des verbleibenden Budgets                                | Hoch      | ✅                  |
-| Diagramm-Visualisierung              | Kreis-/Balkendiagramme zur Darstellung von Ausgaben                         | Mittel    | ✅                  |
-| Erinnerungen für wiederkehrende Kosten | Push-Benachrichtigungen für z. B. Miete oder Abo-Zahlungen                | Mittel    | ❌                  |
-| Export als PDF/CSV                   | Export der Daten zur Weiterverwendung                                       | Niedrig   | ❌                  |
-| Spartipps basierend auf Ausgaben     | Dynamische Spartipps passend zum Nutzungsverhalten                          | Niedrig   | ❌                  |
-| Mehrsprachigkeit (DE/EN)             | Sprachauswahl für internationale Studierende                                | Niedrig   | ❌                  |
-| Dark Mode                            | Dunkles Farbschema zur Schonung der Augen                                   | Niedrig   | ❌                  |
+| Funktion                     | Beschreibung                                                                                 | Priorität | Bestandteil des MVP |
+|------------------------------|----------------------------------------------------------------------------------------------|-----------|----------------------|
+| Einnahmen & Ausgaben erfassen | Nutzer:innen können Einnahmen und Ausgaben erfassen und bearbeiten                           | Hoch      | ✅                    |
+| Kategorisierung              | Transaktionen können Kategorien wie Wohnen, Freizeit oder Sparen zugeordnet werden           | Hoch      | ✅                    |
+| Berichte & Analysen         | Visualisierung der Finanzen durch Diagramme und Berichte                                     | Mittel    | ✅                    |
+| Budgetziele setzen           | Nutzer:innen können Sparziele oder Budgetlimits definieren und deren Fortschritt verfolgen   | Mittel    | ❌                    |
 
 ---
 
