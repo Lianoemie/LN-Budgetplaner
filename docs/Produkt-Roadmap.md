@@ -24,6 +24,7 @@
 - Passwort vergessen-Funktion im Login  
 - Nach Registrierung automatisch eingeloggt  
 
+---
 
 ## MVP – Minimum Viable Product
 
