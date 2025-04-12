@@ -3,7 +3,7 @@
 ## Ziel der App
 Studibudget unterstützt Studierende dabei, ihre monatlichen Einnahmen und Ausgaben im Blick zu behalten. Die App soll ihnen helfen, ihre finanzielle Situation besser zu verstehen und ihre Ausgaben zu optimieren.
 
----
+##
 
 ## Funktionen & Priorisierung
 
@@ -15,7 +15,7 @@ Studibudget unterstützt Studierende dabei, ihre monatlichen Einnahmen und Ausga
 | Berichte & Analysen         | Visualisierung der Finanzen durch Diagramme und Berichte                                     | Mittel    | ✅                    |
 | Budgetziele setzen           | Nutzer:innen können Sparziele oder Budgetlimits definieren und deren Fortschritt verfolgen   | Mittel    | ❌                    |
 
----
+##
 
 ## MVP – Minimum Viable Product
 
