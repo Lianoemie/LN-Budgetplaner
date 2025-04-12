@@ -1,6 +1,6 @@
 # Persona
 <img src="Fotos/Nathalie_Meyer.png" alt="Nathalie Meyer" width="300">
-(Bild mit ChatGPT anhand einer Personenbeschreibung generiert)
+<sub>*Abbildung: KI-generiertes Porträt von Nathalie Meyer, stilbewusste Wirtschaftsstudentin und Persona für „Studibudget“*</sub>
 
 ##
 
