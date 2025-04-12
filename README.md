@@ -1,4 +1,4 @@
-# LN-Budgetrechner
+# BMLD-Informatik-2-LN-App: Budgetplaner für Studenten "Studibudget"
 
 ## Über den Budgetplaner
 
