@@ -1,26 +1,25 @@
 # Produkt-Roadmap – Studibudget
 
 
-## Version 1.0 – Basisfunktionen für Budgetübersicht
+## Version 1.0
 1. Einnahmen erfassen  
 2. Ausgaben erfassen  
 3. Transaktionen Kategorien zuordnen (z. B. Wohnen, Freizeit, Sparen)  
 4. Monatliches Budget berechnen  
 5. Einfache Visualisierung der Ausgaben (z. B. Kreisdiagramm)  
 
-##
 
-## Version 2.0 – Erweiterte Nutzerfunktionen & Warnhinweise
-- Budgetziele setzen (z. B. Sparziele, Limit pro Kategorie)  
-- Warnung bei Überschreitung des Budgetlimits  
+
+## Version 2.0
+- Datenspeicherung auf SwitchDrive, User Login und Multi-User
+- Budgetziele setzen (z. B. Sparziele, evtl. Limit pro Kategorie)  
 - Monatsvergleich: Ausgaben im Vergleich zu Vormonaten  
 - Export der Finanzübersicht (z. B. als PDF)  
 
-##
 
-## Version 3.0 – Automatisierungen & Prognosen
+
+## Version 3.0
 - Wiederkehrende Einnahmen/Ausgaben automatisch erkennen  
-- Prognose zukünftiger Budgets auf Basis bisheriger Daten  
 - Passwort vergessen-Funktion im Login  
 - Nach Registrierung automatisch eingeloggt  
 
