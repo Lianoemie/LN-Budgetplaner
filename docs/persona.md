@@ -1,5 +1,7 @@
 # Persona
-![Nathalie Meyer – stilbewusste Wirtschaftsstudentin](../Fotos/nathalie.png)
+<img src="Fotos/nathalie.png" alt="Nathalie Meyer" width="300">
+(Bild mit ChatGPT anhand einer Personenbeschreibung generiert)
+
 
 - **Name**: Nathalie Meyer
 - **Wohnort**: Zürich
