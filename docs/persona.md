@@ -1,5 +1,5 @@
 # Persona
-<img src="Fotos/nathalie.png" alt="Nathalie Meyer" width="300">
+<img src="Fotos/Nathalie_Meyer.png" alt="Nathalie Meyer" width="300">
 (Bild mit ChatGPT anhand einer Personenbeschreibung generiert)
 
 
