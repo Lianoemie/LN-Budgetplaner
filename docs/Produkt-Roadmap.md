@@ -8,7 +8,7 @@
 4. Monatliches Budget berechnen  
 5. Einfache Visualisierung der Ausgaben (z. B. Kreisdiagramm)  
 
----
+##
 
 ## Version 2.0 – Erweiterte Nutzerfunktionen & Warnhinweise
 - Budgetziele setzen (z. B. Sparziele, Limit pro Kategorie)  
@@ -16,7 +16,7 @@
 - Monatsvergleich: Ausgaben im Vergleich zu Vormonaten  
 - Export der Finanzübersicht (z. B. als PDF)  
 
----
+##
 
 ## Version 3.0 – Automatisierungen & Prognosen
 - Wiederkehrende Einnahmen/Ausgaben automatisch erkennen  
