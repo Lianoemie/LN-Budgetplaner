@@ -22,7 +22,7 @@
 ## Mein nächster Urlaub
 - Tokio
 
-# Ein typischer Tag
+## Ein typischer Tag
 - Frühmorgens esse ich Frühstück mit einem Matcha Latte und fahre dann anschliessend in die Uni. Ich bin mit dem öffentlichen Verkehr unterwegs, da ich ein ÖV-Abo habe und nicht autofahren kann. Ich besuche dann meine Vorlesungen und gehe daraufhin mit FreundInnen essen. Je nach Tag gehe ich entweder ins Gym oder ins Pilates. Am Ende vom Tag gehe ich nach Hause und bereite die Vorlesungen nach und lerne etwas. Bevor ich schlafen gehe, muss ich zwingend meine Skincare machen.
 
 ## Das ist ein Tick von mir
