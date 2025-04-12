@@ -19,14 +19,13 @@ Mit wenigen Klicks lassen sich Einnahmen und Ausgaben erfassen, kategorisieren u
 - **Budgetziele setzen**  
   Definieren Sie individuelle finanzielle Ziele und verfolgen Sie Ihren Fortschritt.
 
----
-
 ### Zielgruppe
 
 **Studibudget** richtet sich in erster Linie an Studierende, die ihre Finanzen besser strukturieren und kontrollieren möchten.  
 Die App eignet sich aber auch für alle, die ein einfaches Tool zur Verwaltung kleiner Budgets oder privater Haushalte suchen.
 
 ### Installation und Nutzung:
+
 Weitere Informationen zur Installation und Nutzung finden Sie in der Dokumentation.
 
 ## Autoren:
