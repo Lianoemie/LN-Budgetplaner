@@ -36,3 +36,5 @@ Ein paar Beschreibungen in der App würde die Testperson anders formulieren oder
 - Weitere Profilangaben (z.B. Name) fehlen - Kann man diese im Nachhinein noch bearbeiten? 
 - Als was kann man die Finanzdatei exportieren? PDF, Excel? Was ist alles möglich? Was ist alles drauf?
 - Es sollte möglich sein Kategorien abzuwählen oder 0 CHF einzutragen, falls die Person nichts ausgibt für das
+## Fazit
+- Die zuvor genannten Probleme betrafen die fehlende Profil-Schaltfläche, unklare Exportmöglichkeiten für Finanzdaten, fehlende Profilangaben sowie eingeschränkte Kategoriewahl. Diese Punkte wurden behoben: Der "Mein Profil"-Button ist nun auf jeder Seite sichtbar, Exportformate wie PDF und Excel sind klar ausgewiesen, Kategorien können frei gewählt oder abgewählt werden, und zusätzliche Profilangaben lassen sich ergänzen. Die Nutzerfreundlichkeit wurde damit deutlich verbessert.
