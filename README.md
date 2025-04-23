@@ -30,3 +30,6 @@ Weitere Informationen zur Installation und Nutzung finden Sie in der Dokumentati
 
 ## Autoren:
 Lia Müller (muelli6@students.zhaw.ch), Elena Stevanovic (stevaele@students.zhaw.ch), Selina Rüdisüli (ruedisel@students.zhaw.ch)
+
+
+Link der App: https://ln-budgetplaner-bmld24.streamlit.app 
