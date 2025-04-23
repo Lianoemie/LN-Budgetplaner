@@ -5,11 +5,11 @@ import pandas as pd
 if 'ausgaben' not in st.session_state:
     st.session_state.ausgaben = []
 
-st.title("💰 Budgetplaner")
+st.title("Einnahme hinzufügen")
 
 # Eingabeformular für neue Ausgaben
 with st.form("ausgabe_formular"):
-    kategorie = st.selectbox("Kategorie", ["Lebensmittel", "Miete", "Freizeit", "Transport", "Sonstiges"])
+    kategorie = st.selectbox("Kategorie", ["Lebensmittel", "Miete", "Freizeit", "Transport"])
     betrag = st.number_input("Betrag (CHF)", min_value=0.0, format="%.2f")
     beschreibung = st.text_input("Beschreibung (optional)")
     abgesendet = st.form_submit_button("Hinzufügen")
