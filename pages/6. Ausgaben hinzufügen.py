@@ -12,12 +12,12 @@ if 'ausgaben' not in st.session_state:
         {"Kategorie": "Transport", "Betrag (CHF)": 75.00, "Beschreibung": "ÖV-Abo"}
     ]
 
-st.title("💰 Budgetplaner (CHF)")
+st.title("Ausgaben hinzufügen")
 
 # Eingabeformular für neue Ausgaben
 with st.form("ausgabe_formular"):
     st.subheader("Neue Ausgabe erfassen")
-    kategorie = st.selectbox("Kategorie", ["Lebensmittel", "Miete", "Freizeit", "Transport", "Sonstiges"])
+    kategorie = st.selectbox("Kategorie", ["Lebensmittel", "Miete", "Freizeit", "Transport"])
     betrag = st.number_input("Betrag (CHF)", min_value=0.0, step=1.0, format="%.2f")
     beschreibung = st.text_input("Beschreibung (optional)")
     abschicken = st.form_submit_button("Hinzufügen")
