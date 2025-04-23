@@ -15,13 +15,13 @@ data_manager.load_app_data(
     parse_dates = ['timestamp']
     )
 
-st.title('BMI Rechner')
+st.title('Studibudget')
 
-st.markdown(f"✨ Hallo! ✨")
-st.markdown("🏃 Die Anwendung ermöglicht es Ihnen, Ihren BMI zu berechnen und im Zeitverlauf zu verfolgen 📊")
+st.markdown(f"Hallo! ")
+st.markdown("Die Anwendung ermöglicht es dir, deine Finanzen zu ordnen und Struktur zu schaffen")
         
-# Add some health advice
-st.info("""Der BMI ist ein Screening-Tool, aber keine Diagnose für Körperfett oder Gesundheit. 
-Bitte konsultieren Sie einen Arzt für eine vollständige Beurteilung.""")
+st.info("""Studibudget hilft dir, den Überblick über deine Finanzen zu behalten – ersetzt aber keine professionelle Finanzberatung. 
+Für eine umfassende Einschätzung deiner finanziellen Situation wende dich bitte an eine Fachperson.""")
 
-st.write("Diese App wurde von Samuel Wehrli im Rahmen des Moduls 'BMLD Informatik 2' an der ZHAW entwickelt.")
+
+st.write("Diese App wurde von Selina Rüdisüli, Elena Stevanovic und Lia Müller  im Rahmen des Moduls 'BMLD Informatik 2' an der ZHAW entwickelt.")
