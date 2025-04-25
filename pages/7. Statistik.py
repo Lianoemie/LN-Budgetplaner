@@ -4,7 +4,6 @@ import plotly.express as px
 from datetime import datetime
 
 st.set_page_config(page_title="Statistiken", page_icon="📊")
-
 st.title("📊 Statistiken")
 
 # ----------------------------------------
@@ -21,28 +20,40 @@ if 'ausgaben' not in st.session_state:
 df_einnahmen = pd.DataFrame(st.session_state.einnahmen)
 df_ausgaben = pd.DataFrame(st.session_state.ausgaben)
 
-# Datum in datetime-Format umwandeln
-if not df_einnahmen.empty:
-    df_einnahmen['Datum'] = pd.to_datetime(df_einnahmen['Datum'])
-if not df_ausgaben.empty:
-    df_ausgaben['Datum'] = pd.to_datetime(df_ausgaben['Datum'])
+# Datum in datetime-Format umwandeln (falls vorhanden)
+if 'Datum' in df_einnahmen.columns:
+    df_einnahmen['Datum'] = pd.to_datetime(df_einnahmen['Datum'], errors='coerce')
+if 'Datum' in df_ausgaben.columns:
+    df_ausgaben['Datum'] = pd.to_datetime(df_ausgaben['Datum'], errors='coerce')
 
-# Alle vorhandenen Monate herausfiltern (für Dropdown)
-alle_monate = pd.concat([df_einnahmen['Datum'], df_ausgaben['Datum']]).dropna()
-alle_monate = alle_monate.dt.to_period('M').sort_values().unique()
+# ----------------------------------------
+# Monat auswählen (Dropdown), Standard: aktueller Monat
+# ----------------------------------------
+daten_quellen = []
 
-# Aktuellen Monat ermitteln
+if 'Datum' in df_einnahmen.columns:
+    daten_quellen.append(df_einnahmen['Datum'])
+if 'Datum' in df_ausgaben.columns:
+    daten_quellen.append(df_ausgaben['Datum'])
+
+if daten_quellen:
+    alle_monate = pd.concat(daten_quellen).dropna()
+    alle_monate = alle_monate.dt.to_period('M').sort_values().unique()
+    alle_monate_str = [str(monat) for monat in alle_monate]
+else:
+    st.warning("Noch keine Einnahmen oder Ausgaben vorhanden.")
+    st.stop()
+
 aktueller_monat = datetime.now().strftime('%Y-%m')
 
-# Auswahlbox für Monat
 ausgewaehlter_monat = st.selectbox(
     "Monat auswählen",
-    options=[str(monat) for monat in alle_monate],
-    index=[str(monat) for monat in alle_monate].index(aktueller_monat) if aktueller_monat in [str(monat) for monat in alle_monate] else 0
+    options=alle_monate_str,
+    index=alle_monate_str.index(aktueller_monat) if aktueller_monat in alle_monate_str else 0
 )
 
 # ----------------------------------------
-# Daten für den ausgewählten Monat filtern
+# Daten für ausgewählten Monat filtern
 # ----------------------------------------
 monat_start = pd.to_datetime(ausgewaehlter_monat + "-01")
 monat_ende = (monat_start + pd.offsets.MonthEnd(1))
@@ -53,18 +64,16 @@ df_ausgaben_monat = df_ausgaben[(df_ausgaben['Datum'] >= monat_start) & (df_ausg
 # ----------------------------------------
 # Kuchendiagramm erstellen
 # ----------------------------------------
+st.subheader(f"💡 Überblick für {ausgewaehlter_monat}")
 
-st.subheader(f"Übersicht für {ausgewaehlter_monat}")
-
-# Einnahmen-Daten für Kuchendiagramm
+# Einnahmen gruppieren
 einnahmen_summen = df_einnahmen_monat.groupby('Kategorie')['Betrag (CHF)'].sum().reset_index()
 einnahmen_summen['Typ'] = 'Einnahmen'
 
-# Ausgaben-Daten für Kuchendiagramm
+# Ausgaben gruppieren
 ausgaben_summen = df_ausgaben_monat.groupby('Kategorie')['Betrag (CHF)'].sum().reset_index()
 ausgaben_summen['Typ'] = 'Ausgaben'
 
-# Einnahmen und Ausgaben zusammenfügen
 gesamt_summen = pd.concat([einnahmen_summen, ausgaben_summen])
 
 if not gesamt_summen.empty:
@@ -72,9 +81,9 @@ if not gesamt_summen.empty:
         gesamt_summen,
         values='Betrag (CHF)',
         names='Kategorie',
-        color='Typ',  # Einnahmen und Ausgaben bekommen verschiedene Farben
+        color='Typ',  # Einnahmen vs. Ausgaben farblich getrennt
         hole=0.4,
-        title="Verteilung Einnahmen und Ausgaben",
+        title="Verteilung der Einnahmen und Ausgaben"
     )
     st.plotly_chart(fig, use_container_width=True)
 else:
