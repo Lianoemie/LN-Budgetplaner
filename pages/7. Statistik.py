@@ -64,7 +64,7 @@ else:
         st.markdown("**💵 Einnahmen – Detailübersicht:**")
         df_e_detail = pd.DataFrame({
             "Kategorie": einnahmen_kat.index,
-            "Betrag (CHF)": einnahmen_kat.values,
+            "Betrag (CHF)": [f"{v:,.2f}".replace(",", "'") for v in einnahmen_kat.values],
             "Anteil (%)": [f"{(v / total_einnahmen * 100):.1f}%" for v in einnahmen_kat.values]
         })
         st.table(df_e_detail)
@@ -88,7 +88,7 @@ else:
         st.markdown("**💸 Ausgaben – Detailübersicht:**")
         df_a_detail = pd.DataFrame({
             "Kategorie": ausgaben_kat.index,
-            "Betrag (CHF)": ausgaben_kat.values,
+            "Betrag (CHF)": [f"{v:,.2f}".replace(",", "'") for v in ausgaben_kat.values],
             "Anteil (%)": [f"{(v / total_ausgaben * 100):.1f}%" for v in ausgaben_kat.values]
         })
         st.table(df_a_detail)
@@ -103,6 +103,7 @@ else:
     saldo = einnahmen_summe - ausgaben_summe
 
     st.subheader("📊 Monatlicher Saldo")
-    st.metric(label="Einnahmen – Ausgaben", value=f"{saldo:.2f} CHF")
+    st.metric(label="Einnahmen – Ausgaben", value=f"{saldo:,.2f} CHF".replace(",", "'"))
+
 
 
