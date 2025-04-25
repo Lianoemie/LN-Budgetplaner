@@ -42,7 +42,7 @@ alle_monate_str = [str(monat) for monat in alle_monate]
 if not alle_monate_str:
     st.info("Noch keine Daten mit Datum vorhanden.")
 else:
-    gewaehlter_monat = st.selectbox("📅 Monat auswählen", alle_monate_str)
+    gewaehlter_monat = st.selectbox("🗕️ Monat auswählen", alle_monate_str)
 
     jahr, monat = map(int, gewaehlter_monat.split("-"))
     df_e_monat = df_einnahmen[(df_einnahmen["Datum"].dt.month == monat) & (df_einnahmen["Datum"].dt.year == jahr)]
@@ -55,7 +55,9 @@ else:
         st.subheader("💰 Einnahmen nach Kategorie")
         einnahmen_kat = df_e_monat.groupby("Kategorie")["Betrag (CHF)"].sum()
         total_einnahmen = einnahmen_kat.sum()
-        colors = plt.get_cmap("tab20").colors[:len(einnahmen_kat)]
+
+        cmap_einnahmen = plt.cm.get_cmap('tab10', len(einnahmen_kat))
+        colors = [cmap_einnahmen(i) for i in range(len(einnahmen_kat))]
 
         fig1, ax1 = plt.subplots()
         wedges, _ = ax1.pie(
@@ -106,7 +108,9 @@ else:
         st.subheader("💸 Ausgaben nach Kategorie")
         ausgaben_kat = df_a_monat.groupby("Kategorie")["Betrag (CHF)"].sum()
         total_ausgaben = ausgaben_kat.sum()
-        colors = plt.get_cmap("tab20b").colors[:len(ausgaben_kat)]
+
+        cmap_ausgaben = plt.cm.get_cmap('tab20', len(ausgaben_kat))
+        colors = [cmap_ausgaben(i) for i in range(len(ausgaben_kat))]
 
         fig2, ax2 = plt.subplots()
         wedges, _ = ax2.pie(
