@@ -42,3 +42,22 @@ def zeige_kategorien(titel, kategorien, farbe):
 # Schöne Darstellung der Kategorien
 zeige_kategorien("📥 Einnahmen-Kategorien", st.session_state.kategorien_einnahmen, farbe="#4CAF50")  # grün
 zeige_kategorien("📤 Ausgaben-Kategorien", st.session_state.kategorien_ausgaben, farbe="#F44336")   # rot
+
+st.markdown("---")
+
+# Kategorie löschen
+st.subheader("🗑️ Kategorie löschen")
+with st.form("kategorie_loeschen"):
+    loesch_typ = st.selectbox("Art der Kategorie", ["Einnahme", "Ausgabe"])
+    if loesch_typ == "Einnahme":
+        auswahl = st.selectbox("Kategorie wählen", st.session_state.kategorien_einnahmen)
+    else:
+        auswahl = st.selectbox("Kategorie wählen", st.session_state.kategorien_ausgaben)
+    loeschen = st.form_submit_button("Löschen")
+
+    if loeschen:
+        if loesch_typ == "Einnahme":
+            st.session_state.kategorien_einnahmen.remove(auswahl)
+        else:
+            st.session_state.kategorien_ausgaben.remove(auswahl)
+        st.success(f"Kategorie '{auswahl}' wurde gelöscht.")
