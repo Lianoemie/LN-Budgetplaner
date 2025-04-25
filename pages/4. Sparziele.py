@@ -38,6 +38,7 @@ with st.form("sparziel_formular"):
         }
         st.session_state.sparziele.append(neues_sparziel)
         st.success(f"Sparziel '{name}' wurde hinzugefügt!")
+        st.experimental_rerun()
 
 # -----------------------------
 # Übersicht Sparziele
@@ -71,6 +72,7 @@ if st.session_state.sparziele:
                         "Datum": datetime.today().strftime("%Y-%m-%d")
                     })
                     st.success(f"{betrag:.2f} CHF erfolgreich auf '{ziel['Name']}' eingezahlt!")
+                    st.experimental_rerun()
 
         # Liste der Einzahlungen
         if ziel["Einzahlungen"]:
