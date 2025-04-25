@@ -33,6 +33,14 @@ df_ausgaben = pd.DataFrame(st.session_state.ausgaben)
 df_einnahmen["Datum"] = pd.to_datetime(df_einnahmen["Datum"])
 df_ausgaben["Datum"] = pd.to_datetime(df_ausgaben["Datum"])
 
+# Farbpalette mit stark unterscheidbaren Farben
+kontrastfarben = [
+    "#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd",
+    "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf",
+    "#e41a1c", "#377eb8", "#4daf4a", "#984ea3", "#ff7f00",
+    "#ffff33", "#a65628", "#f781bf", "#999999"
+]
+
 # -----------------------------
 # Monatsauswahl
 # -----------------------------
@@ -49,20 +57,19 @@ else:
     df_a_monat = df_ausgaben[(df_ausgaben["Datum"].dt.month == monat) & (df_ausgaben["Datum"].dt.year == jahr)]
 
     # -----------------------------
-    # Einnahmen Kuchendiagramm mit farbigen Labels
+    # Einnahmen Kuchendiagramm
     # -----------------------------
     if not df_e_monat.empty:
         st.subheader("💰 Einnahmen nach Kategorie")
         einnahmen_kat = df_e_monat.groupby("Kategorie")["Betrag (CHF)"].sum()
         total_einnahmen = einnahmen_kat.sum()
-        colors = plt.get_cmap("tab20").colors[:len(einnahmen_kat)]
+        colors = kontrastfarben[:len(einnahmen_kat)]
 
         fig1, ax1 = plt.subplots()
         wedges, _ = ax1.pie(
             einnahmen_kat,
             colors=colors,
             startangle=90,
-            radius=1,
             wedgeprops={'edgecolor': 'white'}
         )
         ax1.axis('equal')
@@ -101,20 +108,19 @@ else:
         st.info("Keine Einnahmen in diesem Monat.")
 
     # -----------------------------
-    # Ausgaben Kuchendiagramm mit farbigen Labels
+    # Ausgaben Kuchendiagramm
     # -----------------------------
     if not df_a_monat.empty:
         st.subheader("💸 Ausgaben nach Kategorie")
         ausgaben_kat = df_a_monat.groupby("Kategorie")["Betrag (CHF)"].sum()
         total_ausgaben = ausgaben_kat.sum()
-        colors = plt.get_cmap("tab20b").colors[:len(ausgaben_kat)]
+        colors = kontrastfarben[:len(ausgaben_kat)]
 
         fig2, ax2 = plt.subplots()
         wedges, _ = ax2.pie(
             ausgaben_kat,
             colors=colors,
             startangle=90,
-            radius=1,
             wedgeprops={'edgecolor': 'white'}
         )
         ax2.axis('equal')
@@ -161,6 +167,7 @@ else:
 
     st.subheader("📊 Monatlicher Saldo")
     st.metric(label="Einnahmen – Ausgaben", value=f"{saldo:,.2f} CHF".replace(",", "'"))
+
 
 
 
