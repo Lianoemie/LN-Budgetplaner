@@ -34,7 +34,7 @@ alle_monate = sorted(alle_monate)
 
 gewaehlter_monat = st.selectbox("Wähle einen Monat", alle_monate, index=alle_monate.index(heute))
 jahr, monat = map(int, gewaehlter_monat.split("-"))
-monat_start = datetime(year, monat, 1)
+monat_start = datetime(jahr, monat, 1)
 
 # -----------------------------
 # Monatliches Budget eingeben
