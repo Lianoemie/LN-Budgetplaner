@@ -3,7 +3,6 @@ import pandas as pd
 from datetime import datetime
 
 st.set_page_config(page_title="Fixkosten", page_icon="📆")
-
 st.title("📆 Fixkosten verwalten")
 
 # -------------------------------------
@@ -22,38 +21,38 @@ for eintrag in st.session_state.fixkosten:
         eintrag["Stoppdatum"] = None
 
 # -------------------------------------
-# Neue Fixkosten erfassen
+# Formular-Elemente (außerhalb des st.form)
 # -------------------------------------
-with st.form("fixkosten_formular"):
-    st.subheader("➕ Neue Fixkosten hinzufügen")
+st.subheader("➕ Neue Fixkosten hinzufügen")
 
-    kategorie = st.text_input("Kategorie (z. B. Miete, Versicherung)")
-    betrag = st.number_input("Monatlicher Betrag (CHF)", min_value=0.0, format="%.2f")
+kategorie = st.text_input("Kategorie (z. B. Miete, Versicherung)")
+betrag = st.number_input("Monatlicher Betrag (CHF)", min_value=0.0, format="%.2f")
 
-    wiederholung = st.radio(
-        "Wiederholung auswählen",
-        options=[
-            "Keine Wiederholung",
-            "Wöchentlich",
-            "Zweiwöchentlich",
-            "Monatlich",
-            "Halbjährlich",
-            "Jährlich"
-        ],
-        index=3
-    )
+wiederholung = st.radio(
+    "Wiederholung auswählen",
+    options=[
+        "Keine Wiederholung",
+        "Wöchentlich",
+        "Zweiwöchentlich",
+        "Monatlich",
+        "Halbjährlich",
+        "Jährlich"
+    ],
+    index=3
+)
 
-    datum = st.date_input("Startdatum der Fixkosten", value=datetime.today())
+datum = st.date_input("Startdatum der Fixkosten", value=datetime.today())
 
-    stoppdatum = None
-    stopp_aktiv = st.checkbox("Stoppdatum setzen?")
+stopp_aktiv = st.checkbox("Stoppdatum setzen?")
+stoppdatum = None
+if stopp_aktiv:
+    stoppdatum = st.date_input("Stoppdatum auswählen")
 
-    if stopp_aktiv:
-        stoppdatum = st.date_input("Stoppdatum auswählen", key="stoppdatum_wahl")
-
-    speichern = st.form_submit_button("Hinzufügen")
-
-    if speichern and kategorie and betrag > 0:
+# -------------------------------------
+# Speichern (innerhalb form)
+# -------------------------------------
+if st.button("Hinzufügen"):
+    if kategorie and betrag > 0:
         neue_fixkosten = {
             "Kategorie": kategorie,
             "Betrag (CHF)": betrag,
@@ -64,6 +63,8 @@ with st.form("fixkosten_formular"):
         st.session_state.fixkosten.append(neue_fixkosten)
         st.success(f"Fixkosten '{kategorie}' gespeichert.")
         st.rerun()
+    else:
+        st.warning("Bitte Kategorie und Betrag korrekt ausfüllen.")
 
 # -------------------------------------
 # Anzeige der Fixkosten + Löschoption
@@ -85,12 +86,10 @@ if st.session_state.fixkosten:
 
     st.markdown("---")
 
-    # Gesamtsumme aller Fixkosten (nur informativ)
     df = pd.DataFrame(st.session_state.fixkosten)
     gesamt_fixkosten = df["Betrag (CHF)"].sum()
     st.metric("💸 Gesamte Fixkosten (alle)", f"{gesamt_fixkosten:.2f} CHF")
 
-    # Alle löschen Button
     if st.button("❌ Alle Fixkosten löschen"):
         st.session_state.fixkosten.clear()
         st.success("Alle Fixkosten wurden gelöscht.")
