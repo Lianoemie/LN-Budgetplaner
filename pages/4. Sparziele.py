@@ -4,9 +4,16 @@ from datetime import datetime
 
 st.set_page_config(page_title="Sparziele", page_icon="🎯")
 
-# Session-State initialisieren
+# ----------------------------------------
+# Session-State initialisieren + absichern
+# ----------------------------------------
 if 'sparziele' not in st.session_state:
     st.session_state.sparziele = []
+
+# 🛡️ Sicherheits-Check für alte Sparziele ohne 'Einzahlungen'
+for ziel in st.session_state.sparziele:
+    if "Einzahlungen" not in ziel:
+        ziel["Einzahlungen"] = []
 
 st.title("🎯 Sparziele verwalten")
 
@@ -49,7 +56,13 @@ if st.session_state.sparziele:
 
         # Einzahlung hinzufügen
         with st.expander(f"➕ Einzahlung hinzufügen für {ziel['Name']}"):
-            betrag = st.number_input(f"Betrag einzahlen für '{ziel['Name']}'", min_value=0.0, step=10.0, key=f"einzahlen_{index}")
+            betrag = st.number_input(
+                f"Betrag einzahlen für '{ziel['Name']}'",
+                min_value=0.0,
+                step=10.0,
+                format="%.2f",
+                key=f"einzahlen_{index}"
+            )
             if st.button(f"Einzahlen auf '{ziel['Name']}'", key=f"button_{index}"):
                 if betrag > 0:
                     ziel["Bisher gespart (CHF)"] += betrag
@@ -65,8 +78,8 @@ if st.session_state.sparziele:
             einzahlungen_df = pd.DataFrame(ziel["Einzahlungen"])
             einzahlungen_df.index = range(1, len(einzahlungen_df) + 1)  # Index beginnt bei 1
             st.table(einzahlungen_df)
+
         st.divider()
 
 else:
     st.info("Noch keine Sparziele vorhanden. Lege eines an!")
-
