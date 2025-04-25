@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
+import numpy as np
 from datetime import datetime
 
 st.set_page_config(page_title="Statistik", page_icon="📈")
@@ -48,28 +49,45 @@ else:
     df_a_monat = df_ausgaben[(df_ausgaben["Datum"].dt.month == monat) & (df_ausgaben["Datum"].dt.year == jahr)]
 
     # -----------------------------
-    # Einnahmen Kuchendiagramm
+    # Einnahmen Kuchendiagramm mit farbigen Labels
     # -----------------------------
     if not df_e_monat.empty:
         st.subheader("💰 Einnahmen nach Kategorie")
         einnahmen_kat = df_e_monat.groupby("Kategorie")["Betrag (CHF)"].sum()
         total_einnahmen = einnahmen_kat.sum()
-        labels_ein = [f"{k} ({v:.2f} CHF, {v / total_einnahmen * 100:.1f}%)" for k, v in einnahmen_kat.items()]
-
-        colors = plt.get_cmap("Set2").colors  # schöne Farben
+        colors = plt.get_cmap("tab20").colors[:len(einnahmen_kat)]
 
         fig1, ax1 = plt.subplots()
-        wedges, texts = ax1.pie(
+        wedges, _, _ = ax1.pie(
             einnahmen_kat,
-            labels=labels_ein,
             colors=colors,
             startangle=90,
+            radius=1,
             wedgeprops={'edgecolor': 'white'}
         )
         ax1.axis('equal')
 
-        for text in texts:
-            text.set_fontsize(10)
+        for i, w in enumerate(wedges):
+            kategorie = einnahmen_kat.index[i]
+            betrag = einnahmen_kat.values[i]
+            prozent = betrag / total_einnahmen * 100
+            label = f"{kategorie}\n{betrag:.2f} CHF ({prozent:.1f}%)"
+
+            angle = (w.theta2 + w.theta1) / 2
+            x = np.cos(np.deg2rad(angle))
+            y = np.sin(np.deg2rad(angle))
+            ha = 'left' if x >= 0 else 'right'
+            ax1.annotate(
+                label,
+                xy=(x, y),
+                xytext=(1.4 * x, 1.4 * y),
+                ha=ha,
+                va='center',
+                fontsize=10,
+                color=colors[i],
+                arrowprops=dict(arrowstyle='-', color=colors[i])
+            )
+
         st.pyplot(fig1)
 
         st.markdown("**💵 Einnahmen – Detailübersicht:**")
@@ -83,28 +101,45 @@ else:
         st.info("Keine Einnahmen in diesem Monat.")
 
     # -----------------------------
-    # Ausgaben Kuchendiagramm
+    # Ausgaben Kuchendiagramm mit farbigen Labels
     # -----------------------------
     if not df_a_monat.empty:
         st.subheader("💸 Ausgaben nach Kategorie")
         ausgaben_kat = df_a_monat.groupby("Kategorie")["Betrag (CHF)"].sum()
         total_ausgaben = ausgaben_kat.sum()
-        labels_aus = [f"{k} ({v:.2f} CHF, {v / total_ausgaben * 100:.1f}%)" for k, v in ausgaben_kat.items()]
-
-        colors = plt.get_cmap("Set2").colors
+        colors = plt.get_cmap("tab20b").colors[:len(ausgaben_kat)]
 
         fig2, ax2 = plt.subplots()
-        wedges, texts = ax2.pie(
+        wedges, _, _ = ax2.pie(
             ausgaben_kat,
-            labels=labels_aus,
             colors=colors,
             startangle=90,
+            radius=1,
             wedgeprops={'edgecolor': 'white'}
         )
         ax2.axis('equal')
 
-        for text in texts:
-            text.set_fontsize(10)
+        for i, w in enumerate(wedges):
+            kategorie = ausgaben_kat.index[i]
+            betrag = ausgaben_kat.values[i]
+            prozent = betrag / total_ausgaben * 100
+            label = f"{kategorie}\n{betrag:.2f} CHF ({prozent:.1f}%)"
+
+            angle = (w.theta2 + w.theta1) / 2
+            x = np.cos(np.deg2rad(angle))
+            y = np.sin(np.deg2rad(angle))
+            ha = 'left' if x >= 0 else 'right'
+            ax2.annotate(
+                label,
+                xy=(x, y),
+                xytext=(1.4 * x, 1.4 * y),
+                ha=ha,
+                va='center',
+                fontsize=10,
+                color=colors[i],
+                arrowprops=dict(arrowstyle='-', color=colors[i])
+            )
+
         st.pyplot(fig2)
 
         st.markdown("**💸 Ausgaben – Detailübersicht:**")
@@ -126,6 +161,7 @@ else:
 
     st.subheader("📊 Monatlicher Saldo")
     st.metric(label="Einnahmen – Ausgaben", value=f"{saldo:,.2f} CHF".replace(",", "'"))
+
 
 
 
