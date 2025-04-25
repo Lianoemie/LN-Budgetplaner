@@ -54,12 +54,12 @@ with st.form("kategorie_loeschen"):
     loeschen = st.form_submit_button("Löschen")
 
     if loeschen and auswahl:
-        if loesch_typ == "Einnahme":
-            st.session_state.kategorien_einnahmen.remove(auswahl)
-        else:
-            st.session_state.kategorien_ausgaben.remove(auswahl)
-        st.success(f"Kategorie '{auswahl}' wurde gelöscht.")
-        st.experimental_rerun()
+    if loesch_typ == "Einnahme":
+        st.session_state.kategorien_einnahmen.remove(auswahl)
+    else:
+        st.session_state.kategorien_ausgaben.remove(auswahl)
+    st.success(f"Kategorie '{auswahl}' wurde gelöscht.")
+    st.rerun()
 
 # -----------------------------
 # Kategorien anzeigen (Badges)
