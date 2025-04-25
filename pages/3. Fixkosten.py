@@ -26,6 +26,7 @@ for eintrag in st.session_state.fixkosten:
 # -------------------------------------
 with st.form("fixkosten_formular"):
     st.subheader("➕ Neue Fixkosten hinzufügen")
+
     kategorie = st.text_input("Kategorie (z. B. Miete, Versicherung)")
     betrag = st.number_input("Monatlicher Betrag (CHF)", min_value=0.0, format="%.2f")
 
@@ -46,8 +47,9 @@ with st.form("fixkosten_formular"):
 
     stoppdatum = None
     stopp_aktiv = st.checkbox("Stoppdatum setzen?")
+
     if stopp_aktiv:
-        stoppdatum = st.date_input("Stoppdatum auswählen")
+        stoppdatum = st.date_input("Stoppdatum auswählen", key="stoppdatum_wahl")
 
     speichern = st.form_submit_button("Hinzufügen")
 
