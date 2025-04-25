@@ -18,14 +18,27 @@ with st.form("fixkosten_formular"):
     st.subheader("➕ Neue Fixkosten hinzufügen")
     kategorie = st.text_input("Kategorie (z. B. Miete, Versicherung)")
     betrag = st.number_input("Monatlicher Betrag (CHF)", min_value=0.0, format="%.2f")
-    wiederholen = st.checkbox("🔁 Monatlich wiederholen", value=True)
+
+    wiederholung = st.radio(
+        "Wiederholung auswählen",
+        options=[
+            "Keine Wiederholung",
+            "Wöchentlich",
+            "Zweiwöchentlich",
+            "Monatlich",
+            "Halbjährlich",
+            "Jährlich"
+        ],
+        index=3  # Standard auf "Monatlich"
+    )
+
     speichern = st.form_submit_button("Hinzufügen")
 
     if speichern and kategorie and betrag > 0:
         neue_fixkosten = {
             "Kategorie": kategorie,
             "Betrag (CHF)": betrag,
-            "Monatlich": "✔️" if wiederholen else "✖️"
+            "Wiederholung": wiederholung
         }
         st.session_state.fixkosten.append(neue_fixkosten)
         st.success(f"Fixkosten '{kategorie}' gespeichert.")
@@ -38,10 +51,10 @@ if st.session_state.fixkosten:
 
     # Einzelne Fixkosten anzeigen mit Löschen-Button
     for i, eintrag in enumerate(st.session_state.fixkosten):
-        cols = st.columns([3, 2, 2, 1])
+        cols = st.columns([3, 2, 3, 1])
         cols[0].markdown(f"**{eintrag['Kategorie']}**")
         cols[1].markdown(f"{eintrag['Betrag (CHF)']:.2f} CHF")
-        cols[2].markdown(eintrag['Monatlich'])
+        cols[2].markdown(eintrag["Wiederholung"])
         if cols[3].button("🗑️", key=f"loeschen_{i}"):
             st.session_state.fixkosten.pop(i)
             st.success("Fixkosten gelöscht.")
