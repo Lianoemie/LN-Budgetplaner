@@ -48,7 +48,7 @@ else:
     df_e_monat = df_einnahmen[(df_einnahmen["Datum"].dt.month == monat) & (df_einnahmen["Datum"].dt.year == jahr)]
     df_a_monat = df_ausgaben[(df_ausgaben["Datum"].dt.month == monat) & (df_ausgaben["Datum"].dt.year == jahr)]
 
-    # -----------------------------
+  # -----------------------------
 # Einnahmen Kuchendiagramm
 # -----------------------------
 if not df_e_monat.empty:
@@ -82,6 +82,7 @@ if not df_e_monat.empty:
         "Betrag (CHF)": [f"{v:,.2f}".replace(",", "'") for v in einnahmen_kat.values],
         "Anteil (%)": [f"{(v / total_einnahmen * 100):.1f}%" for v in einnahmen_kat.values]
     })
+    df_e_detail.index = np.arange(1, len(df_e_detail) + 1)  # Index startet bei 1
     st.table(df_e_detail)
 else:
     st.info("Keine Einnahmen in diesem Monat.")
@@ -120,10 +121,10 @@ if not df_a_monat.empty:
         "Betrag (CHF)": [f"{v:,.2f}".replace(",", "'") for v in ausgaben_kat.values],
         "Anteil (%)": [f"{(v / total_ausgaben * 100):.1f}%" for v in ausgaben_kat.values]
     })
+    df_a_detail.index = np.arange(1, len(df_a_detail) + 1)  # Index startet bei 1
     st.table(df_a_detail)
 else:
     st.info("Keine Ausgaben in diesem Monat.")
-
 
 
     # -----------------------------
