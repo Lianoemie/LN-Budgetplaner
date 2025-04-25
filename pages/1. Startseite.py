@@ -34,6 +34,7 @@ alle_monate = sorted(alle_monate)
 
 gewaehlter_monat = st.selectbox("Wähle einen Monat", alle_monate, index=alle_monate.index(heute))
 jahr, monat = map(int, gewaehlter_monat.split("-"))
+monat_start = datetime(year, monat, 1)
 
 # -----------------------------
 # Monatliches Budget eingeben
@@ -48,13 +49,15 @@ st.session_state.monatliches_budget = st.number_input(
 )
 
 # -----------------------------
-# Fixkosten filtern nach Monat
+# Fixkosten filtern (Startdatum/Stoppdatum prüfen)
 # -----------------------------
 fixkosten_monat = []
 for eintrag in st.session_state.fixkosten:
     try:
-        datum = datetime.strptime(eintrag["Datum"], "%Y-%m-%d")
-        if datum.month == monat and datum.year == jahr:
+        startdatum = datetime.strptime(eintrag["Datum"], "%Y-%m-%d")
+        stoppdatum = datetime.strptime(eintrag["Stoppdatum"], "%Y-%m-%d") if eintrag["Stoppdatum"] else None
+
+        if startdatum <= monat_start and (stoppdatum is None or monat_start <= stoppdatum):
             fixkosten_monat.append(eintrag)
     except:
         continue

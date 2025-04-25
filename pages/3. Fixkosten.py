@@ -18,6 +18,8 @@ for eintrag in st.session_state.fixkosten:
         eintrag["Wiederholung"] = "Monatlich"
     if "Datum" not in eintrag:
         eintrag["Datum"] = datetime.today().strftime("%Y-%m-%d")
+    if "Stoppdatum" not in eintrag:
+        eintrag["Stoppdatum"] = None
 
 # -------------------------------------
 # Neue Fixkosten erfassen
@@ -41,6 +43,10 @@ with st.form("fixkosten_formular"):
     )
 
     datum = st.date_input("Startdatum der Fixkosten", value=datetime.today())
+    stoppdatum_option = st.checkbox("Stoppdatum setzen?")
+    stoppdatum = None
+    if stoppdatum_option:
+        stoppdatum = st.date_input("Stoppdatum", min_value=datum)
 
     speichern = st.form_submit_button("Hinzufügen")
 
@@ -49,7 +55,8 @@ with st.form("fixkosten_formular"):
             "Kategorie": kategorie,
             "Betrag (CHF)": betrag,
             "Wiederholung": wiederholung,
-            "Datum": str(datum)
+            "Datum": str(datum),
+            "Stoppdatum": str(stoppdatum) if stoppdatum else None
         }
         st.session_state.fixkosten.append(neue_fixkosten)
         st.success(f"Fixkosten '{kategorie}' gespeichert.")
@@ -62,19 +69,20 @@ if st.session_state.fixkosten:
     st.subheader("📋 Deine aktuellen Fixkosten")
 
     for i, eintrag in enumerate(st.session_state.fixkosten):
-        cols = st.columns([3, 2, 2, 2, 1])
+        cols = st.columns([3, 2, 2, 2, 2, 1])
         cols[0].markdown(f"**{eintrag['Kategorie']}**")
         cols[1].markdown(f"{eintrag['Betrag (CHF)']:.2f} CHF")
         cols[2].markdown(eintrag["Wiederholung"])
-        cols[3].markdown(f"📅 {eintrag['Datum']}")
-        if cols[4].button("🗑️", key=f"loeschen_{i}"):
+        cols[3].markdown(f"📅 Start: {eintrag['Datum']}")
+        cols[4].markdown(f"📅 Stopp: {eintrag['Stoppdatum'] if eintrag['Stoppdatum'] else '❌'}")
+        if cols[5].button("🗑️", key=f"loeschen_{i}"):
             st.session_state.fixkosten.pop(i)
             st.success("Fixkosten gelöscht.")
             st.rerun()
 
     st.markdown("---")
 
-    # Gesamtsumme anzeigen (alle, nicht gefiltert)
+    # Gesamtsumme aller Fixkosten (nur informativ)
     df = pd.DataFrame(st.session_state.fixkosten)
     gesamt_fixkosten = df["Betrag (CHF)"].sum()
     st.metric("💸 Gesamte Fixkosten (alle)", f"{gesamt_fixkosten:.2f} CHF")
