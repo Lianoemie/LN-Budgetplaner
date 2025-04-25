@@ -49,110 +49,111 @@ else:
     df_a_monat = df_ausgaben[(df_ausgaben["Datum"].dt.month == monat) & (df_ausgaben["Datum"].dt.year == jahr)]
 
     # -----------------------------
-    # Einnahmen Kuchendiagramm
-    # -----------------------------
-    if not df_e_monat.empty:
-        st.subheader("💰 Einnahmen nach Kategorie")
-        einnahmen_kat = df_e_monat.groupby("Kategorie")["Betrag (CHF)"].sum()
-        total_einnahmen = einnahmen_kat.sum()
+# Einnahmen Kuchendiagramm
+# -----------------------------
+if not df_e_monat.empty:
+    st.subheader("💰 Einnahmen nach Kategorie")
+    einnahmen_kat = df_e_monat.groupby("Kategorie")["Betrag (CHF)"].sum()
+    total_einnahmen = einnahmen_kat.sum()
 
-        cmap_einnahmen = plt.cm.get_cmap('tab10', len(einnahmen_kat))
-        colors = [cmap_einnahmen(i) for i in range(len(einnahmen_kat))]
+    cmap_einnahmen = plt.cm.get_cmap('tab10', len(einnahmen_kat))
+    colors = [cmap_einnahmen(i) for i in range(len(einnahmen_kat))]
 
-        fig1, ax1 = plt.subplots()
-        wedges, _ = ax1.pie(
-            einnahmen_kat,
-            colors=colors,
-            startangle=90,
-            wedgeprops={'edgecolor': 'white'}
+    fig1, ax1 = plt.subplots(figsize=(6, 6))  # ← Feste Größe eingefügt
+    wedges, _ = ax1.pie(
+        einnahmen_kat,
+        colors=colors,
+        startangle=90,
+        wedgeprops={'edgecolor': 'white'}
+    )
+    ax1.axis('equal')
+
+    for i, w in enumerate(wedges):
+        kategorie = einnahmen_kat.index[i]
+        betrag = einnahmen_kat.values[i]
+        prozent = betrag / total_einnahmen * 100
+        label = f"{kategorie}\n{betrag:.2f} CHF ({prozent:.1f}%)"
+
+        angle = (w.theta2 + w.theta1) / 2
+        x = np.cos(np.deg2rad(angle))
+        y = np.sin(np.deg2rad(angle))
+        ha = 'left' if x >= 0 else 'right'
+        ax1.annotate(
+            label,
+            xy=(x, y),
+            xytext=(1.4 * x, 1.4 * y),
+            ha=ha,
+            va='center',
+            fontsize=10,
+            color=colors[i],
+            arrowprops=dict(arrowstyle='-', color=colors[i])
         )
-        ax1.axis('equal')
 
-        for i, w in enumerate(wedges):
-            kategorie = einnahmen_kat.index[i]
-            betrag = einnahmen_kat.values[i]
-            prozent = betrag / total_einnahmen * 100
-            label = f"{kategorie}\n{betrag:.2f} CHF ({prozent:.1f}%)"
+    st.pyplot(fig1)
 
-            angle = (w.theta2 + w.theta1) / 2
-            x = np.cos(np.deg2rad(angle))
-            y = np.sin(np.deg2rad(angle))
-            ha = 'left' if x >= 0 else 'right'
-            ax1.annotate(
-                label,
-                xy=(x, y),
-                xytext=(1.4 * x, 1.4 * y),
-                ha=ha,
-                va='center',
-                fontsize=10,
-                color=colors[i],
-                arrowprops=dict(arrowstyle='-', color=colors[i])
-            )
+    st.markdown("**💵 Einnahmen – Detailübersicht:**")
+    df_e_detail = pd.DataFrame({
+        "Kategorie": einnahmen_kat.index,
+        "Betrag (CHF)": [f"{v:,.2f}".replace(",", "'") for v in einnahmen_kat.values],
+        "Anteil (%)": [f"{(v / total_einnahmen * 100):.1f}%" for v in einnahmen_kat.values]
+    })
+    st.table(df_e_detail)
+else:
+    st.info("Keine Einnahmen in diesem Monat.")
 
-        st.pyplot(fig1)
+# -----------------------------
+# Ausgaben Kuchendiagramm
+# -----------------------------
+if not df_a_monat.empty:
+    st.subheader("💸 Ausgaben nach Kategorie")
+    ausgaben_kat = df_a_monat.groupby("Kategorie")["Betrag (CHF)"].sum()
+    total_ausgaben = ausgaben_kat.sum()
 
-        st.markdown("**💵 Einnahmen – Detailübersicht:**")
-        df_e_detail = pd.DataFrame({
-            "Kategorie": einnahmen_kat.index,
-            "Betrag (CHF)": [f"{v:,.2f}".replace(",", "'") for v in einnahmen_kat.values],
-            "Anteil (%)": [f"{(v / total_einnahmen * 100):.1f}%" for v in einnahmen_kat.values]
-        })
-        st.table(df_e_detail)
-    else:
-        st.info("Keine Einnahmen in diesem Monat.")
+    cmap_ausgaben = plt.cm.get_cmap('tab20', len(ausgaben_kat))
+    colors = [cmap_ausgaben(i) for i in range(len(ausgaben_kat))]
 
-    # -----------------------------
-    # Ausgaben Kuchendiagramm
-    # -----------------------------
-    if not df_a_monat.empty:
-        st.subheader("💸 Ausgaben nach Kategorie")
-        ausgaben_kat = df_a_monat.groupby("Kategorie")["Betrag (CHF)"].sum()
-        total_ausgaben = ausgaben_kat.sum()
+    fig2, ax2 = plt.subplots(figsize=(6, 6))  # ← Feste Größe eingefügt
+    wedges, _ = ax2.pie(
+        ausgaben_kat,
+        colors=colors,
+        startangle=90,
+        wedgeprops={'edgecolor': 'white'}
+    )
+    ax2.axis('equal')
 
-        cmap_ausgaben = plt.cm.get_cmap('tab20', len(ausgaben_kat))
-        colors = [cmap_ausgaben(i) for i in range(len(ausgaben_kat))]
+    for i, w in enumerate(wedges):
+        kategorie = ausgaben_kat.index[i]
+        betrag = ausgaben_kat.values[i]
+        prozent = betrag / total_ausgaben * 100
+        label = f"{kategorie}\n{betrag:.2f} CHF ({prozent:.1f}%)"
 
-        fig2, ax2 = plt.subplots()
-        wedges, _ = ax2.pie(
-            ausgaben_kat,
-            colors=colors,
-            startangle=90,
-            wedgeprops={'edgecolor': 'white'}
+        angle = (w.theta2 + w.theta1) / 2
+        x = np.cos(np.deg2rad(angle))
+        y = np.sin(np.deg2rad(angle))
+        ha = 'left' if x >= 0 else 'right'
+        ax2.annotate(
+            label,
+            xy=(x, y),
+            xytext=(1.4 * x, 1.4 * y),
+            ha=ha,
+            va='center',
+            fontsize=10,
+            color=colors[i],
+            arrowprops=dict(arrowstyle='-', color=colors[i])
         )
-        ax2.axis('equal')
 
-        for i, w in enumerate(wedges):
-            kategorie = ausgaben_kat.index[i]
-            betrag = ausgaben_kat.values[i]
-            prozent = betrag / total_ausgaben * 100
-            label = f"{kategorie}\n{betrag:.2f} CHF ({prozent:.1f}%)"
+    st.pyplot(fig2)
 
-            angle = (w.theta2 + w.theta1) / 2
-            x = np.cos(np.deg2rad(angle))
-            y = np.sin(np.deg2rad(angle))
-            ha = 'left' if x >= 0 else 'right'
-            ax2.annotate(
-                label,
-                xy=(x, y),
-                xytext=(1.4 * x, 1.4 * y),
-                ha=ha,
-                va='center',
-                fontsize=10,
-                color=colors[i],
-                arrowprops=dict(arrowstyle='-', color=colors[i])
-            )
+    st.markdown("**💸 Ausgaben – Detailübersicht:**")
+    df_a_detail = pd.DataFrame({
+        "Kategorie": ausgaben_kat.index,
+        "Betrag (CHF)": [f"{v:,.2f}".replace(",", "'") for v in ausgaben_kat.values],
+        "Anteil (%)": [f"{(v / total_ausgaben * 100):.1f}%" for v in ausgaben_kat.values]
+    })
+    st.table(df_a_detail)
+else:
+    st.info("Keine Ausgaben in diesem Monat.")
 
-        st.pyplot(fig2)
-
-        st.markdown("**💸 Ausgaben – Detailübersicht:**")
-        df_a_detail = pd.DataFrame({
-            "Kategorie": ausgaben_kat.index,
-            "Betrag (CHF)": [f"{v:,.2f}".replace(",", "'") for v in ausgaben_kat.values],
-            "Anteil (%)": [f"{(v / total_ausgaben * 100):.1f}%" for v in ausgaben_kat.values]
-        })
-        st.table(df_a_detail)
-    else:
-        st.info("Keine Ausgaben in diesem Monat.")
 
     # -----------------------------
     # Monatlicher Saldo
