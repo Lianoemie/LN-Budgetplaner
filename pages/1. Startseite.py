@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 from datetime import datetime
+import calendar
 
 st.set_page_config(page_title="Startseite", page_icon="🏠")
 
@@ -35,6 +36,8 @@ alle_monate = sorted(alle_monate)
 gewaehlter_monat = st.selectbox("Wähle einen Monat", alle_monate, index=alle_monate.index(standard_monat))
 jahr, monat = map(int, gewaehlter_monat.split("-"))
 monat_start = datetime(jahr, monat, 1)
+letzter_tag = calendar.monthrange(jahr, monat)[1]
+monat_ende = datetime(jahr, monat, letzter_tag)
 
 # -----------------------------
 # Monatliches Budget eingeben
@@ -49,7 +52,7 @@ st.session_state.monatliches_budget = st.number_input(
 )
 
 # -----------------------------
-# Fixkosten filtern (Startdatum/Stoppdatum prüfen)
+# Fixkosten filtern (Start- und Enddatum prüfen)
 # -----------------------------
 fixkosten_monat = []
 for eintrag in st.session_state.fixkosten:
@@ -57,7 +60,7 @@ for eintrag in st.session_state.fixkosten:
         startdatum = datetime.strptime(eintrag["Datum"], "%Y-%m-%d")
         stoppdatum = datetime.strptime(eintrag["Stoppdatum"], "%Y-%m-%d") if eintrag["Stoppdatum"] else None
 
-        if startdatum <= monat_start and (stoppdatum is None or monat_start <= stoppdatum):
+        if startdatum <= monat_ende and (stoppdatum is None or monat_start <= stoppdatum):
             fixkosten_monat.append(eintrag)
     except:
         continue
