@@ -38,6 +38,7 @@ st.subheader("🗑️ Kategorie löschen")
 
 with st.form("kategorie_loeschen"):
     loesch_typ = st.selectbox("Art der Kategorie", ["Einnahme", "Ausgabe"])
+
     if loesch_typ == "Einnahme":
         if st.session_state.kategorien_einnahmen:
             auswahl = st.selectbox("Kategorie wählen", st.session_state.kategorien_einnahmen)
@@ -54,12 +55,12 @@ with st.form("kategorie_loeschen"):
     loeschen = st.form_submit_button("Löschen")
 
     if loeschen and auswahl:
-    if loesch_typ == "Einnahme":
-        st.session_state.kategorien_einnahmen.remove(auswahl)
-    else:
-        st.session_state.kategorien_ausgaben.remove(auswahl)
-    st.success(f"Kategorie '{auswahl}' wurde gelöscht.")
-    st.rerun()
+        if loesch_typ == "Einnahme":
+            st.session_state.kategorien_einnahmen.remove(auswahl)
+        else:
+            st.session_state.kategorien_ausgaben.remove(auswahl)
+        st.success(f"Kategorie '{auswahl}' wurde gelöscht.")
+        st.rerun()  # Seite neu laden
 
 # -----------------------------
 # Kategorien anzeigen (Badges)
