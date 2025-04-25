@@ -43,10 +43,11 @@ with st.form("fixkosten_formular"):
     )
 
     datum = st.date_input("Startdatum der Fixkosten", value=datetime.today())
-    stoppdatum_option = st.checkbox("Stoppdatum setzen?")
+
     stoppdatum = None
-    if stoppdatum_option:
-        stoppdatum = st.date_input("Stoppdatum")  # ✅ Keine Einschränkung mehr
+    stopp_aktiv = st.checkbox("Stoppdatum setzen?")
+    if stopp_aktiv:
+        stoppdatum = st.date_input("Stoppdatum auswählen")
 
     speichern = st.form_submit_button("Hinzufügen")
 
