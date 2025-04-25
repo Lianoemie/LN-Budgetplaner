@@ -23,7 +23,6 @@ if 'fixkosten' not in st.session_state:
 # -----------------------------
 st.subheader("📅 Monat auswählen")
 
-# Sammle alle relevanten Daten (aus Fixkosten, Einnahmen, Ausgaben)
 alle_daten = []
 for quelle in [st.session_state.fixkosten, st.session_state.einnahmen, st.session_state.ausgaben]:
     for eintrag in quelle:
@@ -33,14 +32,10 @@ for quelle in [st.session_state.fixkosten, st.session_state.einnahmen, st.sessio
         except:
             continue
 
-# Fallback: Heute anzeigen, falls keine Daten vorhanden
 if not alle_daten:
     alle_daten = [datetime.today()]
 
-# Monate extrahieren
 alle_monate = sorted(list(set([d.strftime("%Y-%m") for d in alle_daten])))
-
-# Aktueller Monat vorauswählen
 heute = datetime.today().strftime("%Y-%m")
 if heute not in alle_monate:
     alle_monate.append(heute)
@@ -62,10 +57,9 @@ st.session_state.monatliches_budget = st.number_input(
 )
 
 # -----------------------------
-# Fixkosten filtern nach gewähltem Monat
+# Fixkosten filtern nach Monat
 # -----------------------------
 fixkosten_monat = []
-
 for eintrag in st.session_state.fixkosten:
     try:
         datum = datetime.strptime(eintrag["Datum"], "%Y-%m-%d")
@@ -73,14 +67,29 @@ for eintrag in st.session_state.fixkosten:
             fixkosten_monat.append(eintrag)
     except:
         continue
-
-# -----------------------------
-# Berechnungen: aktueller Stand
-# -----------------------------
-gesamt_einnahmen = sum([e["Betrag (CHF)"] for e in st.session_state.einnahmen])
-gesamt_ausgaben = sum([a["Betrag (CHF)"] for a in st.session_state.ausgaben])
 gesamt_fixkosten = sum([f["Betrag (CHF)"] for f in fixkosten_monat])
 
+# -----------------------------
+# Einnahmen & Ausgaben filtern
+# -----------------------------
+gesamt_einnahmen = 0
+gesamt_ausgaben = 0
+
+df_e = pd.DataFrame(st.session_state.einnahmen)
+if not df_e.empty:
+    df_e["Datum"] = pd.to_datetime(df_e["Datum"])
+    df_e_monat = df_e[(df_e["Datum"].dt.month == monat) & (df_e["Datum"].dt.year == jahr)]
+    gesamt_einnahmen = df_e_monat["Betrag (CHF)"].sum()
+
+df_a = pd.DataFrame(st.session_state.ausgaben)
+if not df_a.empty:
+    df_a["Datum"] = pd.to_datetime(df_a["Datum"])
+    df_a_monat = df_a[(df_a["Datum"].dt.month == monat) & (df_a["Datum"].dt.year == jahr)]
+    gesamt_ausgaben = df_a_monat["Betrag (CHF)"].sum()
+
+# -----------------------------
+# Aktueller Stand berechnen
+# -----------------------------
 aktueller_stand = (
     st.session_state.monatliches_budget
     + gesamt_einnahmen
@@ -88,7 +97,7 @@ aktueller_stand = (
     - gesamt_ausgaben
 )
 
-st.subheader("📊 Finanzübersicht für", anchor=False)
+st.subheader(f"📊 Finanzübersicht für {gewaehlter_monat}")
 st.metric("💰 Verfügbar", f"{aktueller_stand:.2f} CHF")
 st.caption(f"(Fixkosten in Höhe von {gesamt_fixkosten:.2f} CHF für {gewaehlter_monat} berücksichtigt)")
 
@@ -97,36 +106,24 @@ st.caption(f"(Fixkosten in Höhe von {gesamt_fixkosten:.2f} CHF für {gewaehlter
 # -----------------------------
 st.subheader("🧾 Übersicht letzte Ausgaben")
 
-df_a = pd.DataFrame(st.session_state.ausgaben)
-if not df_a.empty:
-    df_a["Datum"] = pd.to_datetime(df_a["Datum"])
-    df_a_monat = df_a[(df_a["Datum"].dt.month == monat) & (df_a["Datum"].dt.year == jahr)]
-    if not df_a_monat.empty:
-        df_a_monat = df_a_monat.sort_values("Datum", ascending=False).tail(5).iloc[::-1]
-        df_a_monat.index = range(1, len(df_a_monat) + 1)
-        st.table(df_a_monat[["Kategorie", "Betrag (CHF)", "Beschreibung", "Datum"]])
-    else:
-        st.info("Keine Ausgaben in diesem Monat.")
+if not df_a.empty and not df_a_monat.empty:
+    letzte_ausgaben = df_a_monat.sort_values("Datum", ascending=False).tail(5).iloc[::-1]
+    letzte_ausgaben.index = range(1, len(letzte_ausgaben) + 1)
+    st.table(letzte_ausgaben[["Kategorie", "Betrag (CHF)", "Beschreibung", "Datum"]])
 else:
-    st.info("Noch keine Ausgaben eingetragen.")
+    st.info("Keine Ausgaben in diesem Monat.")
 
 # -----------------------------
 # Letzte Einnahmen anzeigen
 # -----------------------------
 st.subheader("💵 Übersicht letzte Einnahmen")
 
-df_e = pd.DataFrame(st.session_state.einnahmen)
-if not df_e.empty:
-    df_e["Datum"] = pd.to_datetime(df_e["Datum"])
-    df_e_monat = df_e[(df_e["Datum"].dt.month == monat) & (df_e["Datum"].dt.year == jahr)]
-    if not df_e_monat.empty:
-        df_e_monat = df_e_monat.sort_values("Datum", ascending=False).tail(5).iloc[::-1]
-        df_e_monat.index = range(1, len(df_e_monat) + 1)
-        st.table(df_e_monat[["Kategorie", "Betrag (CHF)", "Beschreibung", "Datum"]])
-    else:
-        st.info("Keine Einnahmen in diesem Monat.")
+if not df_e.empty and not df_e_monat.empty:
+    letzte_einnahmen = df_e_monat.sort_values("Datum", ascending=False).tail(5).iloc[::-1]
+    letzte_einnahmen.index = range(1, len(letzte_einnahmen) + 1)
+    st.table(letzte_einnahmen[["Kategorie", "Betrag (CHF)", "Beschreibung", "Datum"]])
 else:
-    st.info("Noch keine Einnahmen eingetragen.")
+    st.info("Keine Einnahmen in diesem Monat.")
 
 # -----------------------------
 # Navigation (Buttons)
