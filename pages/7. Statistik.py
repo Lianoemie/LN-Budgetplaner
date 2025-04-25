@@ -65,7 +65,7 @@ else:
         total_einnahmen = einnahmen_kat.sum()
         colors = kontrastfarben[:len(einnahmen_kat)]
 
-        fig1, ax1 = plt.subplots()
+        fig1, ax1 = plt.subplots(figsize=(6, 6))
         wedges, _ = ax1.pie(
             einnahmen_kat,
             colors=colors,
@@ -116,7 +116,7 @@ else:
         total_ausgaben = ausgaben_kat.sum()
         colors = kontrastfarben[:len(ausgaben_kat)]
 
-        fig2, ax2 = plt.subplots()
+        fig2, ax2 = plt.subplots(figsize=(6, 6))
         wedges, _ = ax2.pie(
             ausgaben_kat,
             colors=colors,
@@ -167,6 +167,7 @@ else:
 
     st.subheader("📊 Monatlicher Saldo")
     st.metric(label="Einnahmen – Ausgaben", value=f"{saldo:,.2f} CHF".replace(",", "'"))
+
 
 
 
