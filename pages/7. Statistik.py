@@ -7,7 +7,7 @@ st.set_page_config(page_title="Statistiken", page_icon="📊")
 st.title("📊 Statistiken")
 
 # ----------------------------------------
-# Sicherstellen, dass Einnahmen und Ausgaben existieren
+# Sicherstellen, dass Daten vorhanden sind
 # ----------------------------------------
 if 'einnahmen' not in st.session_state:
     st.session_state.einnahmen = []
@@ -20,17 +20,16 @@ if 'ausgaben' not in st.session_state:
 df_einnahmen = pd.DataFrame(st.session_state.einnahmen)
 df_ausgaben = pd.DataFrame(st.session_state.ausgaben)
 
-# Datum in datetime-Format umwandeln (falls vorhanden)
+# Datum in datetime-Format umwandeln (nur wenn Spalte vorhanden)
 if 'Datum' in df_einnahmen.columns:
     df_einnahmen['Datum'] = pd.to_datetime(df_einnahmen['Datum'], errors='coerce')
 if 'Datum' in df_ausgaben.columns:
     df_ausgaben['Datum'] = pd.to_datetime(df_ausgaben['Datum'], errors='coerce')
 
 # ----------------------------------------
-# Monat auswählen (Dropdown), Standard: aktueller Monat
+# Monat-Auswahl vorbereiten
 # ----------------------------------------
 daten_quellen = []
-
 if 'Datum' in df_einnahmen.columns:
     daten_quellen.append(df_einnahmen['Datum'])
 if 'Datum' in df_ausgaben.columns:
@@ -45,7 +44,6 @@ else:
     st.stop()
 
 aktueller_monat = datetime.now().strftime('%Y-%m')
-
 ausgewaehlter_monat = st.selectbox(
     "Monat auswählen",
     options=alle_monate_str,
@@ -53,60 +51,63 @@ ausgewaehlter_monat = st.selectbox(
 )
 
 # ----------------------------------------
-# Daten für ausgewählten Monat filtern
+# Monatsdaten filtern
 # ----------------------------------------
 monat_start = pd.to_datetime(ausgewaehlter_monat + "-01")
-monat_ende = (monat_start + pd.offsets.MonthEnd(1))
+monat_ende = monat_start + pd.offsets.MonthEnd(0)
 
-df_einnahmen_monat = df_einnahmen[(df_einnahmen['Datum'] >= monat_start) & (df_einnahmen['Datum'] <= monat_ende)]
-df_ausgaben_monat = df_ausgaben[(df_ausgaben['Datum'] >= monat_start) & (df_ausgaben['Datum'] <= monat_ende)]
-
-# ----------------------------------------
-# Kuchendiagramm erstellen
-# ----------------------------------------
-st.subheader(f"💡 Überblick für {ausgewaehlter_monat}")
-
-# Einnahmen gruppieren
-einnahmen_summen = df_einnahmen_monat.groupby('Kategorie')['Betrag (CHF)'].sum().reset_index()
-einnahmen_summen['Typ'] = 'Einnahmen'
-
-# Ausgaben gruppieren
-ausgaben_summen = df_ausgaben_monat.groupby('Kategorie')['Betrag (CHF)'].sum().reset_index()
-ausgaben_summen['Typ'] = 'Ausgaben'
-
-gesamt_summen = pd.concat([einnahmen_summen, ausgaben_summen])
-
-if not gesamt_summen.empty:
-    fig = px.pie(
-        gesamt_summen,
-        values='Betrag (CHF)',
-        names='Kategorie',
-        color='Typ',  # Einnahmen vs. Ausgaben farblich getrennt
-        hole=0.4,
-        title="Verteilung der Einnahmen und Ausgaben"
-    )
-    st.plotly_chart(fig, use_container_width=True)
+if 'Datum' in df_einnahmen.columns:
+    df_einnahmen_monat = df_einnahmen[(df_einnahmen['Datum'] >= monat_start) & (df_einnahmen['Datum'] <= monat_ende)]
 else:
-    st.info("Keine Einnahmen oder Ausgaben für diesen Monat vorhanden.")
+    df_einnahmen_monat = pd.DataFrame()
+
+if 'Datum' in df_ausgaben.columns:
+    df_ausgaben_monat = df_ausgaben[(df_ausgaben['Datum'] >= monat_start) & (df_ausgaben['Datum'] <= monat_ende)]
+else:
+    df_ausgaben_monat = pd.DataFrame()
 
 # ----------------------------------------
-# Detailansicht Einnahmen
+# Kuchendiagramm: Einnahmen
 # ----------------------------------------
-st.subheader("📥 Detailansicht Einnahmen")
-
+st.subheader(f"📥 Einnahmen im {ausgewaehlter_monat}")
 if not df_einnahmen_monat.empty:
-    st.dataframe(df_einnahmen_monat[['Datum', 'Kategorie', 'Betrag (CHF)', 'Beschreibung']], use_container_width=True)
+    gruppiert_einnahmen = df_einnahmen_monat.groupby("Kategorie")["Betrag (CHF)"].sum().reset_index()
+    fig_e = px.pie(
+        gruppiert_einnahmen,
+        names="Kategorie",
+        values="Betrag (CHF)",
+        title="Einnahmen nach Kategorie",
+        hole=0.4
+    )
+    st.plotly_chart(fig_e, use_container_width=True)
+
+    st.dataframe(
+        df_einnahmen_monat[['Datum', 'Kategorie', 'Betrag (CHF)', 'Beschreibung']],
+        use_container_width=True
+    )
     st.metric("💵 Gesamteinnahmen", f"{df_einnahmen_monat['Betrag (CHF)'].sum():.2f} CHF")
 else:
     st.info("Keine Einnahmen für diesen Monat.")
 
 # ----------------------------------------
-# Detailansicht Ausgaben
+# Kuchendiagramm: Ausgaben
 # ----------------------------------------
-st.subheader("📤 Detailansicht Ausgaben")
-
+st.subheader(f"📤 Ausgaben im {ausgewaehlter_monat}")
 if not df_ausgaben_monat.empty:
-    st.dataframe(df_ausgaben_monat[['Datum', 'Kategorie', 'Betrag (CHF)', 'Beschreibung']], use_container_width=True)
+    gruppiert_ausgaben = df_ausgaben_monat.groupby("Kategorie")["Betrag (CHF)"].sum().reset_index()
+    fig_a = px.pie(
+        gruppiert_ausgaben,
+        names="Kategorie",
+        values="Betrag (CHF)",
+        title="Ausgaben nach Kategorie",
+        hole=0.4
+    )
+    st.plotly_chart(fig_a, use_container_width=True)
+
+    st.dataframe(
+        df_ausgaben_monat[['Datum', 'Kategorie', 'Betrag (CHF)', 'Beschreibung']],
+        use_container_width=True
+    )
     st.metric("💸 Gesamtausgaben", f"{df_ausgaben_monat['Betrag (CHF)'].sum():.2f} CHF")
 else:
     st.info("Keine Ausgaben für diesen Monat.")
