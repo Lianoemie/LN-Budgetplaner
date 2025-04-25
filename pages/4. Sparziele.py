@@ -2,16 +2,15 @@ import streamlit as st
 import pandas as pd
 from datetime import datetime
 
-# ❗️ Muss die erste Streamlit-Zeile sein:
 st.set_page_config(page_title="Sparziele", page_icon="🎯")
 
-# ----------------------------------------
-# Session-State initialisieren + absichern
-# ----------------------------------------
+# -------------------------------
+# Session-State initialisieren
+# -------------------------------
 if 'sparziele' not in st.session_state:
     st.session_state.sparziele = []
 
-# 🛡️ Sicherheits-Check für alte Sparziele ohne 'Einzahlungen'
+# 🛡️ Sicherheits-Check für alte Einträge
 for ziel in st.session_state.sparziele:
     if "Einzahlungen" not in ziel:
         ziel["Einzahlungen"] = []
@@ -75,13 +74,24 @@ if st.session_state.sparziele:
                     st.success(f"{betrag:.2f} CHF erfolgreich auf '{ziel['Name']}' eingezahlt!")
                     st.rerun()
 
-        # Liste der Einzahlungen
+        # Liste der Einzahlungen mit Lösch-Buttons
         if ziel["Einzahlungen"]:
             st.markdown(f"**📜 Bisherige Einzahlungen für {ziel['Name']}:**")
-            einzahlungen_df = pd.DataFrame(ziel["Einzahlungen"])
-            einzahlungen_df["Betrag (CHF)"] = einzahlungen_df["Betrag (CHF)"].map(lambda x: f"{x:.2f}")
-            einzahlungen_df.index = range(1, len(einzahlungen_df) + 1)
-            st.table(einzahlungen_df)
+            for einzahl_index, einzahlung in enumerate(ziel["Einzahlungen"]):
+                cols = st.columns([3, 2, 1])
+                cols[0].markdown(f"- {einzahlung['Datum']}")
+                cols[1].markdown(f"{einzahlung['Betrag (CHF)']:.2f} CHF")
+                if cols[2].button("🗑️", key=f"delete_einzahlung_{index}_{einzahl_index}"):
+                    ziel["Bisher gespart (CHF)"] -= einzahlung["Betrag (CHF)"]
+                    ziel["Einzahlungen"].pop(einzahl_index)
+                    st.success("Einzahlung gelöscht.")
+                    st.rerun()
+
+        # Button zum Sparziel löschen
+        if st.button(f"❌ Sparziel '{ziel['Name']}' löschen", key=f"delete_sparziel_{index}"):
+            st.session_state.sparziele.pop(index)
+            st.success(f"Sparziel '{ziel['Name']}' wurde gelöscht.")
+            st.rerun()
 
         st.divider()
 
