@@ -9,7 +9,7 @@ st.title("Einnahme hinzufügen")
 
 # Eingabeformular für neue Ausgaben
 with st.form("ausgabe_formular"):
-    kategorie = st.selectbox("Kategorie", ["Lebensmittel", "Miete", "Freizeit", "Transport"])
+    kategorie = st.selectbox("Kategorie", st.session_state.get('kategorien', ["Lebensmittel", "Miete", "Freizeit", "Transport"]))
     betrag = st.number_input("Betrag (CHF)", min_value=0.0, format="%.2f")
     beschreibung = st.text_input("Beschreibung (optional)")
     abgesendet = st.form_submit_button("Hinzufügen")
@@ -31,3 +31,5 @@ if st.session_state.ausgaben:
 
     gesamt = df["Betrag (CHF)"].sum()
     st.metric("💸 Gesamtausgaben", f"{gesamt:.2f} CHF")
+else:
+    st.info("Noch keine Ausgaben eingetragen.")
