@@ -34,7 +34,7 @@ with st.form("sparziel_formular"):
             "Zielbetrag (CHF)": zielbetrag,
             "Bisher gespart (CHF)": aktueller_betrag,
             "Ziel-Datum": str(ziel_datum),
-            "Einzahlungen": []  # Liste für spätere Einzahlungen
+            "Einzahlungen": []
         }
         st.session_state.sparziele.append(neues_sparziel)
         st.success(f"Sparziel '{name}' wurde hinzugefügt!")
@@ -50,7 +50,7 @@ if st.session_state.sparziele:
         st.markdown(f"### 🎯 {ziel['Name']}")
         zielbetrag = ziel["Zielbetrag (CHF)"]
         aktuell = ziel["Bisher gespart (CHF)"]
-        fortschritt = min(aktuell / zielbetrag, 1.0)  # maximal 100%
+        fortschritt = min(aktuell / zielbetrag, 1.0)
 
         st.text(f"Gespart: {aktuell:.2f} CHF von {zielbetrag:.2f} CHF")
         st.progress(fortschritt)
@@ -78,7 +78,8 @@ if st.session_state.sparziele:
         if ziel["Einzahlungen"]:
             st.markdown(f"**📜 Bisherige Einzahlungen für {ziel['Name']}:**")
             einzahlungen_df = pd.DataFrame(ziel["Einzahlungen"])
-            einzahlungen_df.index = range(1, len(einzahlungen_df) + 1)  # Index beginnt bei 1
+            einzahlungen_df["Betrag (CHF)"] = einzahlungen_df["Betrag (CHF)"].map(lambda x: f"{x:.2f}")
+            einzahlungen_df.index = range(1, len(einzahlungen_df) + 1)
             st.table(einzahlungen_df)
 
         st.divider()
