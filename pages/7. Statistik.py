@@ -22,6 +22,7 @@ def check_and_convert_daten_liste(liste):
             eintrag["Datum"] = datetime.today().strftime("%Y-%m-%d")
     return liste
 
+# Überprüfe, ob 'Datum' Spalte existiert und füge Dummy-Daten hinzu
 st.session_state.einnahmen = check_and_convert_daten_liste(st.session_state.einnahmen)
 st.session_state.ausgaben = check_and_convert_daten_liste(st.session_state.ausgaben)
 
@@ -29,9 +30,16 @@ st.session_state.ausgaben = check_and_convert_daten_liste(st.session_state.ausga
 df_einnahmen = pd.DataFrame(st.session_state.einnahmen)
 df_ausgaben = pd.DataFrame(st.session_state.ausgaben)
 
-# Datum umwandeln
-df_einnahmen["Datum"] = pd.to_datetime(df_einnahmen["Datum"])
-df_ausgaben["Datum"] = pd.to_datetime(df_ausgaben["Datum"])
+# Überprüfe, ob die 'Datum' Spalte existiert, bevor du sie umwandelst
+if "Datum" in df_einnahmen.columns:
+    df_einnahmen["Datum"] = pd.to_datetime(df_einnahmen["Datum"])
+else:
+    st.error("Die 'Datum' Spalte fehlt in den Einnahmen.")
+    
+if "Datum" in df_ausgaben.columns:
+    df_ausgaben["Datum"] = pd.to_datetime(df_ausgaben["Datum"])
+else:
+    st.error("Die 'Datum' Spalte fehlt in den Ausgaben.")
 
 # -----------------------------
 # Monatsauswahl
@@ -48,7 +56,7 @@ else:
     df_e_monat = df_einnahmen[(df_einnahmen["Datum"].dt.month == monat) & (df_einnahmen["Datum"].dt.year == jahr)]
     df_a_monat = df_ausgaben[(df_ausgaben["Datum"].dt.month == monat) & (df_ausgaben["Datum"].dt.year == jahr)]
 
-  # -----------------------------
+# -----------------------------
 # Einnahmen Kuchendiagramm
 # -----------------------------
 if not df_e_monat.empty:
@@ -126,24 +134,12 @@ if not df_a_monat.empty:
 else:
     st.info("Keine Ausgaben in diesem Monat.")
 
+# -----------------------------
+# Monatlicher Saldo
+# -----------------------------
+einnahmen_summe = df_e_monat["Betrag (CHF)"].sum()
+ausgaben_summe = df_a_monat["Betrag (CHF)"].sum()
+saldo = einnahmen_summe - ausgaben_summe
 
-    # -----------------------------
-    # Monatlicher Saldo
-    # -----------------------------
-    einnahmen_summe = df_e_monat["Betrag (CHF)"].sum()
-    ausgaben_summe = df_a_monat["Betrag (CHF)"].sum()
-    saldo = einnahmen_summe - ausgaben_summe
-
-    st.subheader("📊 Monatlicher Saldo")
-    st.metric(label="Einnahmen – Ausgaben", value=f"{saldo:,.2f} CHF".replace(",", "'"))
-
-
-
-
-
-
-
-
-
-
-
+st.subheader("📊 Monatlicher Saldo")
+st.metric(label="Einnahmen – Ausgaben", value=f"{saldo:,.2f} CHF".replace(",", "'"))
