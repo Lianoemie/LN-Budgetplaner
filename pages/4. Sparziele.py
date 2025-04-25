@@ -46,14 +46,29 @@ with st.form("sparziel_formular"):
 if st.session_state.sparziele:
     st.subheader("📋 Übersicht deiner Sparziele")
 
+    def motivation(fortschritt):
+        if fortschritt == 1:
+            return "🎉 Glückwunsch, du hast dein Sparziel erreicht!"
+        elif fortschritt >= 0.75:
+            return "🚀 Fast geschafft – das Ziel ist zum Greifen nah!"
+        elif fortschritt >= 0.5:
+            return "💪 Mehr als die Hälfte ist geschafft – stark!"
+        elif fortschritt >= 0.25:
+            return "🧱 Du hast schon ein gutes Stück geschafft!"
+        else:
+            return "✨ Jeder Franken zählt – bleib dran!"
+
     for index, ziel in enumerate(st.session_state.sparziele):
         st.markdown(f"### 🎯 {ziel['Name']}")
         zielbetrag = ziel["Zielbetrag (CHF)"]
         aktuell = ziel["Bisher gespart (CHF)"]
+        rest = max(zielbetrag - aktuell, 0)
         fortschritt = min(aktuell / zielbetrag, 1.0)
 
         st.text(f"Gespart: {aktuell:.2f} CHF von {zielbetrag:.2f} CHF")
         st.progress(fortschritt)
+        st.markdown(f"**💸 Noch fehlend:** {rest:.2f} CHF")
+        st.markdown(f"**💬 Motivation:** {motivation(fortschritt)}")
 
         # Einzahlung hinzufügen
         with st.expander(f"➕ Einzahlung hinzufügen für {ziel['Name']}"):
