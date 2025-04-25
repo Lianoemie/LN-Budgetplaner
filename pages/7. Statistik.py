@@ -58,7 +58,7 @@ else:
         colors = plt.get_cmap("tab20").colors[:len(einnahmen_kat)]
 
         fig1, ax1 = plt.subplots()
-        wedges, _, _ = ax1.pie(
+        wedges, _ = ax1.pie(
             einnahmen_kat,
             colors=colors,
             startangle=90,
@@ -110,7 +110,7 @@ else:
         colors = plt.get_cmap("tab20b").colors[:len(ausgaben_kat)]
 
         fig2, ax2 = plt.subplots()
-        wedges, _, _ = ax2.pie(
+        wedges, _ = ax2.pie(
             ausgaben_kat,
             colors=colors,
             startangle=90,
@@ -161,6 +161,7 @@ else:
 
     st.subheader("📊 Monatlicher Saldo")
     st.metric(label="Einnahmen – Ausgaben", value=f"{saldo:,.2f} CHF".replace(",", "'"))
+
 
 
 
