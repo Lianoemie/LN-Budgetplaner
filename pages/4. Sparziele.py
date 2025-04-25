@@ -26,7 +26,8 @@ with st.form("sparziel_formular"):
             "Name": name,
             "Zielbetrag (CHF)": zielbetrag,
             "Bisher gespart (CHF)": aktueller_betrag,
-            "Ziel-Datum": str(ziel_datum)
+            "Ziel-Datum": str(ziel_datum),
+            "Einzahlungen": []  # Liste für spätere Einzahlungen
         }
         st.session_state.sparziele.append(neues_sparziel)
         st.success(f"Sparziel '{name}' wurde hinzugefügt!")
@@ -35,21 +36,37 @@ with st.form("sparziel_formular"):
 # Übersicht Sparziele
 # -----------------------------
 if st.session_state.sparziele:
-    df_sparziele = pd.DataFrame(st.session_state.sparziele)
-    df_sparziele.index = range(1, len(df_sparziele) + 1)  # Index beginnt bei 1
-
     st.subheader("📋 Übersicht deiner Sparziele")
-    st.dataframe(df_sparziele, use_container_width=True)
 
-    # Fortschritt anzeigen
-    st.subheader("📈 Fortschritt deiner Sparziele")
-    for ziel in st.session_state.sparziele:
-        name = ziel["Name"]
+    for index, ziel in enumerate(st.session_state.sparziele):
+        st.markdown(f"### 🎯 {ziel['Name']}")
         zielbetrag = ziel["Zielbetrag (CHF)"]
         aktuell = ziel["Bisher gespart (CHF)"]
         fortschritt = min(aktuell / zielbetrag, 1.0)  # maximal 100%
 
-        st.text(f"{name}: {aktuell:.2f} CHF von {zielbetrag:.2f} CHF")
+        st.text(f"Gespart: {aktuell:.2f} CHF von {zielbetrag:.2f} CHF")
         st.progress(fortschritt)
+
+        # Einzahlung hinzufügen
+        with st.expander(f"➕ Einzahlung hinzufügen für {ziel['Name']}"):
+            betrag = st.number_input(f"Betrag einzahlen für '{ziel['Name']}'", min_value=0.0, step=10.0, key=f"einzahlen_{index}")
+            if st.button(f"Einzahlen auf '{ziel['Name']}'", key=f"button_{index}"):
+                if betrag > 0:
+                    ziel["Bisher gespart (CHF)"] += betrag
+                    ziel["Einzahlungen"].append({
+                        "Betrag (CHF)": betrag,
+                        "Datum": datetime.today().strftime("%Y-%m-%d")
+                    })
+                    st.success(f"{betrag:.2f} CHF erfolgreich auf '{ziel['Name']}' eingezahlt!")
+
+        # Liste der Einzahlungen
+        if ziel["Einzahlungen"]:
+            st.markdown(f"**📜 Bisherige Einzahlungen für {ziel['Name']}:**")
+            einzahlungen_df = pd.DataFrame(ziel["Einzahlungen"])
+            einzahlungen_df.index = range(1, len(einzahlungen_df) + 1)  # Index beginnt bei 1
+            st.table(einzahlungen_df)
+        st.divider()
+
 else:
     st.info("Noch keine Sparziele vorhanden. Lege eines an!")
+
