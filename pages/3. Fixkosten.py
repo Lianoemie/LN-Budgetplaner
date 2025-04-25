@@ -28,6 +28,7 @@ with st.form("fixkosten_formular"):
 if st.session_state.fixkosten:
     st.subheader("📋 Deine aktuellen Fixkosten")
     df = pd.DataFrame(st.session_state.fixkosten)
+    df.index = range(1, len(df) + 1)  # Index beginnt bei 1
     st.table(df)
 
     gesamt_fixkosten = df["Betrag (CHF)"].sum()
