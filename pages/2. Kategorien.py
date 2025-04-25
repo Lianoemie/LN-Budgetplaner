@@ -27,9 +27,18 @@ with st.form("neue_kategorie"):
                 liste.append(kategorie)
                 st.success(f"Kategorie '{kategorie}' als {kategorie_typ} hinzugefügt.")
 
-# Übersicht der Kategorien
-st.subheader("📥 Einnahmen-Kategorien")
-st.write(st.session_state.kategorien_einnahmen)
+# Funktion zur schönen Anzeige als "Badges"
+def zeige_kategorien(titel, kategorien, farbe):
+    st.markdown(f"### {titel}")
+    if kategorien:
+        badges = " ".join([
+            f"<span style='background-color:{farbe}; padding:4px 12px; border-radius:20px; color:white; font-size:14px; margin-right:6px'>{k}</span>"
+            for k in kategorien
+        ])
+        st.markdown(badges, unsafe_allow_html=True)
+    else:
+        st.write("Noch keine Kategorien vorhanden.")
 
-st.subheader("📤 Ausgaben-Kategorien")
-st.write(st.session_state.kategorien_ausgaben)
+# Schöne Darstellung der Kategorien
+zeige_kategorien("📥 Einnahmen-Kategorien", st.session_state.kategorien_einnahmen, farbe="#4CAF50")  # grün
+zeige_kategorien("📤 Ausgaben-Kategorien", st.session_state.kategorien_ausgaben, farbe="#F44336")   # rot
