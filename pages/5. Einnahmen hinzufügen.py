@@ -18,21 +18,21 @@ with st.form("ausgabe_formular"):
     abgesendet = st.form_submit_button("Hinzufügen")
 
     if abgesendet and betrag > 0:
-        neue_ausgabe = {
+        neue_Einnahme = {
             "Kategorie": kategorie,
             "Betrag (CHF)": betrag,
             "Beschreibung": beschreibung
         }
-        st.session_state.ausgaben.append(neue_ausgabe)
-        st.success("Ausgabe hinzugefügt!")
+        st.session_state.Einnahme.append(neue_Einnahme)
+        st.success("Einnahme hinzugefügt!")
 
-# Anzeige der bisherigen Ausgaben
-if st.session_state.ausgaben:
-    df = pd.DataFrame(st.session_state.ausgaben)
-    st.subheader("📋 Deine Ausgaben")
+# Anzeige der bisherigen Einnahmen
+if st.session_state.Einnahme:
+    df = pd.DataFrame(st.session_state.Einnahme)
+    st.subheader("📋 Deine Einnahmen")
     st.dataframe(df, use_container_width=True)
 
     gesamt = df["Betrag (CHF)"].sum()
-    st.metric("💸 Gesamtausgaben", f"{gesamt:.2f} CHF")
+    st.metric("💸 Gesamteinnahmen", f"{gesamt:.2f} CHF")
 else:
-    st.info("Noch keine Ausgaben eingetragen.")
+    st.info("Noch keine Einnahmen eingetragen.")
