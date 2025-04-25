@@ -53,11 +53,29 @@ st.caption(f"(Fixkosten in Höhe von {gesamt_fixkosten:.2f} CHF wurden bereits b
 st.subheader("🧾 Übersicht letzte Ausgaben")
 
 if st.session_state.ausgaben:
-    df = pd.DataFrame(st.session_state.ausgaben)
-    letzte = df.tail(5).iloc[::-1]  # letzte 5, neueste zuerst
-    st.table(letzte[["Kategorie", "Betrag (CHF)", "Beschreibung"]])
+    df_a = pd.DataFrame(st.session_state.ausgaben)
+    df_a["Datum"] = pd.to_datetime(df_a["Datum"])
+    df_a = df_a.sort_values("Datum", ascending=False)
+    letzte_ausgaben = df_a.tail(5).iloc[::-1]
+    letzte_ausgaben.index = range(1, len(letzte_ausgaben) + 1)
+    st.table(letzte_ausgaben[["Kategorie", "Betrag (CHF)", "Beschreibung", "Datum"]])
 else:
     st.info("Noch keine Ausgaben eingetragen.")
+
+# -----------------------------
+# Letzte Einnahmen anzeigen
+# -----------------------------
+st.subheader("💵 Übersicht letzte Einnahmen")
+
+if st.session_state.einnahmen:
+    df_e = pd.DataFrame(st.session_state.einnahmen)
+    df_e["Datum"] = pd.to_datetime(df_e["Datum"])
+    df_e = df_e.sort_values("Datum", ascending=False)
+    letzte_einnahmen = df_e.tail(5).iloc[::-1]
+    letzte_einnahmen.index = range(1, len(letzte_einnahmen) + 1)
+    st.table(letzte_einnahmen[["Kategorie", "Betrag (CHF)", "Beschreibung", "Datum"]])
+else:
+    st.info("Noch keine Einnahmen eingetragen.")
 
 # -----------------------------
 # Navigation (Buttons)
@@ -78,4 +96,3 @@ if st.button("💡 Spartipps"):
 
 if st.button("👤 Mein Profil"):
     st.switch_page("pages/profil.py")
-
