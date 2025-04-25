@@ -7,15 +7,12 @@ from datetime import datetime
 st.set_page_config(page_title="Statistik", page_icon="📈")
 st.title("📈 Statistik nach Monat und Kategorie")
 
-# -----------------------------
 # Session-State vorbereiten
-# -----------------------------
 if 'einnahmen' not in st.session_state:
     st.session_state.einnahmen = []
 if 'ausgaben' not in st.session_state:
     st.session_state.ausgaben = []
 
-# Dummy-Datum einfügen, falls noch nicht vorhanden
 def check_and_convert_daten_liste(liste):
     for eintrag in liste:
         if "Datum" not in eintrag:
@@ -25,11 +22,9 @@ def check_and_convert_daten_liste(liste):
 st.session_state.einnahmen = check_and_convert_daten_liste(st.session_state.einnahmen)
 st.session_state.ausgaben = check_and_convert_daten_liste(st.session_state.ausgaben)
 
-# In DataFrames umwandeln
 df_einnahmen = pd.DataFrame(st.session_state.einnahmen)
 df_ausgaben = pd.DataFrame(st.session_state.ausgaben)
 
-# Datum umwandeln
 df_einnahmen["Datum"] = pd.to_datetime(df_einnahmen["Datum"])
 df_ausgaben["Datum"] = pd.to_datetime(df_ausgaben["Datum"])
 
@@ -41,9 +36,7 @@ kontrastfarben = [
     "#ffff33", "#a65628", "#f781bf", "#999999"
 ]
 
-# -----------------------------
 # Monatsauswahl
-# -----------------------------
 alle_monate = pd.concat([df_einnahmen["Datum"], df_ausgaben["Datum"]]).dt.to_period("M").unique()
 alle_monate_str = [str(monat) for monat in alle_monate]
 
@@ -56,19 +49,17 @@ else:
     df_e_monat = df_einnahmen[(df_einnahmen["Datum"].dt.month == monat) & (df_einnahmen["Datum"].dt.year == jahr)]
     df_a_monat = df_ausgaben[(df_ausgaben["Datum"].dt.month == monat) & (df_ausgaben["Datum"].dt.year == jahr)]
 
-    # -----------------------------
-    # Einnahmen Kuchendiagramm
-    # -----------------------------
+    # Einnahmen
     if not df_e_monat.empty:
         st.subheader("💰 Einnahmen nach Kategorie")
         einnahmen_kat = df_e_monat.groupby("Kategorie")["Betrag (CHF)"].sum()
         total_einnahmen = einnahmen_kat.sum()
         colors = kontrastfarben[:len(einnahmen_kat)]
 
-        fig1, ax1 = plt.subplots(figsize=(6, 6))
+        fig1, ax1 = plt.subplots(figsize=(4, 4))
         wedges, _ = ax1.pie(
             einnahmen_kat,
-            radius=0.4,
+            radius=0.5,
             colors=colors,
             startangle=90,
             wedgeprops={'edgecolor': 'white'}
@@ -87,11 +78,11 @@ else:
             ha = 'left' if x >= 0 else 'right'
             ax1.annotate(
                 label,
-                xy=(x, y),
-                xytext=(1.4 * x, 1.4 * y),
+                xy=(x * 0.5, y * 0.5),
+                xytext=(x * 1.2, y * 1.2),
                 ha=ha,
                 va='center',
-                fontsize=10,
+                fontsize=9,
                 color=colors[i],
                 arrowprops=dict(arrowstyle='-', color=colors[i])
             )
@@ -108,19 +99,17 @@ else:
     else:
         st.info("Keine Einnahmen in diesem Monat.")
 
-    # -----------------------------
-    # Ausgaben Kuchendiagramm
-    # -----------------------------
+    # Ausgaben
     if not df_a_monat.empty:
         st.subheader("💸 Ausgaben nach Kategorie")
         ausgaben_kat = df_a_monat.groupby("Kategorie")["Betrag (CHF)"].sum()
         total_ausgaben = ausgaben_kat.sum()
         colors = kontrastfarben[:len(ausgaben_kat)]
 
-        fig2, ax2 = plt.subplots(figsize=(6, 6))
+        fig2, ax2 = plt.subplots(figsize=(4, 4))
         wedges, _ = ax2.pie(
             ausgaben_kat,
-            radius=0.4,
+            radius=0.5,
             colors=colors,
             startangle=90,
             wedgeprops={'edgecolor': 'white'}
@@ -139,11 +128,11 @@ else:
             ha = 'left' if x >= 0 else 'right'
             ax2.annotate(
                 label,
-                xy=(x, y),
-                xytext=(1.4 * x, 1.4 * y),
+                xy=(x * 0.5, y * 0.5),
+                xytext=(x * 1.2, y * 1.2),
                 ha=ha,
                 va='center',
-                fontsize=10,
+                fontsize=9,
                 color=colors[i],
                 arrowprops=dict(arrowstyle='-', color=colors[i])
             )
@@ -160,15 +149,14 @@ else:
     else:
         st.info("Keine Ausgaben in diesem Monat.")
 
-    # -----------------------------
-    # Monatlicher Saldo
-    # -----------------------------
+    # Saldo
     einnahmen_summe = df_e_monat["Betrag (CHF)"].sum()
     ausgaben_summe = df_a_monat["Betrag (CHF)"].sum()
     saldo = einnahmen_summe - ausgaben_summe
 
     st.subheader("📊 Monatlicher Saldo")
     st.metric(label="Einnahmen – Ausgaben", value=f"{saldo:,.2f} CHF".replace(",", "'"))
+
 
 
 
