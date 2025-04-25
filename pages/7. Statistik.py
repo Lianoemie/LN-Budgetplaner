@@ -59,14 +59,15 @@ if not df_e_monat.empty:
     cmap_einnahmen = plt.cm.get_cmap('tab10', len(einnahmen_kat))
     colors = [cmap_einnahmen(i) for i in range(len(einnahmen_kat))]
 
-    fig1, ax1 = plt.subplots(figsize=(6, 6))  # ← Feste Größe eingefügt
+    fig1, ax1 = plt.subplots(figsize=(6, 6))  # Feste Größe
     wedges, _ = ax1.pie(
         einnahmen_kat,
         colors=colors,
         startangle=90,
         wedgeprops={'edgecolor': 'white'}
     )
-    ax1.axis('equal')
+    ax1.set(aspect="equal")  # Kreis exakt
+    ax1.set_position([0.1, 0.1, 0.8, 0.8])  # Gleiche Kreisgröße bei jedem Plot
 
     for i, w in enumerate(wedges):
         kategorie = einnahmen_kat.index[i]
@@ -112,14 +113,15 @@ if not df_a_monat.empty:
     cmap_ausgaben = plt.cm.get_cmap('tab20', len(ausgaben_kat))
     colors = [cmap_ausgaben(i) for i in range(len(ausgaben_kat))]
 
-    fig2, ax2 = plt.subplots(figsize=(6, 6))  # ← Feste Größe eingefügt
+    fig2, ax2 = plt.subplots(figsize=(6, 6))  # Feste Größe
     wedges, _ = ax2.pie(
         ausgaben_kat,
         colors=colors,
         startangle=90,
         wedgeprops={'edgecolor': 'white'}
     )
-    ax2.axis('equal')
+    ax2.set(aspect="equal")  # Kreis exakt
+    ax2.set_position([0.1, 0.1, 0.8, 0.8])  # Gleiche Kreisgröße bei jedem Plot
 
     for i, w in enumerate(wedges):
         kategorie = ausgaben_kat.index[i]
