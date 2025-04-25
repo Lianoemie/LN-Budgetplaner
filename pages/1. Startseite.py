@@ -19,20 +19,20 @@ if 'fixkosten' not in st.session_state:
     st.session_state.fixkosten = []
 
 # -----------------------------
-# Feste Monatsauswahl (z. B. 2023–2026)
+# Feste Monatsauswahl (ab Jan 2025)
 # -----------------------------
 st.subheader("📅 Monat auswählen")
 
 von_jahr = 2025
-bis_jahr = 2030
+bis_jahr = 2026
 alle_monate = [f"{jahr}-{monat:02d}" for jahr in range(von_jahr, bis_jahr + 1) for monat in range(1, 13)]
 
-heute = datetime.today().strftime("%Y-%m")
-if heute not in alle_monate:
-    alle_monate.append(heute)
+standard_monat = "2025-01"
+if standard_monat not in alle_monate:
+    alle_monate.append(standard_monat)
 alle_monate = sorted(alle_monate)
 
-gewaehlter_monat = st.selectbox("Wähle einen Monat", alle_monate, index=alle_monate.index(heute))
+gewaehlter_monat = st.selectbox("Wähle einen Monat", alle_monate, index=alle_monate.index(standard_monat))
 jahr, monat = map(int, gewaehlter_monat.split("-"))
 monat_start = datetime(jahr, monat, 1)
 
