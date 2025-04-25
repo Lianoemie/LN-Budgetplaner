@@ -11,6 +11,11 @@ st.title("📆 Fixkosten verwalten")
 if 'fixkosten' not in st.session_state:
     st.session_state.fixkosten = []
 
+# 🔐 Sicherheits-Update für ältere Einträge (ohne "Wiederholung")
+for eintrag in st.session_state.fixkosten:
+    if "Wiederholung" not in eintrag:
+        eintrag["Wiederholung"] = "Monatlich"  # Standardwert
+
 # -------------------------------------
 # Neue Fixkosten erfassen
 # -------------------------------------
@@ -29,7 +34,7 @@ with st.form("fixkosten_formular"):
             "Halbjährlich",
             "Jährlich"
         ],
-        index=3  # Standard auf "Monatlich"
+        index=3  # Standard: "Monatlich"
     )
 
     speichern = st.form_submit_button("Hinzufügen")
@@ -42,6 +47,7 @@ with st.form("fixkosten_formular"):
         }
         st.session_state.fixkosten.append(neue_fixkosten)
         st.success(f"Fixkosten '{kategorie}' gespeichert.")
+        st.rerun()
 
 # -------------------------------------
 # Anzeige der Fixkosten + Löschoption
@@ -49,7 +55,6 @@ with st.form("fixkosten_formular"):
 if st.session_state.fixkosten:
     st.subheader("📋 Deine aktuellen Fixkosten")
 
-    # Einzelne Fixkosten anzeigen mit Löschen-Button
     for i, eintrag in enumerate(st.session_state.fixkosten):
         cols = st.columns([3, 2, 3, 1])
         cols[0].markdown(f"**{eintrag['Kategorie']}**")
