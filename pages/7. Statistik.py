@@ -59,37 +59,21 @@ if not df_e_monat.empty:
     cmap_einnahmen = plt.cm.get_cmap('tab10', len(einnahmen_kat))
     colors = [cmap_einnahmen(i) for i in range(len(einnahmen_kat))]
 
-    fig1, ax1 = plt.subplots(figsize=(6, 6))  # Feste Größe
-    wedges, _ = ax1.pie(
+    fig1, ax1 = plt.subplots(figsize=(6, 6))
+    wedges, texts = ax1.pie(
         einnahmen_kat,
         colors=colors,
         startangle=90,
         wedgeprops={'edgecolor': 'white'}
     )
-    ax1.set(aspect="equal")  # Kreis exakt
-    ax1.set_position([0.1, 0.1, 0.8, 0.8])  # Gleiche Kreisgröße bei jedem Plot
-
-    for i, w in enumerate(wedges):
-        kategorie = einnahmen_kat.index[i]
-        betrag = einnahmen_kat.values[i]
-        prozent = betrag / total_einnahmen * 100
-        label = f"{kategorie}\n{betrag:.2f} CHF ({prozent:.1f}%)"
-
-        angle = (w.theta2 + w.theta1) / 2
-        x = np.cos(np.deg2rad(angle))
-        y = np.sin(np.deg2rad(angle))
-        ha = 'left' if x >= 0 else 'right'
-        ax1.annotate(
-            label,
-            xy=(x, y),
-            xytext=(1.4 * x, 1.4 * y),
-            ha=ha,
-            va='center',
-            fontsize=10,
-            color=colors[i],
-            arrowprops=dict(arrowstyle='-', color=colors[i])
-        )
-
+    ax1.axis('equal')
+    ax1.legend(
+        wedges,
+        [f"{kategorie} – {betrag:,.2f} CHF" for kategorie, betrag in zip(einnahmen_kat.index, einnahmen_kat.values)],
+        title="Kategorie",
+        loc="center left",
+        bbox_to_anchor=(1, 0, 0.5, 1)
+    )
     st.pyplot(fig1)
 
     st.markdown("**💵 Einnahmen – Detailübersicht:**")
@@ -113,37 +97,21 @@ if not df_a_monat.empty:
     cmap_ausgaben = plt.cm.get_cmap('tab20', len(ausgaben_kat))
     colors = [cmap_ausgaben(i) for i in range(len(ausgaben_kat))]
 
-    fig2, ax2 = plt.subplots(figsize=(6, 6))  # Feste Größe
-    wedges, _ = ax2.pie(
+    fig2, ax2 = plt.subplots(figsize=(6, 6))
+    wedges, texts = ax2.pie(
         ausgaben_kat,
         colors=colors,
         startangle=90,
         wedgeprops={'edgecolor': 'white'}
     )
-    ax2.set(aspect="equal")  # Kreis exakt
-    ax2.set_position([0.1, 0.1, 0.8, 0.8])  # Gleiche Kreisgröße bei jedem Plot
-
-    for i, w in enumerate(wedges):
-        kategorie = ausgaben_kat.index[i]
-        betrag = ausgaben_kat.values[i]
-        prozent = betrag / total_ausgaben * 100
-        label = f"{kategorie}\n{betrag:.2f} CHF ({prozent:.1f}%)"
-
-        angle = (w.theta2 + w.theta1) / 2
-        x = np.cos(np.deg2rad(angle))
-        y = np.sin(np.deg2rad(angle))
-        ha = 'left' if x >= 0 else 'right'
-        ax2.annotate(
-            label,
-            xy=(x, y),
-            xytext=(1.4 * x, 1.4 * y),
-            ha=ha,
-            va='center',
-            fontsize=10,
-            color=colors[i],
-            arrowprops=dict(arrowstyle='-', color=colors[i])
-        )
-
+    ax2.axis('equal')
+    ax2.legend(
+        wedges,
+        [f"{kategorie} – {betrag:,.2f} CHF" for kategorie, betrag in zip(ausgaben_kat.index, ausgaben_kat.values)],
+        title="Kategorie",
+        loc="center left",
+        bbox_to_anchor=(1, 0, 0.5, 1)
+    )
     st.pyplot(fig2)
 
     st.markdown("**💸 Ausgaben – Detailübersicht:**")
@@ -155,6 +123,7 @@ if not df_a_monat.empty:
     st.table(df_a_detail)
 else:
     st.info("Keine Ausgaben in diesem Monat.")
+
 
 
     # -----------------------------
