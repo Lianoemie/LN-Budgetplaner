@@ -68,7 +68,7 @@ if st.session_state.sparziele:
         st.text(f"Gespart: {aktuell:.2f} CHF von {zielbetrag:.2f} CHF")
         st.progress(fortschritt)
         st.markdown(f"**💸 Noch fehlend:** {rest:.2f} CHF")
-        st.markdown(f"**💬 Motivation:** {motivation(fortschritt)}")
+        st.markdown(f"{motivation(fortschritt)}")
 
         # Einzahlung hinzufügen
         with st.expander(f"➕ Einzahlung hinzufügen für {ziel['Name']}"):
