@@ -91,7 +91,7 @@ if st.session_state.sparziele:
 
         # Liste der Einzahlungen mit Lösch-Buttons
         if ziel["Einzahlungen"]:
-            st.markdown(f"**📜 Bisherige Einzahlungen für {ziel['Name']}:**")
+            st.markdown(f"**Bisherige Einzahlungen für {ziel['Name']}:**")
             for einzahl_index, einzahlung in enumerate(ziel["Einzahlungen"]):
                 cols = st.columns([3, 2, 1])
                 cols[0].markdown(f"- {einzahlung['Datum']}")
