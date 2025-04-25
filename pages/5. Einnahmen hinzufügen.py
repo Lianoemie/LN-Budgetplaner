@@ -32,6 +32,7 @@ with st.form("einnahmen_formular"):
 
 if st.session_state.einnahmen:
     df = pd.DataFrame(st.session_state.einnahmen)
+    df.index = range(1, len(df) + 1)  # <-- Index beginnt jetzt bei 1
     st.subheader("📋 Übersicht deiner Einnahmen")
     st.dataframe(df, use_container_width=True)
     gesamt = df["Betrag (CHF)"].sum()
