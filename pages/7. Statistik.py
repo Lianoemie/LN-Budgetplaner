@@ -56,9 +56,20 @@ else:
         total_einnahmen = einnahmen_kat.sum()
         labels_ein = [f"{k} ({v:.2f} CHF, {v / total_einnahmen * 100:.1f}%)" for k, v in einnahmen_kat.items()]
 
+        colors = plt.get_cmap("Set2").colors  # schöne Farben
+
         fig1, ax1 = plt.subplots()
-        ax1.pie(einnahmen_kat, labels=labels_ein, startangle=90)
+        wedges, texts = ax1.pie(
+            einnahmen_kat,
+            labels=labels_ein,
+            colors=colors,
+            startangle=90,
+            wedgeprops={'edgecolor': 'white'}
+        )
         ax1.axis('equal')
+
+        for text in texts:
+            text.set_fontsize(10)
         st.pyplot(fig1)
 
         st.markdown("**💵 Einnahmen – Detailübersicht:**")
@@ -80,9 +91,20 @@ else:
         total_ausgaben = ausgaben_kat.sum()
         labels_aus = [f"{k} ({v:.2f} CHF, {v / total_ausgaben * 100:.1f}%)" for k, v in ausgaben_kat.items()]
 
+        colors = plt.get_cmap("Set2").colors
+
         fig2, ax2 = plt.subplots()
-        ax2.pie(ausgaben_kat, labels=labels_aus, startangle=90)
+        wedges, texts = ax2.pie(
+            ausgaben_kat,
+            labels=labels_aus,
+            colors=colors,
+            startangle=90,
+            wedgeprops={'edgecolor': 'white'}
+        )
         ax2.axis('equal')
+
+        for text in texts:
+            text.set_fontsize(10)
         st.pyplot(fig2)
 
         st.markdown("**💸 Ausgaben – Detailübersicht:**")
@@ -104,6 +126,7 @@ else:
 
     st.subheader("📊 Monatlicher Saldo")
     st.metric(label="Einnahmen – Ausgaben", value=f"{saldo:,.2f} CHF".replace(",", "'"))
+
 
 
 
