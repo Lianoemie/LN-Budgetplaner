@@ -19,23 +19,14 @@ if 'fixkosten' not in st.session_state:
     st.session_state.fixkosten = []
 
 # -----------------------------
-# Monat & Jahr-Auswahl
+# Feste Monatsauswahl (z. B. 2023–2026)
 # -----------------------------
 st.subheader("📅 Monat auswählen")
 
-alle_daten = []
-for quelle in [st.session_state.fixkosten, st.session_state.einnahmen, st.session_state.ausgaben]:
-    for eintrag in quelle:
-        try:
-            datum = datetime.strptime(eintrag["Datum"], "%Y-%m-%d")
-            alle_daten.append(datum)
-        except:
-            continue
+von_jahr = 2023
+bis_jahr = 2026
+alle_monate = [f"{jahr}-{monat:02d}" for jahr in range(von_jahr, bis_jahr + 1) for monat in range(1, 13)]
 
-if not alle_daten:
-    alle_daten = [datetime.today()]
-
-alle_monate = sorted(list(set([d.strftime("%Y-%m") for d in alle_daten])))
 heute = datetime.today().strftime("%Y-%m")
 if heute not in alle_monate:
     alle_monate.append(heute)
@@ -80,12 +71,16 @@ if not df_e.empty:
     df_e["Datum"] = pd.to_datetime(df_e["Datum"])
     df_e_monat = df_e[(df_e["Datum"].dt.month == monat) & (df_e["Datum"].dt.year == jahr)]
     gesamt_einnahmen = df_e_monat["Betrag (CHF)"].sum()
+else:
+    df_e_monat = pd.DataFrame()
 
 df_a = pd.DataFrame(st.session_state.ausgaben)
 if not df_a.empty:
     df_a["Datum"] = pd.to_datetime(df_a["Datum"])
     df_a_monat = df_a[(df_a["Datum"].dt.month == monat) & (df_a["Datum"].dt.year == jahr)]
     gesamt_ausgaben = df_a_monat["Betrag (CHF)"].sum()
+else:
+    df_a_monat = pd.DataFrame()
 
 # -----------------------------
 # Aktueller Stand berechnen
@@ -106,7 +101,7 @@ st.caption(f"(Fixkosten in Höhe von {gesamt_fixkosten:.2f} CHF für {gewaehlter
 # -----------------------------
 st.subheader("🧾 Übersicht letzte Ausgaben")
 
-if not df_a.empty and not df_a_monat.empty:
+if not df_a_monat.empty:
     letzte_ausgaben = df_a_monat.sort_values("Datum", ascending=False).tail(5).iloc[::-1]
     letzte_ausgaben.index = range(1, len(letzte_ausgaben) + 1)
     st.table(letzte_ausgaben[["Kategorie", "Betrag (CHF)", "Beschreibung", "Datum"]])
@@ -118,7 +113,7 @@ else:
 # -----------------------------
 st.subheader("💵 Übersicht letzte Einnahmen")
 
-if not df_e.empty and not df_e_monat.empty:
+if not df_e_monat.empty:
     letzte_einnahmen = df_e_monat.sort_values("Datum", ascending=False).tail(5).iloc[::-1]
     letzte_einnahmen.index = range(1, len(letzte_einnahmen) + 1)
     st.table(letzte_einnahmen[["Kategorie", "Betrag (CHF)", "Beschreibung", "Datum"]])
