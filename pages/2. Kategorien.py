@@ -2,26 +2,34 @@ import streamlit as st
 
 st.set_page_config(page_title="Kategorien verwalten", page_icon="🗂️")
 
-# Session-State für Kategorien initialisieren
-if 'kategorien' not in st.session_state:
-    st.session_state.kategorien = ["Lebensmittel", "Miete", "Freizeit", "Transport"]
+# Session-State initialisieren
+if 'kategorien_einnahmen' not in st.session_state:
+    st.session_state.kategorien_einnahmen = ["Lohn", "Stipendium"]
+if 'kategorien_ausgaben' not in st.session_state:
+    st.session_state.kategorien_ausgaben = ["Lebensmittel", "Miete", "Freizeit", "Transport"]
 
 st.title("🗂️ Kategorien verwalten")
 
-# Neue Kategorie hinzufügen
-with st.form("kategorie_formular"):
-    neue_kategorie = st.text_input("Neue Kategorie eingeben")
-    kategorie_hinzufuegen = st.form_submit_button("Kategorie hinzufügen")
+# Kategorie hinzufügen
+with st.form("neue_kategorie"):
+    kategorie = st.text_input("Name der neuen Kategorie")
+    kategorie_typ = st.selectbox("Für was ist die Kategorie gedacht?", ["Einnahme", "Ausgabe"])
+    hinzufügen = st.form_submit_button("Hinzufügen")
 
-    if kategorie_hinzufuegen:
-        if neue_kategorie and neue_kategorie not in st.session_state.kategorien:
-            st.session_state.kategorien.append(neue_kategorie)
-            st.success(f"Kategorie '{neue_kategorie}' hinzugefügt!")
-        elif neue_kategorie in st.session_state.kategorien:
-            st.warning("Diese Kategorie existiert bereits.")
+    if hinzufügen:
+        if not kategorie:
+            st.error("Bitte gib einen Namen ein.")
         else:
-            st.error("Bitte gib einen Namen für die Kategorie ein.")
+            liste = st.session_state.kategorien_einnahmen if kategorie_typ == "Einnahme" else st.session_state.kategorien_ausgaben
+            if kategorie in liste:
+                st.warning("Diese Kategorie existiert bereits.")
+            else:
+                liste.append(kategorie)
+                st.success(f"Kategorie '{kategorie}' als {kategorie_typ} hinzugefügt.")
 
-# Anzeige der aktuellen Kategorien
-st.subheader("Aktuelle Kategorien:")
-st.write(st.session_state.kategorien)
+# Übersicht der Kategorien
+st.subheader("📥 Einnahmen-Kategorien")
+st.write(st.session_state.kategorien_einnahmen)
+
+st.subheader("📤 Ausgaben-Kategorien")
+st.write(st.session_state.kategorien_ausgaben)
