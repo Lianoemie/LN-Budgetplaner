@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+from datetime import datetime
 
 st.set_page_config(page_title="Startseite", page_icon="🏠")
 
@@ -30,11 +31,28 @@ st.session_state.monatliches_budget = st.number_input(
 )
 
 # -----------------------------
+# Fixkosten filtern (nur aktueller Monat)
+# -----------------------------
+heute = datetime.today()
+aktueller_monat = heute.month
+aktuelles_jahr = heute.year
+
+fixkosten_aktuell = []
+
+for eintrag in st.session_state.fixkosten:
+    try:
+        datum = datetime.strptime(eintrag["Datum"], "%Y-%m-%d")
+        if datum.month == aktueller_monat and datum.year == aktuelles_jahr:
+            fixkosten_aktuell.append(eintrag)
+    except:
+        continue  # falls kein gültiges Datum vorhanden ist
+
+# -----------------------------
 # Berechnungen: aktueller Stand
 # -----------------------------
 gesamt_einnahmen = sum([e["Betrag (CHF)"] for e in st.session_state.einnahmen])
 gesamt_ausgaben = sum([a["Betrag (CHF)"] for a in st.session_state.ausgaben])
-gesamt_fixkosten = sum([f["Betrag (CHF)"] for f in st.session_state.fixkosten])
+gesamt_fixkosten = sum([f["Betrag (CHF)"] for f in fixkosten_aktuell])
 
 aktueller_stand = (
     st.session_state.monatliches_budget
@@ -45,7 +63,7 @@ aktueller_stand = (
 
 st.subheader("📊 Aktueller Stand")
 st.metric("💰 Verfügbar", f"{aktueller_stand:.2f} CHF")
-st.caption(f"(Fixkosten in Höhe von {gesamt_fixkosten:.2f} CHF wurden bereits berücksichtigt)")
+st.caption(f"(Fixkosten in Höhe von {gesamt_fixkosten:.2f} CHF für diesen Monat wurden berücksichtigt)")
 
 # -----------------------------
 # Letzte Ausgaben anzeigen
