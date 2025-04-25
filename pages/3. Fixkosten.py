@@ -31,15 +31,34 @@ with st.form("fixkosten_formular"):
         st.success(f"Fixkosten '{kategorie}' gespeichert.")
 
 # -------------------------------------
-# Anzeige der Fixkosten
+# Anzeige der Fixkosten + Löschoption
 # -------------------------------------
 if st.session_state.fixkosten:
     st.subheader("📋 Deine aktuellen Fixkosten")
-    df = pd.DataFrame(st.session_state.fixkosten)
-    df.index = range(1, len(df) + 1)  # Index beginnt bei 1
-    st.table(df)
 
+    # Einzelne Fixkosten anzeigen mit Löschen-Button
+    for i, eintrag in enumerate(st.session_state.fixkosten):
+        cols = st.columns([3, 2, 2, 1])
+        cols[0].markdown(f"**{eintrag['Kategorie']}**")
+        cols[1].markdown(f"{eintrag['Betrag (CHF)']:.2f} CHF")
+        cols[2].markdown(eintrag['Monatlich'])
+        if cols[3].button("🗑️", key=f"loeschen_{i}"):
+            st.session_state.fixkosten.pop(i)
+            st.success("Fixkosten gelöscht.")
+            st.rerun()
+
+    st.markdown("---")
+
+    # Gesamtsumme anzeigen
+    df = pd.DataFrame(st.session_state.fixkosten)
     gesamt_fixkosten = df["Betrag (CHF)"].sum()
     st.metric("💸 Gesamte Fixkosten pro Monat", f"{gesamt_fixkosten:.2f} CHF")
+
+    # Alle löschen Button
+    if st.button("❌ Alle Fixkosten löschen"):
+        st.session_state.fixkosten.clear()
+        st.success("Alle Fixkosten wurden gelöscht.")
+        st.rerun()
+
 else:
     st.info("Noch keine Fixkosten eingetragen.")
