@@ -1,7 +1,8 @@
 import streamlit as st
-import pandas as pd
+from PIL import Image
 from datetime import datetime
 
+# ❗️ Muss die erste Streamlit-Zeile sein:
 st.set_page_config(page_title="Sparziele", page_icon="🎯")
 
 # -------------------------------
@@ -48,15 +49,19 @@ if st.session_state.sparziele:
 
     def motivation(fortschritt):
         if fortschritt == 1:
-            return "🎉 Glückwunsch, du hast dein Sparziel erreicht!"
+            return "🎉 Boom! Ziel erreicht – gönn dir was!"
         elif fortschritt >= 0.75:
-            return "🚀 Fast geschafft – das Ziel ist zum Greifen nah!"
+            return "🚀 Fast da! Nur noch ein kleiner Push!"
         elif fortschritt >= 0.5:
-            return "💪 Mehr als die Hälfte ist geschafft – stark!"
+            return "🧗‍♀️ Halbzeit – jetzt nicht locker lassen!"
         elif fortschritt >= 0.25:
-            return "🧱 Du hast schon ein gutes Stück geschafft!"
+            return "🏁 Der Anfang ist gemacht – bleib am Ball!"
         else:
-            return "✨ Jeder Franken zählt – bleib dran!"
+            return "💡 Jeder Franken bringt dich näher ans Ziel – los geht’s!"
+
+    # Bild für die Motivationsfigur
+    image_path = "/mnt/data/A_screenshot_of_a_savings_management_application_d.png"  # Pfad zu deinem Motivationsbild
+    motivationsbild = Image.open(image_path)
 
     for index, ziel in enumerate(st.session_state.sparziele):
         st.markdown(f"### 🎯 {ziel['Name']}")
@@ -69,6 +74,9 @@ if st.session_state.sparziele:
         st.progress(fortschritt)
         st.markdown(f"**💸 Noch fehlend:** {rest:.2f} CHF")
         st.markdown(f"**💬 Motivation:** {motivation(fortschritt)}")
+
+        # Bild mit Motivationsspruch
+        st.image(motivationsbild, caption="Bleib dran – du schaffst das!", use_column_width=True)
 
         # Einzahlung hinzufügen
         with st.expander(f"➕ Einzahlung hinzufügen für {ziel['Name']}"):
