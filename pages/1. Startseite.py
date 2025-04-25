@@ -23,8 +23,8 @@ if 'fixkosten' not in st.session_state:
 # -----------------------------
 st.subheader("📅 Monat auswählen")
 
-von_jahr = 2023
-bis_jahr = 2026
+von_jahr = 2025
+bis_jahr = 2030
 alle_monate = [f"{jahr}-{monat:02d}" for jahr in range(von_jahr, bis_jahr + 1) for monat in range(1, 13)]
 
 heute = datetime.today().strftime("%Y-%m")
