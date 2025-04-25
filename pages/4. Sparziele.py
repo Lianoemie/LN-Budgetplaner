@@ -76,7 +76,11 @@ if st.session_state.sparziele:
         st.markdown(f"**💬 Motivation:** {motivation(fortschritt)}")
 
         # Bild mit Motivationsspruch
-        st.image(motivationsbild, caption="Bleib dran – du schaffst das!", use_column_width=True)
+        col1, col2 = st.columns([1, 3])  # Spalten für das Bild und den Text
+        with col1:
+            st.image(motivationsbild, caption="Du schaffst das!", use_column_width=True)  # Bild anzeigen
+        with col2:
+            st.markdown(f"### **Motivationsspruch**: {motivation(fortschritt)}")  # Text anzeigen
 
         # Einzahlung hinzufügen
         with st.expander(f"➕ Einzahlung hinzufügen für {ziel['Name']}"):
