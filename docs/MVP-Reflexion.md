@@ -8,4 +8,4 @@
 - die Roadmap kann so erhalten bleiben.
 
 # Welche Unterstützung brauchen wir, um unsere Ziele zu erreichen?
-- Hilfreich für unseren nächsten Schritt wäre etwas Unterstützung beim Einrichten der Datenspeicherung auf dem Switchdrive, da wir alle etwas Probleme damit hatten schon bei der letzten Appentwicklung. 
+- Hilfreich für unseren nächsten Schritt wäre etwas Unterstützung beim Einrichten der Datenspeicherung auf dem Switchdrive, da wir alle etwas Probleme damit hatten schon bei der letzten Appentwicklung. Wir wären noch froh, wenn man mit uns anschauen könnte, ob und wie man es einrichten könnte, wenn ein User nach der Regristrierung direkt eingeloggt bleibt 
