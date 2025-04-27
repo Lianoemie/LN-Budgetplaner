@@ -72,7 +72,8 @@ if not df_einnahmen_monat.empty:
         names="Kategorie",
         values="Betrag (CHF)",
         title="Einnahmen nach Kategorie",
-        hole=0.4
+        hole=0.4,
+        textinfo="value+percent"  # <-- Betrag + Prozent
     )
     st.plotly_chart(fig_e, use_container_width=True)
 
@@ -89,7 +90,7 @@ else:
 # ----------------------------------------
 st.subheader(f"📤 Ausgaben (inkl. Fixkosten) im {ausgewaehlter_monat}")
 
-# Fixkosten als "Fixkosten" markieren, damit man es später im Diagramm sieht
+# Fixkosten als "Fixkosten" markieren, falls keine Kategorie vorhanden
 if not df_fixkosten_monat.empty:
     df_fixkosten_monat = df_fixkosten_monat.copy()
     df_fixkosten_monat['Kategorie'] = df_fixkosten_monat['Kategorie'].fillna('Fixkosten')
@@ -104,7 +105,8 @@ if not df_gesamtausgaben_monat.empty:
         names="Kategorie",
         values="Betrag (CHF)",
         title="Ausgaben nach Kategorie (inkl. Fixkosten)",
-        hole=0.4
+        hole=0.4,
+        textinfo="value+percent"  # <-- Betrag + Prozent
     )
     st.plotly_chart(fig_a, use_container_width=True)
 
