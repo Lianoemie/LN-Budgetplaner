@@ -4,7 +4,7 @@ import pandas as pd
 from utils.data_manager import DataManager
 
 # Initialize the data manager
-data_manager = DataManager(fs_protocol='webdav', fs_root_folder="Selia App")
+data_manager = DataManager(fs_protocol='webdav', fs_root_folder="Studibudget")
 
 # Load the data from persistent storage into session state
 data_manager.load_app_data(
