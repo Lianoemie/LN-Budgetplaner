@@ -13,34 +13,35 @@ if 'einnahmen' not in st.session_state:
     st.session_state.einnahmen = []
 if 'ausgaben' not in st.session_state:
     st.session_state.ausgaben = []
+if 'fixkosten' not in st.session_state:
+    st.session_state.fixkosten = []
 
 # ----------------------------------------
 # Daten vorbereiten
 # ----------------------------------------
 df_einnahmen = pd.DataFrame(st.session_state.einnahmen)
 df_ausgaben = pd.DataFrame(st.session_state.ausgaben)
+df_fixkosten = pd.DataFrame(st.session_state.fixkosten)
 
 # Datum in datetime-Format umwandeln (nur wenn Spalte vorhanden)
-if 'Datum' in df_einnahmen.columns:
-    df_einnahmen['Datum'] = pd.to_datetime(df_einnahmen['Datum'], errors='coerce')
-if 'Datum' in df_ausgaben.columns:
-    df_ausgaben['Datum'] = pd.to_datetime(df_ausgaben['Datum'], errors='coerce')
+for df in [df_einnahmen, df_ausgaben, df_fixkosten]:
+    if 'Datum' in df.columns:
+        df['Datum'] = pd.to_datetime(df['Datum'], errors='coerce')
 
 # ----------------------------------------
 # Monat-Auswahl vorbereiten
 # ----------------------------------------
 daten_quellen = []
-if 'Datum' in df_einnahmen.columns:
-    daten_quellen.append(df_einnahmen['Datum'])
-if 'Datum' in df_ausgaben.columns:
-    daten_quellen.append(df_ausgaben['Datum'])
+for df in [df_einnahmen, df_ausgaben, df_fixkosten]:
+    if 'Datum' in df.columns:
+        daten_quellen.append(df['Datum'])
 
 if daten_quellen:
     alle_monate = pd.concat(daten_quellen).dropna()
     alle_monate = alle_monate.dt.to_period('M').sort_values().unique()
     alle_monate_str = [str(monat) for monat in alle_monate]
 else:
-    st.warning("Noch keine Einnahmen oder Ausgaben vorhanden.")
+    st.warning("Noch keine Einnahmen oder Ausgaben/Fixkosten vorhanden.")
     st.stop()
 
 aktueller_monat = datetime.now().strftime('%Y-%m')
@@ -56,15 +57,9 @@ ausgewaehlter_monat = st.selectbox(
 monat_start = pd.to_datetime(ausgewaehlter_monat + "-01")
 monat_ende = monat_start + pd.offsets.MonthEnd(0)
 
-if 'Datum' in df_einnahmen.columns:
-    df_einnahmen_monat = df_einnahmen[(df_einnahmen['Datum'] >= monat_start) & (df_einnahmen['Datum'] <= monat_ende)]
-else:
-    df_einnahmen_monat = pd.DataFrame()
-
-if 'Datum' in df_ausgaben.columns:
-    df_ausgaben_monat = df_ausgaben[(df_ausgaben['Datum'] >= monat_start) & (df_ausgaben['Datum'] <= monat_ende)]
-else:
-    df_ausgaben_monat = pd.DataFrame()
+df_einnahmen_monat = df_einnahmen[(df_einnahmen['Datum'] >= monat_start) & (df_einnahmen['Datum'] <= monat_ende)] if 'Datum' in df_einnahmen.columns else pd.DataFrame()
+df_ausgaben_monat = df_ausgaben[(df_ausgaben['Datum'] >= monat_start) & (df_ausgaben['Datum'] <= monat_ende)] if 'Datum' in df_ausgaben.columns else pd.DataFrame()
+df_fixkosten_monat = df_fixkosten[(df_fixkosten['Datum'] >= monat_start) & (df_fixkosten['Datum'] <= monat_ende)] if 'Datum' in df_fixkosten.columns else pd.DataFrame()
 
 # ----------------------------------------
 # Kuchendiagramm: Einnahmen
@@ -90,24 +85,33 @@ else:
     st.info("Keine Einnahmen für diesen Monat.")
 
 # ----------------------------------------
-# Kuchendiagramm: Ausgaben
+# Kuchendiagramm: Ausgaben (inkl. Fixkosten)
 # ----------------------------------------
-st.subheader(f"📤 Ausgaben im {ausgewaehlter_monat}")
-if not df_ausgaben_monat.empty:
-    gruppiert_ausgaben = df_ausgaben_monat.groupby("Kategorie")["Betrag (CHF)"].sum().reset_index()
+st.subheader(f"📤 Ausgaben (inkl. Fixkosten) im {ausgewaehlter_monat}")
+
+# Fixkosten als "Fixkosten" markieren, damit man es später im Diagramm sieht
+if not df_fixkosten_monat.empty:
+    df_fixkosten_monat = df_fixkosten_monat.copy()
+    df_fixkosten_monat['Kategorie'] = df_fixkosten_monat['Kategorie'].fillna('Fixkosten')
+
+# Gesamtausgaben zusammenfassen
+df_gesamtausgaben_monat = pd.concat([df_ausgaben_monat, df_fixkosten_monat], ignore_index=True)
+
+if not df_gesamtausgaben_monat.empty:
+    gruppiert_ausgaben = df_gesamtausgaben_monat.groupby("Kategorie")["Betrag (CHF)"].sum().reset_index()
     fig_a = px.pie(
         gruppiert_ausgaben,
         names="Kategorie",
         values="Betrag (CHF)",
-        title="Ausgaben nach Kategorie",
+        title="Ausgaben nach Kategorie (inkl. Fixkosten)",
         hole=0.4
     )
     st.plotly_chart(fig_a, use_container_width=True)
 
     st.dataframe(
-        df_ausgaben_monat[['Datum', 'Kategorie', 'Betrag (CHF)', 'Beschreibung']],
+        df_gesamtausgaben_monat[['Datum', 'Kategorie', 'Betrag (CHF)', 'Beschreibung']],
         use_container_width=True
     )
-    st.metric("💸 Gesamtausgaben", f"{df_ausgaben_monat['Betrag (CHF)'].sum():.2f} CHF")
+    st.metric("💸 Gesamtausgaben (inkl. Fixkosten)", f"{df_gesamtausgaben_monat['Betrag (CHF)'].sum():.2f} CHF")
 else:
-    st.info("Keine Ausgaben für diesen Monat.")
+    st.info("Keine Ausgaben/Fixkosten für diesen Monat.")
