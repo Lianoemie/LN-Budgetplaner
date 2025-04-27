@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-import plotly.express as px
+import plotly.graph_objects as go
 from datetime import datetime
 
 st.set_page_config(page_title="Statistiken", page_icon="📊")
@@ -67,14 +67,17 @@ df_fixkosten_monat = df_fixkosten[(df_fixkosten['Datum'] >= monat_start) & (df_f
 st.subheader(f"📥 Einnahmen im {ausgewaehlter_monat}")
 if not df_einnahmen_monat.empty:
     gruppiert_einnahmen = df_einnahmen_monat.groupby("Kategorie")["Betrag (CHF)"].sum().reset_index()
-    fig_e = px.pie(
-        gruppiert_einnahmen,
-        names="Kategorie",
-        values="Betrag (CHF)",
-        title="Einnahmen nach Kategorie",
-        hole=0.4,
-        textinfo="value+percent"  # <-- Betrag + Prozent
+    
+    fig_e = go.Figure(
+        data=[go.Pie(
+            labels=gruppiert_einnahmen["Kategorie"],
+            values=gruppiert_einnahmen["Betrag (CHF)"],
+            hole=0.4,
+            textinfo="value+percent",
+            insidetextorientation='radial'
+        )]
     )
+    fig_e.update_layout(title="Einnahmen nach Kategorie")
     st.plotly_chart(fig_e, use_container_width=True)
 
     st.dataframe(
@@ -100,14 +103,17 @@ df_gesamtausgaben_monat = pd.concat([df_ausgaben_monat, df_fixkosten_monat], ign
 
 if not df_gesamtausgaben_monat.empty:
     gruppiert_ausgaben = df_gesamtausgaben_monat.groupby("Kategorie")["Betrag (CHF)"].sum().reset_index()
-    fig_a = px.pie(
-        gruppiert_ausgaben,
-        names="Kategorie",
-        values="Betrag (CHF)",
-        title="Ausgaben nach Kategorie (inkl. Fixkosten)",
-        hole=0.4,
-        textinfo="value+percent"  # <-- Betrag + Prozent
+    
+    fig_a = go.Figure(
+        data=[go.Pie(
+            labels=gruppiert_ausgaben["Kategorie"],
+            values=gruppiert_ausgaben["Betrag (CHF)"],
+            hole=0.4,
+            textinfo="value+percent",
+            insidetextorientation='radial'
+        )]
     )
+    fig_a.update_layout(title="Ausgaben nach Kategorie (inkl. Fixkosten)")
     st.plotly_chart(fig_a, use_container_width=True)
 
     st.dataframe(
