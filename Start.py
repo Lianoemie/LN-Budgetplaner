@@ -7,13 +7,12 @@ from utils.login_manager import LoginManager
 # Initialize the data manager
 data_manager = DataManager(fs_protocol='webdav', fs_root_folder="Studibudget")
 
-# Load the data from persistent storage into session state
-data_manager.load_user_data(
-    session_state_key='data_df', 
-    file_name='data.csv', 
-    initial_value=pd.DataFrame(), 
-    #parse_dates=['timestamp']
-)
+if 'data_df' not in st.session_state:
+    data_manager.load_user_data(
+        session_state_key='data_df', 
+        file_name='data.csv', 
+        initial_value=pd.DataFrame()
+    )
 
 # --- Welcome Page ---
 st.title('Studibudget 📅')
