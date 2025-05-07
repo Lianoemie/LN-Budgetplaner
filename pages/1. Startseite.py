@@ -3,11 +3,6 @@ import pandas as pd
 from datetime import datetime
 import calendar
 
-# ====== Start Login Block ======
-from utils.login_manager import LoginManager
-LoginManager().go_to_login('Start.py') 
-# ====== End Login Block ======
-
 st.set_page_config(page_title="Startseite", page_icon="🏠")
 
 st.title("🏠 Startseite – Studibudget")

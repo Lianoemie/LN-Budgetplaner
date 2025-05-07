@@ -2,11 +2,6 @@ import streamlit as st
 import pandas as pd
 from datetime import datetime
 
-# ====== Start Login Block ======
-from utils.login_manager import LoginManager
-LoginManager().go_to_login('Start.py') 
-# ====== End Login Block ======
-
 st.set_page_config(page_title="Fixkosten", page_icon="📆")
 st.title("📆 Fixkosten verwalten")
 
