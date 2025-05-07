@@ -7,11 +7,11 @@ from utils.data_manager import DataManager
 data_manager = DataManager(fs_protocol='webdav', fs_root_folder="Studibudget")
 
 # Load the data from persistent storage into session state
-data_manager.load_app_data(
+data_manager.load_user_data(
     session_state_key='data_df', 
     file_name='data.csv', 
     initial_value=pd.DataFrame(), 
-    parse_dates=['timestamp']
+    #parse_dates=['timestamp']
 )
 
 # --- Welcome Page ---
