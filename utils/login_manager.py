@@ -136,13 +136,11 @@ def go_to_login(self, login_page_py_file):
     """
     Create a logout button that logs the user out and redirects to the login page.
     If the user is not logged in, the login page is displayed.
+
+    Parameters
+    - login_page_py_file: The path to the Python file that contains the login page
     """
-if st.session_state.get("authentication_status") is not True:
-    st.write("Not authenticated – attempting redirect")
-
-    if "redirected_to_login" not in st.session_state:
-        st.session_state["redirected_to_login"] = True
-        st.write("Redirecting now...")
+    if st.session_state.get("authentication_status") is not True:
         st.switch_page(login_page_py_file)
-
-    st.stop()
+    else:
+        self.authenticator.logout()
