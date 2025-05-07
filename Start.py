@@ -9,9 +9,6 @@ LoginManager().go_to_login('Start.py')
 
 # ====== End Login Block ======
 
-
-from utils.data_manager import DataManager
-
 # Initialize the data manager
 data_manager = DataManager(fs_protocol='webdav', fs_root_folder="Studibudget")
 
