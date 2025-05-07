@@ -63,3 +63,4 @@ im Rahmen des Moduls **"BMLD Informatik 2"** an der **ZHAW** entwickelt.
 
 Viel Spaß beim Planen und Verwalten deiner Finanzen!
 """)
+

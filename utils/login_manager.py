@@ -136,12 +136,9 @@ class LoginManager:
         """
         Create a logout button that logs the user out and redirects to the login page.
         If the user is not logged in, the login page is displayed.
-
-        Parameters
-        - login_page_py_file (str): The path to the Python file that contains the login page
         """
         if st.session_state.get("authentication_status") is not True:
             st.switch_page(login_page_py_file)
         else:
-            self.authenticator.logout() # create logout button
+            self.authenticator.logout()
 
