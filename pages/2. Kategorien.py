@@ -53,15 +53,19 @@ st.markdown("---")
 st.subheader("🗑️ Kategorie löschen")
 
 with st.form("kategorie_loeschen"):
-    loesch_typ = st.selectbox("Art der Kategorie", ["Einnahme", "Ausgabe"])
+    loesch_typ = st.selectbox("Art der Kategorie", ["Einnahme", "Ausgabe"], key="loesch_typ")
+    st.write("🔍 DEBUG – Gewählter Typ:", loesch_typ)
 
+    # Wähle explizit die richtige Liste aus dem Session-State
     if loesch_typ == "Einnahme":
         kategorien_liste = st.session_state.kategorien_einnahmen
     else:
         kategorien_liste = st.session_state.kategorien_ausgaben
 
+    st.write("📋 DEBUG – Aktuelle Kategorien:", kategorien_liste)
+
     if kategorien_liste:
-        auswahl = st.selectbox("Kategorie wählen", kategorien_liste)
+        auswahl = st.selectbox("Kategorie wählen", kategorien_liste, key=f"kategorie_auswahl_{loesch_typ}")
     else:
         auswahl = None
         st.info(f"Keine {loesch_typ}-Kategorien vorhanden.")
@@ -69,13 +73,11 @@ with st.form("kategorie_loeschen"):
     loeschen = st.form_submit_button("Löschen")
 
     if loeschen and auswahl:
-        # Aus der jeweiligen Session-State-Variable entfernen
         if loesch_typ == "Einnahme":
             st.session_state.kategorien_einnahmen.remove(auswahl)
         else:
             st.session_state.kategorien_ausgaben.remove(auswahl)
 
-        # Optional: Protokollieren
         result = {
             "kategorie": auswahl,
             "typ": loesch_typ,
@@ -85,6 +87,7 @@ with st.form("kategorie_loeschen"):
         dm.append_record(session_state_key='kategorien_df', record_dict=result)
         st.success(f"Kategorie '{auswahl}' wurde gelöscht.")
         st.rerun()
+
 
 
 # -----------------------------
