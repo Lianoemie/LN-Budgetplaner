@@ -38,11 +38,9 @@ with st.form("neue_kategorie"):
                 liste.append(kategorie)
                 st.success(f"Kategorie '{kategorie}' als {kategorie_typ} hinzugefügt.")
 
-# -----------------------------
-# Kategorie löschen
-# -----------------------------
-st.markdown("---")
-st.subheader("🗑️ Kategorie löschen")
+# Vor dem ersten Zugriff sicher initialisieren!
+if 'loesch_typ' not in st.session_state:
+    st.session_state.loesch_typ = "Einnahme"
 
 with st.form("kategorie_loeschen"):
     loesch_typ = st.selectbox(
@@ -52,7 +50,8 @@ with st.form("kategorie_loeschen"):
         key="loesch_typ"
     )
 
-    if loesch_typ == "Einnahme":
+    # Zugriff direkt über Session-State, da der Selectbox-Wert mit dem key "loesch_typ" automatisch dort gespeichert wird
+    if st.session_state.loesch_typ == "Einnahme":
         kategorien = st.session_state.kategorien_einnahmen
     else:
         kategorien = st.session_state.kategorien_ausgaben
@@ -61,15 +60,15 @@ with st.form("kategorie_loeschen"):
         auswahl = st.selectbox("Kategorie wählen", kategorien)
     else:
         auswahl = None
-        st.info(f"Keine {loesch_typ}-Kategorien vorhanden.")
+        st.info(f"Keine {st.session_state.loesch_typ}-Kategorien vorhanden.")
 
     loeschen = st.form_submit_button("Löschen")
 
     if loeschen and auswahl:
         kategorien.remove(auswahl)
         st.success(f"Kategorie '{auswahl}' wurde gelöscht.")
-        st.rerun()  # Seite neu laden, damit die Änderungen sichtbar sind
-        
+        st.rerun()
+
 # -----------------------------
 # Kategorien anzeigen (Badges)
 # -----------------------------
