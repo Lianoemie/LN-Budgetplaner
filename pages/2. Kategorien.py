@@ -49,15 +49,10 @@ st.markdown("---")
 st.subheader("🗑️ Kategorie löschen")
 
 with st.form("kategorie_loeschen"):
-    # Richtige Speicherung im Session-State für den Reload
-    loesch_typ = st.selectbox(
-        "Art der Kategorie",
-        ["Einnahme", "Ausgabe"],
-        index=["Einnahme", "Ausgabe"].index(st.session_state.loesch_typ)
-    )
-    st.session_state.loesch_typ = loesch_typ  # Update sofort speichern
+    # DIREKT den Wert aus der Selectbox nutzen!
+    loesch_typ = st.selectbox("Art der Kategorie", ["Einnahme", "Ausgabe"])
 
-    # Jetzt den Rückgabewert von Selectbox verwenden (nicht den alten Session-State-Wert!)
+    # Richtige Kategorien abhängig von der Auswahl
     if loesch_typ == "Einnahme":
         kategorien = st.session_state.kategorien_einnahmen
     else:
@@ -75,6 +70,7 @@ with st.form("kategorie_loeschen"):
         kategorien.remove(auswahl)
         st.success(f"Kategorie '{auswahl}' wurde gelöscht.")
         st.rerun()
+
 
 # -----------------------------
 # Kategorien anzeigen (Badges)
