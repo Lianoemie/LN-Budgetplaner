@@ -14,12 +14,19 @@ LoginManager().go_to_login('Start.py')
 # DataManager initialisieren
 dm = DataManager()
 
-# kategorien_df vorbereiten und registrieren
-import pandas as pd
-if 'kategorien_df' not in st.session_state:
-    st.session_state.kategorien_df = pd.DataFrame(columns=["kategorie", "typ", "aktion", "zeitpunkt"])
-dm.register_data(session_state_key='kategorien_df', file_name='kategorien.csv')
+# Kategorien-Log laden oder initialisieren
+dm.load_app_data(
+    session_state_key='kategorien_df',
+    file_name='kategorien.csv',
+    initial_value=pd.DataFrame(columns=["kategorie", "typ", "aktion", "zeitpunkt"]),
+    parse_dates=['zeitpunkt']
+)
 
+# Kategorienlisten initialisieren
+if 'kategorien_einnahmen' not in st.session_state:
+    st.session_state.kategorien_einnahmen = ["Lohn", "Stipendium", "Schenkungen"]
+if 'kategorien_ausgaben' not in st.session_state:
+    st.session_state.kategorien_ausgaben = ["Miete", "Freizeit", "Transport", "Geschenke", "Sonstiges"]
 
 # Titel
 st.title("🗂️ Kategorien verwalten")
@@ -50,6 +57,7 @@ with st.form("neue_kategorie"):
                 }
                 dm.append_record(session_state_key='kategorien_df', record_dict=result)
                 st.success(f"Kategorie '{kategorie}' als {kategorie_typ} hinzugefügt.")
+                st.rerun()
 
 # -----------------------------
 # Kategorie löschen
