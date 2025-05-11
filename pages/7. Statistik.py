@@ -3,6 +3,8 @@ import pandas as pd
 import plotly.graph_objects as go
 from datetime import datetime
 
+st.set_page_config(page_title="Statistiken", page_icon="📊")
+
 # ====== Start Login Block ======
 from utils.login_manager import LoginManager
 from utils.data_manager import DataManager
@@ -11,8 +13,6 @@ LoginManager().go_to_login('Start.py')
 
 # ====== End Login Block ======
 
-
-st.set_page_config(page_title="Statistiken", page_icon="📊")
 st.title("📊 Statistiken")
 
 # ----------------------------------------
