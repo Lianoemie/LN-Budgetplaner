@@ -7,16 +7,19 @@ from utils.helpers import ch_now
 LoginManager().go_to_login('Start.py') 
 # ====== End Login Block ======
 
-# --- Initialisierung ---
-if 'name' not in st.session_state:
-    st.session_state.update({
-        'name': '',
-        'vorname': '',
-        'mail': '',
-        'fixkosten': [],
-        'kategorien': [],
-        'sparziele': []
-    })
+# --- Sichere Initialisierung des Session States ---
+default_state = {
+    'name': '',
+    'vorname': '',
+    'mail': '',
+    'fixkosten': [],
+    'kategorien': [],
+    'sparziele': []
+}
+
+for key, value in default_state.items():
+    if key not in st.session_state:
+        st.session_state[key] = value
 
 st.title("📚 Studibudget")
 
@@ -42,7 +45,6 @@ st.divider()
 # --- Helper-Funktion zum Anzeigen und Bearbeiten von Listen ---
 def manage_section(section_name, state_key):
     st.subheader(section_name)
-    # Bestehende Einträge anzeigen
     indices_to_delete = []
     for idx, item in enumerate(st.session_state[state_key]):
         cols = st.columns([4, 1])
