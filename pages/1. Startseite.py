@@ -134,23 +134,24 @@ if not df_e_monat.empty:
 else:
     st.info("Keine Einnahmen in diesem Monat.")
 
-# -----------------------------
-# Navigation (Buttons)
-# -----------------------------
-st.markdown("---")
-col1, col2 = st.columns(2)
+    # -----------------------------
+    # Seitenwechsel-Logik
+    # -----------------------------
+    if "page" not in st.session_state:
+        st.session_state.page = "1. Startseite"
 
-with col1:
-    if st.button("➕ Einmalige Ausgabe"):
-        st.switch_page("6. Ausgaben hinzufügen")
+    if st.session_state.page == "6. Ausgaben hinzufügen":
+        st.experimental_set_query_params(page="6. Ausgaben hinzufügen")
+        st.experimental_rerun()
 
-with col2:
-    if st.button("📈 Statistik"):
-        st.switch_page("7. Statistik")
+    if st.session_state.page == "7. Statistik":
+        st.experimental_set_query_params(page="7. Statistik")
+        st.experimental_rerun()
 
-if st.button("💡 Spartipps"):
-    st.switch_page("8. Spartipps")
+    if st.session_state.page == "8. Spartipps":
+        st.experimental_set_query_params(page="8. Spartipps")
+        st.experimental_rerun()
 
-if st.button("👤 Mein Profil"):
-    st.switch_page("9. Mein Profil")
-
+    if st.session_state.page == "9. Mein Profil":
+        st.experimental_set_query_params(page="9. Mein Profil")
+        st.experimental_rerun()
