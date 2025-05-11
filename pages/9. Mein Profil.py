@@ -76,12 +76,3 @@ st.divider()
 # --- Sparziele ---
 manage_section("🎯 Sparziele", "sparziele")
 st.divider()
-
-# --- Übersicht wird immer angezeigt ---
-st.subheader("📖 Übersicht aller Daten")
-st.write(f"**Name:** {st.session_state['name']}")
-st.write(f"**Vorname:** {st.session_state['vorname']}")
-st.write(f"**Mail:** {st.session_state['mail']}")
-st.write("**📌 Fixkosten:**", st.session_state['fixkosten'] or "Keine Fixkosten eingetragen.")
-st.write("**📂 Kategorien:**", st.session_state['kategorien'] or "Keine Kategorien eingetragen.")
-st.write("**🎯 Sparziele:**", st.session_state['sparziele'] or "Keine Sparziele eingetragen.")
