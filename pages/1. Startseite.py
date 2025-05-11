@@ -142,14 +142,14 @@ col1, col2 = st.columns(2)
 
 with col1:
     if st.button("➕ Einmalige Ausgabe"):
-        st.switch_page("pages/ausgaben.py")
+        st.switch_page("6. Ausgaben hinzufügen")  # Seiten-Name in Streamlit Navigation
 
 with col2:
     if st.button("📈 Statistik"):
-        st.switch_page("pages/statistik.py")
+        st.switch_page("7. Statistik")  # Seiten-Name in Streamlit Navigation
 
 if st.button("💡 Spartipps"):
-    st.switch_page("pages/spartipps.py")
+    st.switch_page("8. Spartipps")  # Seiten-Name in Streamlit Navigation
 
 if st.button("👤 Mein Profil"):
-    st.switch_page("pages/profil.py")
+    st.switch_page("9. Mein Profil")  # Seiten-Name in Streamlit Navigation
