@@ -6,8 +6,8 @@ st.set_page_config(page_title="Kategorien verwalten", page_icon="🗂️")
 from utils.login_manager import LoginManager
 from utils.data_manager import DataManager
 from utils.helpers import ch_now
-LoginManager().go_to_login('Start.py') 
 
+LoginManager().go_to_login('Start.py')
 # ====== End Login Block ======
 
 dm = DataManager()
@@ -41,10 +41,11 @@ with st.form("neue_kategorie"):
                 result = {
                     "kategorie": kategorie,
                     "typ": kategorie_typ,
-                    "zeitpunkt": ch_now()  # Annahme: gibt aktuellen Timestamp als String zurück
+                    "zeitpunkt": ch_now()
                 }
                 dm.append_record(session_state_key='kategorien_df', record_dict=result)
                 st.success(f"Kategorie '{kategorie}' als {kategorie_typ} hinzugefügt.")
+                st.rerun()
 
 # -----------------------------
 # Kategorie löschen
@@ -53,17 +54,12 @@ st.markdown("---")
 st.subheader("🗑️ Kategorie löschen")
 
 with st.form("kategorie_loeschen"):
-    # DIREKT den Wert aus der Selectbox nutzen!
     loesch_typ = st.selectbox("Art der Kategorie", ["Einnahme", "Ausgabe"])
 
-    # Richtige Kategorien abhängig von der Auswahl
-    if loesch_typ == "Einnahme":
-        kategorien = st.session_state.kategorien_einnahmen
-    else:
-        kategorien = st.session_state.kategorien_ausgaben
+    kategorien = st.session_state.kategorien_einnahmen if loesch_typ == "Einnahme" else st.session_state.kategorien_ausgaben
 
     if kategorien:
-        auswahl = st.selectbox("Kategorie wählen", kategorien)
+        auswahl = st.selectbox("Kategorie wählen", sorted(kategorien))
     else:
         auswahl = None
         st.info(f"Keine {loesch_typ}-Kategorien vorhanden.")
@@ -72,7 +68,6 @@ with st.form("kategorie_loeschen"):
 
     if loeschen and auswahl:
         kategorien.remove(auswahl)
-        # ✅ Optional: Auch die Löschung im gespeicherten DataFrame vermerken
         result = {
             "kategorie": auswahl,
             "typ": loesch_typ,
@@ -82,7 +77,6 @@ with st.form("kategorie_loeschen"):
         dm.append_record(session_state_key='kategorien_df', record_dict=result)
         st.success(f"Kategorie '{auswahl}' wurde gelöscht.")
         st.rerun()
-
 
 # -----------------------------
 # Kategorien anzeigen (Badges)
