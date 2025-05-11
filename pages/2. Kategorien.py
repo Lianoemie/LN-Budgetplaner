@@ -8,11 +8,15 @@ st.set_page_config(page_title="Kategorien", page_icon="🗂️")
 LoginManager().go_to_login("Start.py")
 dm = DataManager()
 
-# 🔄 Kategorien laden und in Session-State + DataManager registrieren
-dm.load_user_data("kategorien_einnahmen", "kategorien_einnahmen.json", initial_value=[])
-dm.load_user_data("kategorien_ausgaben", "kategorien_ausgaben.json", initial_value=[])
+dm = DataManager()
 
-st.title("📁 Kategorien verwalten")
+# Wichtig: Daten direkt laden & registrieren, BEVOR etwas anderes kommt
+if "username" not in st.session_state:
+    st.warning("⚠️ Kein Benutzer eingeloggt. Die Seite funktioniert nicht ohne Login.")
+else:
+    dm.load_user_data("kategorien_einnahmen", "kategorien_einnahmen.json", initial_value=[])
+    dm.load_user_data("kategorien_ausgaben", "kategorien_ausgaben.json", initial_value=[])
+
 
 # Tabs für Einnahmen und Ausgaben
 tab1, tab2 = st.tabs(["💰 Einnahmen", "🧾 Ausgaben"])
