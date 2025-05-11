@@ -7,16 +7,15 @@ from utils.login_manager import LoginManager
 from utils.data_manager import DataManager
 from utils.helpers import ch_now
 LoginManager().go_to_login('Start.py') 
-
 # ====== End Login Block ======
 
 dm = DataManager()
 
 # Session-State initialisieren
 if 'kategorien_einnahmen' not in st.session_state:
-    st.session_state.kategorien_einnahmen = ["Lohn", "Stipendium"]
+    st.session_state.kategorien_einnahmen = ["Stipendium", "Lohn", "Schenkungen"]
 if 'kategorien_ausgaben' not in st.session_state:
-    st.session_state.kategorien_ausgaben = ["Lebensmittel", "Miete", "Freizeit", "Transport"]
+    st.session_state.kategorien_ausgaben = ["Miete", "Freizeit", "Transport", "Geschenke", "Sonstiges"]
 
 st.title("🗂️ Kategorien verwalten")
 
@@ -26,7 +25,7 @@ st.title("🗂️ Kategorien verwalten")
 with st.form("neue_kategorie"):
     st.subheader("➕ Neue Kategorie erfassen")
     kategorie = st.text_input("Name der neuen Kategorie")
-    kategorie_typ = st.selectbox("Für was ist die Kategorie gedacht?", ["Einnahme", "Ausgabe"])
+    kategorie_typ = st.selectbox("Für was ist die Kategorie gedacht?", ["Einnahme", "Ausgabe"], key="neue_kategorie_typ")
     hinzufügen = st.form_submit_button("Hinzufügen")
 
     if hinzufügen:
@@ -41,7 +40,7 @@ with st.form("neue_kategorie"):
                 result = {
                     "kategorie": kategorie,
                     "typ": kategorie_typ,
-                    "zeitpunkt": ch_now()  # Annahme: gibt aktuellen Timestamp als String zurück
+                    "zeitpunkt": ch_now()
                 }
                 dm.append_record(session_state_key='kategorien_df', record_dict=result)
                 st.success(f"Kategorie '{kategorie}' als {kategorie_typ} hinzugefügt.")
@@ -53,10 +52,10 @@ st.markdown("---")
 st.subheader("🗑️ Kategorie löschen")
 
 with st.form("kategorie_loeschen"):
-    loesch_typ = st.selectbox("Art der Kategorie", ["Einnahme", "Ausgabe"], key="loesch_typ")
+    loesch_typ = st.selectbox("Art der Kategorie", ["Einnahme", "Ausgabe"], key="loesch_typ_dropdown")
     st.write("🔍 DEBUG – Gewählter Typ:", loesch_typ)
 
-    # Wähle explizit die richtige Liste aus dem Session-State
+    # Kategorienliste abhängig vom Typ wählen
     if loesch_typ == "Einnahme":
         kategorien_liste = st.session_state.kategorien_einnahmen
     else:
@@ -65,7 +64,7 @@ with st.form("kategorie_loeschen"):
     st.write("📋 DEBUG – Aktuelle Kategorien:", kategorien_liste)
 
     if kategorien_liste:
-        auswahl = st.selectbox("Kategorie wählen", kategorien_liste, key=f"kategorie_auswahl_{loesch_typ}")
+        auswahl = st.selectbox("Kategorie wählen", kategorien_liste, key=f"dropdown_{loesch_typ}")
     else:
         auswahl = None
         st.info(f"Keine {loesch_typ}-Kategorien vorhanden.")
@@ -87,8 +86,6 @@ with st.form("kategorie_loeschen"):
         dm.append_record(session_state_key='kategorien_df', record_dict=result)
         st.success(f"Kategorie '{auswahl}' wurde gelöscht.")
         st.rerun()
-
-
 
 # -----------------------------
 # Kategorien anzeigen (Badges)
