@@ -1,5 +1,14 @@
 import streamlit as st
 
+# ====== Start Login Block ======
+from utils.login_manager import LoginManager
+from utils.data_manager import DataManager
+from utils.helpers import ch_now
+LoginManager().go_to_login('Start.py') 
+
+# ====== End Login Block ======
+
+
 # --- Initialisierung ---
 if 'name' not in st.session_state:
     st.session_state.update({
