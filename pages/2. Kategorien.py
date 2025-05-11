@@ -8,51 +8,51 @@ st.set_page_config(page_title="Kategorien", page_icon="🗂️")
 LoginManager().go_to_login("Start.py")
 dm = DataManager()
 
-# ------------------------------
-# Kategorien initial aus Datei laden
-# ------------------------------
+# 🔄 Kategorien laden und in Session-State + DataManager registrieren
 dm.load_user_data("kategorien_einnahmen", "kategorien_einnahmen.json", initial_value=[])
 dm.load_user_data("kategorien_ausgaben", "kategorien_ausgaben.json", initial_value=[])
 
-st.title("🗂️ Kategorien verwalten")
+st.title("📁 Kategorien verwalten")
 
-# Tabs: Einnahmen & Ausgaben
-tab1, tab2 = st.tabs(["💰 Einnahmen", "💸 Ausgaben"])
+# Tabs für Einnahmen und Ausgaben
+tab1, tab2 = st.tabs(["💰 Einnahmen", "🧾 Ausgaben"])
 
-# ------------------------------
-# Einnahmen-Kategorien
-# ------------------------------
+# -----------------------------
+# Tab 1: Einnahmen-Kategorien
+# -----------------------------
 with tab1:
     st.subheader("Einnahmen-Kategorien")
-    neue_kategorie = st.text_input("Neue Kategorie hinzufügen:", key="input_ein")
-    if st.button("➕ Hinzufügen", key="add_ein"):
+
+    neue_kategorie = st.text_input("Neue Kategorie hinzufügen:", key="input_einnahmen")
+    if st.button("➕ Hinzufügen", key="btn_add_einnahmen"):
         if neue_kategorie and neue_kategorie not in st.session_state.kategorien_einnahmen:
             st.session_state.kategorien_einnahmen.append(neue_kategorie)
             dm.save_data("kategorien_einnahmen")
             st.success(f"'{neue_kategorie}' wurde hinzugefügt.")
 
     if st.session_state.kategorien_einnahmen:
-        zu_loeschen = st.selectbox("Kategorie löschen:", st.session_state.kategorien_einnahmen, key="del_ein")
-        if st.button("🗑️ Löschen", key="btn_del_ein"):
+        zu_loeschen = st.selectbox("Kategorie löschen:", st.session_state.kategorien_einnahmen, key="select_del_einnahmen")
+        if st.button("🗑️ Löschen", key="btn_del_einnahmen"):
             st.session_state.kategorien_einnahmen.remove(zu_loeschen)
             dm.save_data("kategorien_einnahmen")
             st.success(f"'{zu_loeschen}' wurde gelöscht.")
 
-# ------------------------------
-# Ausgaben-Kategorien
-# ------------------------------
+# -----------------------------
+# Tab 2: Ausgaben-Kategorien
+# -----------------------------
 with tab2:
     st.subheader("Ausgaben-Kategorien")
-    neue_kategorie = st.text_input("Neue Kategorie hinzufügen:", key="input_aus")
-    if st.button("➕ Hinzufügen", key="add_aus"):
+
+    neue_kategorie = st.text_input("Neue Kategorie hinzufügen:", key="input_ausgaben")
+    if st.button("➕ Hinzufügen", key="btn_add_ausgaben"):
         if neue_kategorie and neue_kategorie not in st.session_state.kategorien_ausgaben:
             st.session_state.kategorien_ausgaben.append(neue_kategorie)
             dm.save_data("kategorien_ausgaben")
             st.success(f"'{neue_kategorie}' wurde hinzugefügt.")
 
     if st.session_state.kategorien_ausgaben:
-        zu_loeschen = st.selectbox("Kategorie löschen:", st.session_state.kategorien_ausgaben, key="del_aus")
-        if st.button("🗑️ Löschen", key="btn_del_aus"):
+        zu_loeschen = st.selectbox("Kategorie löschen:", st.session_state.kategorien_ausgaben, key="select_del_ausgaben")
+        if st.button("🗑️ Löschen", key="btn_del_ausgaben"):
             st.session_state.kategorien_ausgaben.remove(zu_loeschen)
             dm.save_data("kategorien_ausgaben")
             st.success(f"'{zu_loeschen}' wurde gelöscht.")
