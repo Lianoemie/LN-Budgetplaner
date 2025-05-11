@@ -45,7 +45,12 @@ st.markdown("---")
 st.subheader("🗑️ Kategorie löschen")
 
 with st.form("kategorie_loeschen"):
-    loesch_typ = st.selectbox("Art der Kategorie", ["Einnahme", "Ausgabe"])
+    loesch_typ = st.selectbox(
+        "Art der Kategorie",
+        ["Einnahme", "Ausgabe"],
+        index=["Einnahme", "Ausgabe"].index(st.session_state.loesch_typ),
+        key="loesch_typ"
+    )
 
     if loesch_typ == "Einnahme":
         kategorien = st.session_state.kategorien_einnahmen
@@ -64,7 +69,7 @@ with st.form("kategorie_loeschen"):
         kategorien.remove(auswahl)
         st.success(f"Kategorie '{auswahl}' wurde gelöscht.")
         st.rerun()  # Seite neu laden, damit die Änderungen sichtbar sind
-
+        
 # -----------------------------
 # Kategorien anzeigen (Badges)
 # -----------------------------
