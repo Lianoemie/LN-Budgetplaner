@@ -58,6 +58,11 @@ st.session_state.monatliches_budget = st.number_input(
     step=50.0,
     format="%.2f"
 )
+result = {
+    "monat": gewaehlter_monat,
+    "budget": st.session_state.monatliches_budget
+}
+DataManager().append_record(session_state_key='data_df', record_dict=result)
 
 # -----------------------------
 # Fixkosten filtern (Start- und Enddatum prüfen)
@@ -153,3 +158,5 @@ if st.button("💡 Spartipps"):
 
 if st.button("👤 Mein Profil"):
     st.switch_page("9. Mein Profil")
+
+# Buttons gehen nicht?
