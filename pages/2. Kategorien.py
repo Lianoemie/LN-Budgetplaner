@@ -53,17 +53,15 @@ st.markdown("---")
 st.subheader("🗑️ Kategorie löschen")
 
 with st.form("kategorie_loeschen"):
-    # DIREKT den Wert aus der Selectbox nutzen!
     loesch_typ = st.selectbox("Art der Kategorie", ["Einnahme", "Ausgabe"])
 
-    # Richtige Kategorien abhängig von der Auswahl
     if loesch_typ == "Einnahme":
-        kategorien = st.session_state.kategorien_einnahmen
+        kategorien_liste = st.session_state.kategorien_einnahmen
     else:
-        kategorien = st.session_state.kategorien_ausgaben
+        kategorien_liste = st.session_state.kategorien_ausgaben
 
-    if kategorien:
-        auswahl = st.selectbox("Kategorie wählen", kategorien)
+    if kategorien_liste:
+        auswahl = st.selectbox("Kategorie wählen", kategorien_liste)
     else:
         auswahl = None
         st.info(f"Keine {loesch_typ}-Kategorien vorhanden.")
@@ -71,8 +69,13 @@ with st.form("kategorie_loeschen"):
     loeschen = st.form_submit_button("Löschen")
 
     if loeschen and auswahl:
-        kategorien.remove(auswahl)
-        # ✅ Optional: Auch die Löschung im gespeicherten DataFrame vermerken
+        # Aus der jeweiligen Session-State-Variable entfernen
+        if loesch_typ == "Einnahme":
+            st.session_state.kategorien_einnahmen.remove(auswahl)
+        else:
+            st.session_state.kategorien_ausgaben.remove(auswahl)
+
+        # Optional: Protokollieren
         result = {
             "kategorie": auswahl,
             "typ": loesch_typ,
