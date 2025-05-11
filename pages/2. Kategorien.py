@@ -51,11 +51,19 @@ with st.form("neue_kategorie"):
 st.markdown("---")
 st.subheader("🗑️ Kategorie löschen")
 
+# Sichere Initialisierung (optional)
+st.session_state.setdefault("loesch_typ_selector_unique", "Einnahme")
+
 with st.form("kategorie_loeschen"):
-    loesch_typ = st.selectbox("Art der Kategorie", ["Einnahme", "Ausgabe"], key="loesch_typ_dropdown")
+    loesch_typ = st.selectbox(
+        "Art der Kategorie",
+        ["Einnahme", "Ausgabe"],
+        key="loesch_typ_selector_unique"
+    )
+
     st.write("🔍 DEBUG – Gewählter Typ:", loesch_typ)
 
-    # Kategorienliste abhängig vom Typ wählen
+    # Kategorien abhängig vom Typ
     if loesch_typ == "Einnahme":
         kategorien_liste = st.session_state.kategorien_einnahmen
     else:
@@ -64,7 +72,11 @@ with st.form("kategorie_loeschen"):
     st.write("📋 DEBUG – Aktuelle Kategorien:", kategorien_liste)
 
     if kategorien_liste:
-        auswahl = st.selectbox("Kategorie wählen", kategorien_liste, key=f"dropdown_{loesch_typ}")
+        auswahl = st.selectbox(
+            "Kategorie wählen",
+            kategorien_liste,
+            key=f"dropdown_{loesch_typ}"
+        )
     else:
         auswahl = None
         st.info(f"Keine {loesch_typ}-Kategorien vorhanden.")
@@ -86,6 +98,7 @@ with st.form("kategorie_loeschen"):
         dm.append_record(session_state_key='kategorien_df', record_dict=result)
         st.success(f"Kategorie '{auswahl}' wurde gelöscht.")
         st.rerun()
+
 
 # -----------------------------
 # Kategorien anzeigen (Badges)
