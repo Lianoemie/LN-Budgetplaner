@@ -42,16 +42,23 @@ with st.form("neue_kategorie"):
 if 'loesch_typ' not in st.session_state:
     st.session_state.loesch_typ = "Einnahme"
 
+# -----------------------------
+# Kategorie löschen
+# -----------------------------
+st.markdown("---")
+st.subheader("🗑️ Kategorie löschen")
+
 with st.form("kategorie_loeschen"):
+    # Richtige Speicherung im Session-State für den Reload
     loesch_typ = st.selectbox(
         "Art der Kategorie",
         ["Einnahme", "Ausgabe"],
-        index=["Einnahme", "Ausgabe"].index(st.session_state.loesch_typ),
-        key="loesch_typ"
+        index=["Einnahme", "Ausgabe"].index(st.session_state.loesch_typ)
     )
+    st.session_state.loesch_typ = loesch_typ  # Update sofort speichern
 
-    # Zugriff direkt über Session-State, da der Selectbox-Wert mit dem key "loesch_typ" automatisch dort gespeichert wird
-    if st.session_state.loesch_typ == "Einnahme":
+    # Jetzt den Rückgabewert von Selectbox verwenden (nicht den alten Session-State-Wert!)
+    if loesch_typ == "Einnahme":
         kategorien = st.session_state.kategorien_einnahmen
     else:
         kategorien = st.session_state.kategorien_ausgaben
@@ -60,7 +67,7 @@ with st.form("kategorie_loeschen"):
         auswahl = st.selectbox("Kategorie wählen", kategorien)
     else:
         auswahl = None
-        st.info(f"Keine {st.session_state.loesch_typ}-Kategorien vorhanden.")
+        st.info(f"Keine {loesch_typ}-Kategorien vorhanden.")
 
     loeschen = st.form_submit_button("Löschen")
 
