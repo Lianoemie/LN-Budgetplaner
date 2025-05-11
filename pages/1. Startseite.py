@@ -60,14 +60,15 @@ st.session_state.monatliches_budget = st.number_input(
     step=50.0,
     format="%.2f"
 )
-if st.button("💾 Budget speichern"):  # ✅ NEU
+
+if st.button("💾 Budget speichern"):  
     result = {
         "monat": gewaehlter_monat,
         "budget": st.session_state.monatliches_budget
     }
     DataManager().append_record(session_state_key='data_df', record_dict=result)
     st.success("Budget gespeichert!")
-DataManager().append_record(session_state_key='data_df', record_dict=result)
+
 
 # -----------------------------
 # Fixkosten filtern (Start- und Enddatum prüfen)
