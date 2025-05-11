@@ -14,13 +14,12 @@ LoginManager().go_to_login('Start.py')
 # DataManager initialisieren
 dm = DataManager()
 
-# Initialisierung der Session-State-Variablen
-if 'kategorien_einnahmen' not in st.session_state:
-    st.session_state.kategorien_einnahmen = ["Lohn", "Stipendium", "Schenkungen"]
-if 'kategorien_ausgaben' not in st.session_state:
-    st.session_state.kategorien_ausgaben = ["Miete", "Freizeit", "Transport", "Geschenke", "Sonstiges"]
+# kategorien_df vorbereiten und registrieren
+import pandas as pd
 if 'kategorien_df' not in st.session_state:
     st.session_state.kategorien_df = pd.DataFrame(columns=["kategorie", "typ", "aktion", "zeitpunkt"])
+dm.register_data(session_state_key='kategorien_df', file_name='kategorien.csv')
+
 
 # Titel
 st.title("🗂️ Kategorien verwalten")
