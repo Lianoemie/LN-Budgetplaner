@@ -5,4 +5,3 @@ webdav4
 fsspec
 matplotlib
 numpy
-plotly
