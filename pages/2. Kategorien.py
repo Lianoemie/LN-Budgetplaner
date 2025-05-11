@@ -10,6 +10,8 @@ LoginManager().go_to_login('Start.py')
 
 # ====== End Login Block ======
 
+dm = DataManager()
+
 # Session-State initialisieren
 if 'kategorien_einnahmen' not in st.session_state:
     st.session_state.kategorien_einnahmen = ["Lohn", "Stipendium"]
@@ -36,11 +38,13 @@ with st.form("neue_kategorie"):
                 st.warning("Diese Kategorie existiert bereits.")
             else:
                 liste.append(kategorie)
+                result = {
+                    "kategorie": kategorie,
+                    "typ": kategorie_typ,
+                    "zeitpunkt": ch_now()  # Annahme: gibt aktuellen Timestamp als String zurück
+                }
+                dm.append_record(session_state_key='kategorien_df', record_dict=result)
                 st.success(f"Kategorie '{kategorie}' als {kategorie_typ} hinzugefügt.")
-
-# Vor dem ersten Zugriff sicher initialisieren!
-if 'loesch_typ' not in st.session_state:
-    st.session_state.loesch_typ = "Einnahme"
 
 # -----------------------------
 # Kategorie löschen
@@ -68,6 +72,14 @@ with st.form("kategorie_loeschen"):
 
     if loeschen and auswahl:
         kategorien.remove(auswahl)
+        # ✅ Optional: Auch die Löschung im gespeicherten DataFrame vermerken
+        result = {
+            "kategorie": auswahl,
+            "typ": loesch_typ,
+            "aktion": "gelöscht",
+            "zeitpunkt": ch_now()
+        }
+        dm.append_record(session_state_key='kategorien_df', record_dict=result)
         st.success(f"Kategorie '{auswahl}' wurde gelöscht.")
         st.rerun()
 
