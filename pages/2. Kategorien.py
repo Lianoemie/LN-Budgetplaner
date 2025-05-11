@@ -1,22 +1,28 @@
 import streamlit as st
+import pandas as pd
 
-st.set_page_config(page_title="Kategorien verwalten", page_icon="🗂️")
-
-# ====== Start Login Block ======
 from utils.login_manager import LoginManager
 from utils.data_manager import DataManager
 from utils.helpers import ch_now
-LoginManager().go_to_login('Start.py') 
-# ====== End Login Block ======
 
+# Seiteneinstellungen
+st.set_page_config(page_title="Kategorien verwalten", page_icon="🗂️")
+
+# Login
+LoginManager().go_to_login('Start.py')
+
+# DataManager initialisieren
 dm = DataManager()
 
-# Session-State initialisieren
+# Initialisierung der Session-State-Variablen
 if 'kategorien_einnahmen' not in st.session_state:
-    st.session_state.kategorien_einnahmen = ["Stipendium", "Lohn", "Schenkungen"]
+    st.session_state.kategorien_einnahmen = ["Lohn", "Stipendium", "Schenkungen"]
 if 'kategorien_ausgaben' not in st.session_state:
     st.session_state.kategorien_ausgaben = ["Miete", "Freizeit", "Transport", "Geschenke", "Sonstiges"]
+if 'kategorien_df' not in st.session_state:
+    st.session_state.kategorien_df = pd.DataFrame(columns=["kategorie", "typ", "aktion", "zeitpunkt"])
 
+# Titel
 st.title("🗂️ Kategorien verwalten")
 
 # -----------------------------
@@ -25,7 +31,7 @@ st.title("🗂️ Kategorien verwalten")
 with st.form("neue_kategorie"):
     st.subheader("➕ Neue Kategorie erfassen")
     kategorie = st.text_input("Name der neuen Kategorie")
-    kategorie_typ = st.selectbox("Für was ist die Kategorie gedacht?", ["Einnahme", "Ausgabe"], key="neue_kategorie_typ")
+    kategorie_typ = st.selectbox("Für was ist die Kategorie gedacht?", ["Einnahme", "Ausgabe"])
     hinzufügen = st.form_submit_button("Hinzufügen")
 
     if hinzufügen:
@@ -40,13 +46,14 @@ with st.form("neue_kategorie"):
                 result = {
                     "kategorie": kategorie,
                     "typ": kategorie_typ,
+                    "aktion": "hinzugefügt",
                     "zeitpunkt": ch_now()
                 }
                 dm.append_record(session_state_key='kategorien_df', record_dict=result)
                 st.success(f"Kategorie '{kategorie}' als {kategorie_typ} hinzugefügt.")
 
 # -----------------------------
-# Kategorie löschen (neu aufgebaut)
+# Kategorie löschen
 # -----------------------------
 st.markdown("---")
 st.subheader("🗑️ Kategorie löschen")
@@ -54,9 +61,9 @@ st.subheader("🗑️ Kategorie löschen")
 loesch_typ = st.radio("Art der Kategorie", ["Einnahme", "Ausgabe"])
 
 if loesch_typ == "Einnahme":
-    kategorien_liste = st.session_state.get("kategorien_einnahmen", [])
+    kategorien_liste = st.session_state.kategorien_einnahmen
 else:
-    kategorien_liste = st.session_state.get("kategorien_ausgaben", [])
+    kategorien_liste = st.session_state.kategorien_ausgaben
 
 if kategorien_liste:
     auswahl = st.selectbox("Kategorie wählen", kategorien_liste)
@@ -77,8 +84,6 @@ if kategorien_liste:
         st.rerun()
 else:
     st.info(f"Keine {loesch_typ}-Kategorien vorhanden.")
-
-
 
 # -----------------------------
 # Kategorien anzeigen (Badges)
