@@ -1,104 +1,52 @@
 import streamlit as st
+from utils.login_manager import LoginManager
+from utils.data_manager import DataManager
 
 st.set_page_config(page_title="Kategorien verwalten", page_icon="🗂️")
 
-# ====== Start Login Block ======
-from utils.login_manager import LoginManager
-from utils.data_manager import DataManager
-from utils.helpers import ch_now
-LoginManager().go_to_login('Start.py') 
-
-# ====== End Login Block ======
-
+# Login prüfen
+LoginManager().go_to_login("Start.py")
 dm = DataManager()
-
-# Session-State initialisieren
-if 'kategorien_einnahmen' not in st.session_state:
-    st.session_state.kategorien_einnahmen = ["Lohn", "Stipendium"]
-if 'kategorien_ausgaben' not in st.session_state:
-    st.session_state.kategorien_ausgaben = ["Lebensmittel", "Miete", "Freizeit", "Transport"]
 
 st.title("🗂️ Kategorien verwalten")
 
-# -----------------------------
-# Neue Kategorie hinzufügen
-# -----------------------------
-with st.form("neue_kategorie"):
-    st.subheader("➕ Neue Kategorie erfassen")
-    kategorie = st.text_input("Name der neuen Kategorie")
-    kategorie_typ = st.selectbox("Für was ist die Kategorie gedacht?", ["Einnahme", "Ausgabe"])
-    hinzufügen = st.form_submit_button("Hinzufügen")
+# Session-State vorbereiten
+if "kategorien_einnahmen" not in st.session_state:
+    st.session_state.kategorien_einnahmen = dm.load_kategorien("einnahmen")
+if "kategorien_ausgaben" not in st.session_state:
+    st.session_state.kategorien_ausgaben = dm.load_kategorien("ausgaben")
 
-    if hinzufügen:
-        if not kategorie:
-            st.error("Bitte gib einen Namen ein.")
-        else:
-            liste = st.session_state.kategorien_einnahmen if kategorie_typ == "Einnahme" else st.session_state.kategorien_ausgaben
-            if kategorie in liste:
-                st.warning("Diese Kategorie existiert bereits.")
-            else:
-                liste.append(kategorie)
-                result = {
-                    "kategorie": kategorie,
-                    "typ": kategorie_typ,
-                    "zeitpunkt": ch_now()  # Annahme: gibt aktuellen Timestamp als String zurück
-                }
-                dm.append_record(session_state_key='kategorien_df', record_dict=result)
-                st.success(f"Kategorie '{kategorie}' als {kategorie_typ} hinzugefügt.")
+# Tabs für Einnahmen / Ausgaben
+tab1, tab2 = st.tabs(["💰 Einnahmen", "💸 Ausgaben"])
 
-# -----------------------------
-# Kategorie löschen
-# -----------------------------
-st.markdown("---")
-st.subheader("🗑️ Kategorie löschen")
+with tab1:
+    st.subheader("Einnahmen-Kategorien")
+    neue_kategorie = st.text_input("Neue Kategorie hinzufügen:", key="ein_kat")
+    if st.button("➕ Hinzufügen", key="btn_add_ein"):
+        if neue_kategorie and neue_kategorie not in st.session_state.kategorien_einnahmen:
+            st.session_state.kategorien_einnahmen.append(neue_kategorie)
+            dm.save_kategorien("einnahmen", st.session_state.kategorien_einnahmen)
+            st.success("Kategorie hinzugefügt!")
 
-with st.form("kategorie_loeschen"):
-    # DIREKT den Wert aus der Selectbox nutzen!
-    loesch_typ = st.selectbox("Art der Kategorie", ["Einnahme", "Ausgabe"])
+    if st.session_state.kategorien_einnahmen:
+        zu_loeschen = st.selectbox("Kategorie löschen:", st.session_state.kategorien_einnahmen, key="del_ein")
+        if st.button("🗑️ Löschen", key="btn_del_ein"):
+            st.session_state.kategorien_einnahmen.remove(zu_loeschen)
+            dm.save_kategorien("einnahmen", st.session_state.kategorien_einnahmen)
+            st.success("Kategorie gelöscht!")
 
-    # Richtige Kategorien abhängig von der Auswahl
-    if loesch_typ == "Einnahme":
-        kategorien = st.session_state.kategorien_einnahmen
-    else:
-        kategorien = st.session_state.kategorien_ausgaben
+with tab2:
+    st.subheader("Ausgaben-Kategorien")
+    neue_kategorie = st.text_input("Neue Kategorie hinzufügen:", key="aus_kat")
+    if st.button("➕ Hinzufügen", key="btn_add_aus"):
+        if neue_kategorie and neue_kategorie not in st.session_state.kategorien_ausgaben:
+            st.session_state.kategorien_ausgaben.append(neue_kategorie)
+            dm.save_kategorien("ausgaben", st.session_state.kategorien_ausgaben)
+            st.success("Kategorie hinzugefügt!")
 
-    if kategorien:
-        auswahl = st.selectbox("Kategorie wählen", kategorien)
-    else:
-        auswahl = None
-        st.info(f"Keine {loesch_typ}-Kategorien vorhanden.")
-
-    loeschen = st.form_submit_button("Löschen")
-
-    if loeschen and auswahl:
-        kategorien.remove(auswahl)
-        # ✅ Optional: Auch die Löschung im gespeicherten DataFrame vermerken
-        result = {
-            "kategorie": auswahl,
-            "typ": loesch_typ,
-            "aktion": "gelöscht",
-            "zeitpunkt": ch_now()
-        }
-        dm.append_record(session_state_key='kategorien_df', record_dict=result)
-        st.success(f"Kategorie '{auswahl}' wurde gelöscht.")
-        st.rerun()
-
-
-# -----------------------------
-# Kategorien anzeigen (Badges)
-# -----------------------------
-st.markdown("---")
-
-def zeige_kategorien(titel, kategorien, farbe):
-    st.markdown(f"### {titel}")
-    if kategorien:
-        badges = " ".join([
-            f"<span style='background-color:{farbe}; padding:4px 12px; border-radius:20px; color:white; font-size:14px; margin-right:6px'>{k}</span>"
-            for k in kategorien
-        ])
-        st.markdown(badges, unsafe_allow_html=True)
-    else:
-        st.write("Noch keine Kategorien vorhanden.")
-
-zeige_kategorien("📥 Einnahmen-Kategorien", st.session_state.kategorien_einnahmen, farbe="#4CAF50")
-zeige_kategorien("📤 Ausgaben-Kategorien", st.session_state.kategorien_ausgaben, farbe="#F44336")
+    if st.session_state.kategorien_ausgaben:
+        zu_loeschen = st.selectbox("Kategorie löschen:", st.session_state.kategorien_ausgaben, key="del_aus")
+        if st.button("🗑️ Löschen", key="btn_del_aus"):
+            st.session_state.kategorien_ausgaben.remove(zu_loeschen)
+            dm.save_kategorien("ausgaben", st.session_state.kategorien_ausgaben)
+            st.success("Kategorie gelöscht!")
