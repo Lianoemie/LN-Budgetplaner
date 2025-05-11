@@ -46,44 +46,21 @@ with st.form("neue_kategorie"):
                 st.success(f"Kategorie '{kategorie}' als {kategorie_typ} hinzugefügt.")
 
 # -----------------------------
-# Kategorie löschen
+# Kategorie löschen (neu aufgebaut)
 # -----------------------------
 st.markdown("---")
 st.subheader("🗑️ Kategorie löschen")
 
-# Sichere Initialisierung (optional)
-st.session_state.setdefault("loesch_typ_selector_unique", "Einnahme")
+loesch_typ = st.radio("Art der Kategorie", ["Einnahme", "Ausgabe"])
 
-with st.form("kategorie_loeschen"):
-    loesch_typ = st.selectbox(
-        "Art der Kategorie",
-        ["Einnahme", "Ausgabe"],
-        key="loesch_typ_selector_unique"
-    )
+if loesch_typ == "Einnahme":
+    kategorien_liste = st.session_state.get("kategorien_einnahmen", [])
+else:
+    kategorien_liste = st.session_state.get("kategorien_ausgaben", [])
 
-    st.write("🔍 DEBUG – Gewählter Typ:", loesch_typ)
-
-    # Kategorien abhängig vom Typ
-    if loesch_typ == "Einnahme":
-        kategorien_liste = st.session_state.kategorien_einnahmen
-    else:
-        kategorien_liste = st.session_state.kategorien_ausgaben
-
-    st.write("📋 DEBUG – Aktuelle Kategorien:", kategorien_liste)
-
-    if kategorien_liste:
-        auswahl = st.selectbox(
-            "Kategorie wählen",
-            kategorien_liste,
-            key=f"dropdown_{loesch_typ}"
-        )
-    else:
-        auswahl = None
-        st.info(f"Keine {loesch_typ}-Kategorien vorhanden.")
-
-    loeschen = st.form_submit_button("Löschen")
-
-    if loeschen and auswahl:
+if kategorien_liste:
+    auswahl = st.selectbox("Kategorie wählen", kategorien_liste)
+    if st.button("Kategorie löschen"):
         if loesch_typ == "Einnahme":
             st.session_state.kategorien_einnahmen.remove(auswahl)
         else:
@@ -98,6 +75,9 @@ with st.form("kategorie_loeschen"):
         dm.append_record(session_state_key='kategorien_df', record_dict=result)
         st.success(f"Kategorie '{auswahl}' wurde gelöscht.")
         st.rerun()
+else:
+    st.info(f"Keine {loesch_typ}-Kategorien vorhanden.")
+
 
 
 # -----------------------------
