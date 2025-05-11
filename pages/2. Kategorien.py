@@ -1,4 +1,5 @@
 import streamlit as st
+import pandas as pd
 
 st.set_page_config(page_title="Kategorien verwalten", page_icon="🗂️")
 
@@ -13,15 +14,21 @@ LoginManager().go_to_login('Start.py')
 dm = DataManager()
 
 # ==============================
-# Kategorien laden aus DataFrame
+# Kategorien-Daten laden
 # ==============================
-df_kategorien = dm.load_dataframe(session_state_key="kategorien_df", file_name="kategorien.csv")
+dm.load_app_data(
+    session_state_key='kategorien_df',
+    file_name='kategorien.csv',
+    initial_value=pd.DataFrame(columns=["kategorie", "typ", "zeitpunkt"])
+)
 
-# Listen extrahieren
+df_kategorien = st.session_state.kategorien_df
+
+# Listen erstellen
 einnahmen_kategorien = df_kategorien[df_kategorien["typ"] == "Einnahme"]["kategorie"].tolist()
 ausgaben_kategorien = df_kategorien[df_kategorien["typ"] == "Ausgabe"]["kategorie"].tolist()
 
-# Falls leer, Defaultwerte hinzufügen
+# Falls leer, Defaults vorschlagen
 if not einnahmen_kategorien:
     einnahmen_kategorien = ["Lohn", "Stipendium"]
 if not ausgaben_kategorien:
@@ -51,7 +58,11 @@ with st.form("neue_kategorie"):
                     "typ": kategorie_typ,
                     "zeitpunkt": ch_now()
                 }
-                dm.append_record(session_state_key='kategorien_df', record_dict=new_entry)
+                st.session_state.kategorien_df = pd.concat([
+                    st.session_state.kategorien_df,
+                    pd.DataFrame([new_entry])
+                ], ignore_index=True)
+                dm.save_app_data(session_state_key='kategorien_df', file_name='kategorien.csv')
                 st.success(f"Kategorie '{kategorie}' als {kategorie_typ} hinzugefügt.")
                 st.rerun()
 
@@ -74,10 +85,12 @@ with st.form("kategorie_loeschen"):
     loeschen = st.form_submit_button("Löschen")
 
     if loeschen and auswahl:
-        # Zeile im DataFrame löschen
-        df_kategorien = df_kategorien[~((df_kategorien["kategorie"] == auswahl) & (df_kategorien["typ"] == loesch_typ))]
-        dm.save_dataframe(session_state_key="kategorien_df", file_name="kategorien.csv", dataframe=df_kategorien)
-
+        df_kategorien = st.session_state.kategorien_df
+        st.session_state.kategorien_df = df_kategorien[~(
+            (df_kategorien["kategorie"] == auswahl) &
+            (df_kategorien["typ"] == loesch_typ)
+        )].reset_index(drop=True)
+        dm.save_app_data(session_state_key='kategorien_df', file_name='kategorien.csv')
         st.success(f"Kategorie '{auswahl}' wurde gelöscht.")
         st.rerun()
 
@@ -99,16 +112,3 @@ def zeige_kategorien(titel, kategorien, farbe):
 
 zeige_kategorien("📥 Einnahmen-Kategorien", einnahmen_kategorien, farbe="#4CAF50")
 zeige_kategorien("📤 Ausgaben-Kategorien", ausgaben_kategorien, farbe="#F44336")
-
-# Optional: Session zurücksetzen (nur beim Entwickeln verwenden)
-# if st.button("🔄 Testdaten zurücksetzen"):
-#     dm.save_dataframe("kategorien_df", "kategorien.csv", pd.DataFrame([
-#         {"kategorie": "Lohn", "typ": "Einnahme", "zeitpunkt": ch_now()},
-#         {"kategorie": "Stipendium", "typ": "Einnahme", "zeitpunkt": ch_now()},
-#         {"kategorie": "Lebensmittel", "typ": "Ausgabe", "zeitpunkt": ch_now()},
-#         {"kategorie": "Miete", "typ": "Ausgabe", "zeitpunkt": ch_now()},
-#         {"kategorie": "Freizeit", "typ": "Ausgabe", "zeitpunkt": ch_now()},
-#         {"kategorie": "Transport", "typ": "Ausgabe", "zeitpunkt": ch_now()},
-#         {"kategorie": "Geschenke", "typ": "Ausgabe", "zeitpunkt": ch_now()},
-#     ]))
-#     st.success("Testdaten zurückgesetzt. Seite neu laden.")
