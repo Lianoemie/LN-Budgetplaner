@@ -1,24 +1,25 @@
 import streamlit as st
 import pandas as pd
 from datetime import datetime
+from utils.login_manager import LoginManager
+from utils.data_manager import DataManager
 
 st.set_page_config(page_title="Sparziele", page_icon="🎯")
 
 # ====== Start Login Block ======
-from utils.login_manager import LoginManager
-from utils.data_manager import DataManager
-from utils.helpers import ch_now
-LoginManager().go_to_login('Start.py') 
-
+LoginManager().go_to_login('Start.py')
 # ====== End Login Block ======
 
 # -------------------------------
 # Session-State initialisieren
 # -------------------------------
 if 'sparziele' not in st.session_state:
-    st.session_state.sparziele = []
+    try:
+        st.session_state.sparziele = DataManager().load_records(session_state_key='sparziele') or []
+    except ValueError:
+        st.session_state.sparziele = []
 
-# 🛡️ Sicherheits-Check für alte Einträge
+# Sicherheits-Check für alte Einträge
 for ziel in st.session_state.sparziele:
     if "Einzahlungen" not in ziel:
         ziel["Einzahlungen"] = []
@@ -36,18 +37,18 @@ with st.form("sparziel_formular"):
     ziel_datum = st.date_input("Gewünschtes Ziel-Datum", value=datetime.today())
     sparziel_erstellen = st.form_submit_button("Sparziel hinzufügen")
 
-if 'sparziele' not in st.session_state:
-    try:
-        st.session_state.sparziele = DataManager().load_records(session_state_key='sparziele') or []
-    except ValueError:
-        st.session_state.sparziele = []
-
-# Sicherheits-Check für alte Einträge
-for ziel in st.session_state.sparziele:
-    if "Einzahlungen" not in ziel:
-        ziel["Einzahlungen"] = []
-
-st.title("🎯 Sparziele verwalten")
+    if sparziel_erstellen and name and zielbetrag > 0:
+        neues_sparziel = {
+            "Name": name,
+            "Zielbetrag (CHF)": zielbetrag,
+            "Bisher gespart (CHF)": aktueller_betrag,
+            "Ziel-Datum": str(ziel_datum),
+            "Einzahlungen": []
+        }
+        st.session_state.sparziele.append(neues_sparziel)
+        DataManager().save_records(session_state_key='sparziele', records=st.session_state.sparziele)
+        st.success(f"Sparziel '{name}' wurde hinzugefügt!")
+        st.rerun()
 
 # -----------------------------
 # Übersicht Sparziele
@@ -77,7 +78,7 @@ if st.session_state.sparziele:
         st.text(f"Gespart: {aktuell:.2f} CHF von {zielbetrag:.2f} CHF")
         st.progress(fortschritt)
         st.markdown(f"**💸 Noch fehlend:** {rest:.2f} CHF")
-        st.markdown(f"{motivation(fortschritt)}")
+        st.markdown(motivation(fortschritt))
 
         # Einzahlung hinzufügen
         with st.expander(f"➕ Einzahlung hinzufügen für {ziel['Name']}"):
@@ -95,6 +96,7 @@ if st.session_state.sparziele:
                         "Betrag (CHF)": betrag,
                         "Datum": datetime.today().strftime("%Y-%m-%d")
                     })
+                    DataManager().save_records(session_state_key='sparziele', records=st.session_state.sparziele)
                     st.success(f"{betrag:.2f} CHF erfolgreich auf '{ziel['Name']}' eingezahlt!")
                     st.rerun()
 
@@ -108,16 +110,17 @@ if st.session_state.sparziele:
                 if cols[2].button("🗑️", key=f"delete_einzahlung_{index}_{einzahl_index}"):
                     ziel["Bisher gespart (CHF)"] -= einzahlung["Betrag (CHF)"]
                     ziel["Einzahlungen"].pop(einzahl_index)
+                    DataManager().save_records(session_state_key='sparziele', records=st.session_state.sparziele)
                     st.success("Einzahlung gelöscht.")
                     st.rerun()
 
         # Button zum Sparziel löschen
         if st.button(f"❌ Sparziel '{ziel['Name']}' löschen", key=f"delete_sparziel_{index}"):
             st.session_state.sparziele.pop(index)
+            DataManager().save_records(session_state_key='sparziele', records=st.session_state.sparziele)
             st.success(f"Sparziel '{ziel['Name']}' wurde gelöscht.")
             st.rerun()
 
         st.divider()
-
 else:
     st.info("Noch keine Sparziele vorhanden. Lege eines an!")
