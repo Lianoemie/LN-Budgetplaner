@@ -30,9 +30,6 @@ st.header("🧑‍💼 Mein Profil")
 
 st.subheader("👤 Persönliche Informationen")
 
-import streamlit as st
-
-st.subheader("👤 Persönliche Informationen")
 
 # Anzeige
 st.write(f"**Nachname:** {st.session_state.name}")
