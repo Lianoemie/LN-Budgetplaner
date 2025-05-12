@@ -49,11 +49,7 @@ monat_ende = datetime(jahr, monat, calendar.monthrange(jahr, monat)[1])
 st.subheader("💶 Monatliches Budget")
 
 data = st.session_state.get('data_df', pd.DataFrame())
-
-if {'typ', 'monat'}.issubset(data.columns):
-    budget_df = data[(data['typ'] == 'budget') & (data['monat'] == gewaehlter_monat)]
-else:
-    budget_df = pd.DataFrame()
+budget_df = data[(data['typ'] == 'budget') & (data['monat'] == gewaehlter_monat)]
 
 aktuelles_budget = float(budget_df['budget'].iloc[0]) if not budget_df.empty else 0.0
 st.session_state.monatliches_budget = aktuelles_budget
@@ -73,13 +69,11 @@ if st.button("💾 Budget speichern"):
         "budget": st.session_state.monatliches_budget,
         "timestamp": str(ch_now())
     }
-    if {'typ', 'monat'}.issubset(data.columns):
-        st.session_state.data_df = data[~((data['typ'] == 'budget') & (data['monat'] == gewaehlter_monat))]
-    else:
-        st.session_state.data_df = data  # Falls Spalten fehlen, einfach übernehmen
+    st.session_state.data_df = data[~((data['typ'] == 'budget') & (data['monat'] == gewaehlter_monat))]
     DataManager().append_record('data_df', neues_budget)
     st.success("Budget gespeichert!")
     st.rerun()
+
 
 # -----------------------------
 # Fixkosten filtern
