@@ -50,9 +50,6 @@ st.subheader("💶 Monatliches Budget")
 
 data = st.session_state.get('data_df', pd.DataFrame())
 
-# Debug-Ausgabe zur Kontrolle der Spalten
-st.write("📄 Verfügbare Spalten im DataFrame:", list(data.columns))
-
 if {'typ', 'monat'}.issubset(data.columns):
     budget_df = data[(data['typ'] == 'budget') & (data['monat'] == gewaehlter_monat)]
 else:
