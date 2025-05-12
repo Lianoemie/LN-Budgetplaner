@@ -14,7 +14,7 @@ LoginManager().go_to_login('Start.py')
 st.title("📆 Fixkosten verwalten")
 
 # DataManager Instanz (SwitchDrive via WebDAV)
-data_manager = DataManager(fs_protocol='webdav', fs_root_folder="BMLD_App_DB")
+data_manager = DataManager(fs_protocol='webdav', fs_root_folder="Studibudget")
 
 # Session-State initialisieren und Daten laden
 if 'fixkosten_df' not in st.session_state:
