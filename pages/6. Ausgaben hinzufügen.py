@@ -13,13 +13,12 @@ LoginManager().go_to_login('Start.py')
 
 # ====== App-Daten laden ======
 DataManager().load_app_data(
-    session_state_key='ausgaben_df', 
-    file_name='ausgaben.csv', 
+    session_state_key='data_df', 
+    file_name='data.csv', 
     initial_value=pd.DataFrame(), 
     parse_dates=['timestamp']
 )
 
-# ====== Kategorien initialisieren ======
 if 'kategorien_ausgaben' not in st.session_state:
     st.session_state.kategorien_ausgaben = ["Lebensmittel", "Miete", "Freizeit", "Transport"]
 
@@ -28,7 +27,7 @@ st.title("💸 Ausgaben hinzufügen")
 # ----------------------------------------
 # Neue Ausgabe direkt speichern
 # ----------------------------------------
-with st.form("ausgabe_formular"):
+with st.form("ausgaben_formular"):
     st.subheader("Neue Ausgabe erfassen")
     kategorie = st.selectbox("Kategorie", st.session_state.kategorien_ausgaben)
     betrag = st.number_input("Betrag (CHF)", min_value=0.0, step=1.0, format="%.2f")
@@ -45,7 +44,7 @@ with st.form("ausgabe_formular"):
             "timestamp": str(datum)
         }
         DataManager().append_record(
-            session_state_key='ausgaben_df',
+            session_state_key='data_df',
             record_dict=neue_ausgabe
         )
         st.success("Ausgabe gespeichert!")
@@ -54,7 +53,7 @@ with st.form("ausgabe_formular"):
 # ----------------------------------------
 # Übersicht der gespeicherten Ausgaben
 # ----------------------------------------
-data = st.session_state.get('ausgaben_df', pd.DataFrame())
+data = st.session_state.get('data_df', pd.DataFrame())
 ausgaben_df = data[data['typ'] == 'ausgabe']
 
 if not ausgaben_df.empty:
@@ -67,8 +66,8 @@ if not ausgaben_df.empty:
 
     # Alle Ausgaben löschen
     if st.button("❌ Alle Ausgaben löschen"):
-        st.session_state.ausgaben_df = data[data['typ'] != 'ausgabe']
-        DataManager().save_app_data('ausgaben_df', 'ausgaben.csv')
+        st.session_state.data_df = data[data['typ'] != 'ausgabe']
+        DataManager().save_app_data('data_df', 'data.csv')
         st.success("Alle Ausgaben wurden gelöscht.")
         st.rerun()
 else:
