@@ -93,7 +93,6 @@ with st.form("kategorie_loeschen"):
         }
         dm.append_record(session_state_key='kategorien_df', record_dict=result)
         st.success(f"Kategorie '{auswahl}' wurde gelöscht.")
-        st.rerun()
 
 # -----------------------------
 # Kategorien anzeigen (Badges)
