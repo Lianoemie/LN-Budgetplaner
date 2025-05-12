@@ -1,5 +1,7 @@
 import streamlit as st
 import pandas as pd
+import os
+
 
 st.set_page_config(page_title="Kategorien verwalten", page_icon="🗂️")
 
@@ -13,12 +15,13 @@ LoginManager().go_to_login('Start.py')
 
 dm = DataManager()
 
-# 🟢 Registrierung des Keys im DataManager
-dm.register_data(
-    session_state_key='kategorien_df',
-    file_name='kategorien.csv',
-    initial_value=pd.DataFrame(columns=["kategorie", "typ", "zeitpunkt"])
-)
+if 'kategorien_df' not in st.session_state:
+    file = 'kategorien.csv'
+    if os.path.exists(file):
+        st.session_state['kategorien_df'] = pd.read_csv(file)
+    else:
+        st.session_state['kategorien_df'] = pd.DataFrame(columns=["kategorie", "typ", "zeitpunkt"])
+        st.session_state['kategorien_df'].to_csv(file, index=False)
 
 # Session-State initialisieren
 if 'kategorien_einnahmen' not in st.session_state:
@@ -119,4 +122,3 @@ def zeige_kategorien(titel, kategorien, farbe):
 
 zeige_kategorien("📥 Einnahmen-Kategorien", st.session_state.kategorien_einnahmen, farbe="#4CAF50")
 zeige_kategorien("📤 Ausgaben-Kategorien", st.session_state.kategorien_ausgaben, farbe="#F44336")
-
