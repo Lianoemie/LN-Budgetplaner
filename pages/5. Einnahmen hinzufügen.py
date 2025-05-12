@@ -58,10 +58,17 @@ einnahmen_df = data[data['typ'] == 'einnahme']
 
 if not einnahmen_df.empty:
     st.subheader("📋 Übersicht deiner Einnahmen")
-    einnahmen_df_display = einnahmen_df.copy()
+
+    # Nur relevante Spalten und schöne Beschriftung
+    einnahmen_df_display = einnahmen_df[["timestamp", "kategorie", "betrag", "beschreibung"]].copy()
+    einnahmen_df_display.columns = ["Datum", "Kategorie", "Betrag", "Beschreibung"]
     einnahmen_df_display.index = range(1, len(einnahmen_df_display) + 1)
-    gesamt = einnahmen_df_display["betrag"].sum()
+
+    # Gesamtsumme anzeigen
+    gesamt = einnahmen_df_display["Betrag"].sum()
     st.metric("💵 Gesamteinnahmen", f"{gesamt:.2f} CHF")
+
+    # Tabelle anzeigen
     st.dataframe(einnahmen_df_display, use_container_width=True)
 
     # Alle Einnahmen löschen
