@@ -36,17 +36,21 @@ with st.form("sparziel_formular"):
     ziel_datum = st.date_input("Gewünschtes Ziel-Datum", value=datetime.today())
     sparziel_erstellen = st.form_submit_button("Sparziel hinzufügen")
 
-    if sparziel_erstellen and name and zielbetrag > 0:
-        neues_sparziel = {
-            "Name": name,
-            "Zielbetrag (CHF)": zielbetrag,
-            "Bisher gespart (CHF)": aktueller_betrag,
-            "Ziel-Datum": str(ziel_datum),
-            "Einzahlungen": []
-        }
-        st.session_state.sparziele.append(neues_sparziel)
-        st.success(f"Sparziel '{name}' wurde hinzugefügt!")
-        st.rerun()
+if sparziel_erstellen and name and zielbetrag > 0:
+    neues_sparziel = {
+        "Name": name,
+        "Zielbetrag (CHF)": zielbetrag,
+        "Bisher gespart (CHF)": aktueller_betrag,
+        "Ziel-Datum": str(ziel_datum),
+        "Einzahlungen": []
+    }
+    st.session_state.sparziele.append(neues_sparziel)
+    
+    # ✅ Persistentes Speichern über DataManager
+    DataManager().append_record(session_state_key='sparziele', record_dict=neues_sparziel)
+
+    st.success(f"Sparziel '{name}' wurde hinzugefügt!")
+    st.rerun()
 
 # -----------------------------
 # Übersicht Sparziele
