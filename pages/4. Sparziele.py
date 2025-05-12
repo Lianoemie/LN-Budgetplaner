@@ -13,15 +13,16 @@ LoginManager().go_to_login('Start.py')
 # -------------------------------
 # Session-State initialisieren
 # -------------------------------
+data_manager = DataManager()
+
 if 'sparziele' not in st.session_state:
-    data_manager = DataManager()
     try:
         st.session_state.sparziele = data_manager.load_records(session_state_key='sparziele')
     except ValueError:
-        # Initialisierung für append_record erforderlich
+        # 👉 Initialisierung für append_record erforderlich
         st.session_state.sparziele = []
-        data_manager.save_records(session_state_key='sparziele', records=[])
-
+        # Dies legt die leere Datenstruktur explizit an
+        data_manager._register_dataframe('sparziele', pd.DataFrame())
 
 # Sicherheits-Check für alte Einträge
 for ziel in st.session_state.sparziele:
