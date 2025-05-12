@@ -8,93 +8,60 @@ import os
 # ====== Login ======
 LoginManager().go_to_login('Start.py')
 
-# Mail aus Login holen (angenommen, LoginManager setzt das bereits)
-if 'mail' not in st.session_state or not st.session_state['mail']:
-    st.error("Bitte zuerst einloggen!")
-    st.stop()
+import streamlit as st
 
-mail = st.session_state['mail']
+# Initialisierung der Session States
+if 'name' not in st.session_state:
+    st.session_state.name = ""
+if 'vorname' not in st.session_state:
+    st.session_state.vorname = ""
+if 'email' not in st.session_state:
+    st.session_state.email = ""
+if 'fixkosten' not in st.session_state:
+    st.session_state.fixkosten = ["Miete", "Handyvertrag"]
+if 'kategorien' not in st.session_state:
+    st.session_state.kategorien = ["Lebensmittel", "Freizeit"]
+if 'sparziele' not in st.session_state:
+    st.session_state.sparziele = ["Urlaub", "Notgroschen"]
 
-# --- Daten Laden ---
-DATA_DIR = "user_data"
-if not os.path.exists(DATA_DIR):
-    os.makedirs(DATA_DIR)
+st.title("📘 StudiBudget")
+st.header("🧑‍💼 Mein Profil")
 
-filepath = os.path.join(DATA_DIR, f"{mail}.json")
-if os.path.exists(filepath):
-    with open(filepath, 'r') as f:
-        user_data = json.load(f)
-else:
-    user_data = {
-        'name': '',
-        'vorname': '',
-        'mail': mail,
-        'fixkosten': [],
-        'kategorien': [],
-        'sparziele': []
-    }
+# Nutzerdaten anzeigen
+st.subheader("Persönliche Informationen")
+st.write(f"**Name:** {st.session_state.name}")
+st.write(f"**Vorname:** {st.session_state.vorname}")
+st.write(f"**Mail:** {st.session_state.email}")
 
-# --- Initialisierung im Session-State ---
-for key, value in user_data.items():
-    if key not in st.session_state:
-        st.session_state[key] = value
+with st.expander("Profil bearbeiten"):
+    st.session_state.vorname = st.text_input("Vorname", value=st.session_state.vorname)
+    st.session_state.name = st.text_input("Name", value=st.session_state.name)
+    st.session_state.email = st.text_input("E-Mail", value=st.session_state.email)
 
-st.title("📚 Studibudget")
+# Fixkosten
+st.subheader("🏠 Fixkosten")
+for eintrag in st.session_state.fixkosten:
+    st.write(f"- {eintrag}")
+if st.button("Fixkosten bearbeiten ✏️"):
+    st.switch_page("bearbeiten_fixkosten.py")
 
-# --- Profil ---
-st.header("👤 Mein Profil")
-with st.form("profil_form", clear_on_submit=False):
-    name = st.text_input("Name:", value=st.session_state['name'])
-    vorname = st.text_input("Vorname:", value=st.session_state['vorname'])
-    mail_display = st.text_input("Mail (nicht bearbeitbar):", value=mail, disabled=True)
-    if st.form_submit_button("Speichern"):
-        st.session_state['name'] = name
-        st.session_state['vorname'] = vorname
-        user_data.update({'name': name, 'vorname': vorname})
-        with open(filepath, 'w') as f:
-            json.dump(user_data, f)
-        st.success("Profil gespeichert!")
+# Kategorien
+st.subheader("📂 Kategorien")
+for kategorie in st.session_state.kategorien:
+    st.write(f"- {kategorie}")
+if st.button("Kategorien bearbeiten ✏️"):
+    st.switch_page("bearbeiten_kategorien.py")
 
-st.info(f"**Name:** {st.session_state['name']}  \n"
-        f"**Vorname:** {st.session_state['vorname']}  \n"
-        f"**Mail:** {mail}")
+# Sparziele
+st.subheader("💰 Sparziele")
+for ziel in st.session_state.sparziele:
+    st.write(f"- {ziel}")
+if st.button("Sparziele bearbeiten ✏️"):
+    st.switch_page("bearbeiten_sparziele.py")
 
-st.divider()
+# Übersicht aller Daten
+st.subheader("📊 Übersicht aller Daten")
+st.write("**Fixkosten:**", ", ".join(st.session_state.fixkosten))
+st.write("**Kategorien:**", ", ".join(st.session_state.kategorien))
+st.write("**Sparziele:**", ", ".join(st.session_state.sparziele))
 
-# --- Helper-Funktion ---
-def manage_section(section_name, state_key):
-    st.subheader(section_name)
-    indices_to_delete = []
-    for idx, item in enumerate(st.session_state[state_key]):
-        cols = st.columns([4, 1])
-        new_val = cols[0].text_input(f"{section_name} {idx+1}", value=item, key=f"{state_key}_{idx}")
-        if cols[1].button("❌", key=f"delete_{state_key}_{idx}"):
-            indices_to_delete.append(idx)
-        else:
-            st.session_state[state_key][idx] = new_val
-
-    for idx in sorted(indices_to_delete, reverse=True):
-        st.session_state[state_key].pop(idx)
-        st.experimental_rerun()
-
-    new_item = st.text_input(f"Neuen Eintrag hinzufügen ({section_name}):", key=f"new_{state_key}")
-    if st.button("➕ Hinzufügen", key=f"add_{state_key}"):
-        if new_item:
-            st.session_state[state_key].append(new_item)
-            st.success(f"{section_name} hinzugefügt!")
-            st.experimental_rerun()
-
-    # Änderungen speichern
-    user_data[state_key] = st.session_state[state_key]
-    with open(filepath, 'w') as f:
-        json.dump(user_data, f)
-
-# --- Abschnitte ---
-manage_section("📌 Fixkosten", "fixkosten")
-st.divider()
-
-manage_section("📂 Kategorien", "kategorien")
-st.divider()
-
-manage_section("🎯 Sparziele", "sparziele")
-st.divider()
