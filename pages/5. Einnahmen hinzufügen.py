@@ -33,17 +33,23 @@ with st.form("einnahmen_formular"):
     datum = st.date_input("Datum", value=datetime.today())
     abschicken = st.form_submit_button("Hinzufügen")
 
-    if abschicken and betrag > 0:
-        neue_einnahme = {
-            "Kategorie": kategorie,
-            "Betrag (CHF)": betrag,
-            "Beschreibung": beschreibung,
-            "Datum": str(datum)
-        }
-        st.session_state.einnahmen.append(neue_einnahme)
-        st.success("Einnahme hinzugefügt!")
-        st.rerun()
-
+    # Einnahmen speichern
+    if st.button("💾 Einnahmen speichern"):
+        if st.session_state.einnahmen:
+            # Daten für Speicherung vorbereiten
+            for einnahme in st.session_state.einnahmen:
+                result = {
+                    "kategorie": einnahme["Kategorie"],
+                    "betrag": einnahme["Betrag (CHF)"],
+                    "beschreibung": einnahme.get("Beschreibung", ""),
+                    "datum": einnahme["Datum"]
+                }
+                DataManager().append_record(session_state_key='einnahmen_df', record_dict=result)
+            st.session_state.einnahmen.clear()  # Nach dem Speichern die temporären Daten löschen
+            st.success("Einnahmen gespeichert!")
+            st.rerun()
+        else:
+            st.warning("Keine Einnahmen zum Speichern vorhanden.")
 # ----------------------------------------
 # Übersicht und Löschfunktionen
 # ----------------------------------------
