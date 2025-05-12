@@ -19,10 +19,9 @@ if 'sparziele' not in st.session_state:
     try:
         st.session_state.sparziele = data_manager.load_records(session_state_key='sparziele')
     except ValueError:
-        # 👉 Initialisierung für append_record erforderlich
+        # 👉 Initialisieren, damit append_record funktioniert
         st.session_state.sparziele = []
-        # Dies legt die leere Datenstruktur explizit an
-        data_manager._register_dataframe('sparziele', pd.DataFrame())
+        data_manager.register_data(session_state_key='sparziele', initial_data=[])
 
 # Sicherheits-Check für alte Einträge
 for ziel in st.session_state.sparziele:
