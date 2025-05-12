@@ -68,34 +68,35 @@ st.markdown("---")
 st.subheader("🗑️ Kategorie löschen")
 
 with st.form("kategorie_loeschen"):
-    loesch_typ = st.selectbox("Art der Kategorie", ["Einnahme", "Ausgabe"])
+    loesch_typ = st.selectbox("Art der Kategorie", ["Einnahme", "Ausgabe"], key="loesch_typ")
 
-    kategorien_liste = (
-        st.session_state.kategorien_einnahmen 
-        if loesch_typ == "Einnahme" 
-        else st.session_state.kategorien_ausgaben
-    )
+    # Kategorien basierend auf der aktuellen Auswahl
+    if st.session_state.loesch_typ == "Einnahme":
+        kategorien = st.session_state.kategorien_einnahmen
+    else:
+        kategorien = st.session_state.kategorien_ausgaben
 
-    if kategorien_liste:
-        auswahl = st.selectbox("Kategorie wählen", kategorien_liste)
+    if kategorien:
+        auswahl = st.selectbox("Kategorie wählen", kategorien)
     else:
         auswahl = None
-        st.info(f"Keine {loesch_typ}-Kategorien vorhanden.")
+        st.info(f"Keine {st.session_state.loesch_typ}-Kategorien vorhanden.")
 
     loeschen = st.form_submit_button("Löschen")
 
     if loeschen and auswahl:
-        kategorien_liste.remove(auswahl)
+        kategorien.remove(auswahl)
 
         geloeschte_kategorie = {
             "typ": "kategorie_geloescht",
             "kategorie": auswahl,
-            "kategorie_typ": loesch_typ,
+            "kategorie_typ": st.session_state.loesch_typ,
             "timestamp": ch_now()
         }
         dm.append_record(session_state_key='data_df', record_dict=geloeschte_kategorie)
         st.success(f"Kategorie '{auswahl}' wurde gelöscht.")
         st.rerun()
+
 
 # ----------------------------------------
 # Kategorien anzeigen (Badges)
