@@ -52,6 +52,10 @@ with st.form("sparziel_formular"):
 sparziele = data[data["typ"] == "sparziel"].copy()
 einzahlungen = data[data["typ"] == "einzahlung"].copy()
 
+# Sicherheits-Check: Spalte "zielname" ergänzen, falls nicht vorhanden
+if "zielname" not in einzahlungen.columns:
+    einzahlungen["zielname"] = ""
+
 if not sparziele.empty:
     st.subheader("📋 Übersicht deiner Sparziele")
 
