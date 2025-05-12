@@ -9,7 +9,7 @@ st.set_page_config(page_title="Startseite", page_icon="🏠")
 from utils.login_manager import LoginManager
 from utils.data_manager import DataManager
 from utils.helpers import ch_now
-LoginManager().go_to_login('Start.py') 
+LoginManager().go_to_login('Start.py')
 
 # ====== App-Daten laden ======
 DataManager().load_app_data(
@@ -43,52 +43,52 @@ monat_ende = datetime(jahr, monat, letzter_tag)
 # Daten vorbereiten
 # -----------------------------
 data = st.session_state.get("data_df", pd.DataFrame())
-data["timestamp"] = pd.to_datetime(data["timestamp"])
+if not data.empty:
+    data["timestamp"] = pd.to_datetime(data["timestamp"], errors="coerce")
 
 # Einnahmen
-einnahmen_df = data[data["typ"] == "einnahme"]
+einnahmen_df = data[data["typ"] == "einnahme"] if not data.empty else pd.DataFrame()
 einnahmen_monat = einnahmen_df[
     (einnahmen_df["timestamp"] >= monat_start) & (einnahmen_df["timestamp"] <= monat_ende)
-]
-gesamt_einnahmen = einnahmen_monat["betrag"].sum()
+] if not einnahmen_df.empty else pd.DataFrame()
+gesamt_einnahmen = einnahmen_monat["betrag"].sum() if "betrag" in einnahmen_monat.columns else 0.0
 
 # Ausgaben
-ausgaben_df = data[data["typ"] == "ausgabe"]
+ausgaben_df = data[data["typ"] == "ausgabe"] if not data.empty else pd.DataFrame()
 ausgaben_monat = ausgaben_df[
     (ausgaben_df["timestamp"] >= monat_start) & (ausgaben_df["timestamp"] <= monat_ende)
-]
-gesamt_ausgaben = ausgaben_monat["betrag"].sum()
+] if not ausgaben_df.empty else pd.DataFrame()
+gesamt_ausgaben = ausgaben_monat["betrag"].sum() if "betrag" in ausgaben_monat.columns else 0.0
 
 # Fixkosten
-fixkosten_df = data[data["typ"] == "fixkosten"].copy()
-fixkosten_df["datum"] = pd.to_datetime(fixkosten_df["timestamp"])
-fixkosten_df["stoppdatum"] = pd.to_datetime(fixkosten_df["stoppdatum"], errors="coerce")
-
-fixkosten_monat = fixkosten_df[
-    (fixkosten_df["datum"] <= monat_ende) &
-    ((fixkosten_df["stoppdatum"].isna()) | (fixkosten_df["stoppdatum"] >= monat_start))
-]
-gesamt_fixkosten = fixkosten_monat["betrag"].sum()
+fixkosten_df = data[data["typ"] == "fixkosten"].copy() if not data.empty else pd.DataFrame()
+if not fixkosten_df.empty:
+    fixkosten_df["datum"] = pd.to_datetime(fixkosten_df["timestamp"], errors="coerce")
+    fixkosten_df["stoppdatum"] = pd.to_datetime(fixkosten_df.get("stoppdatum"), errors="coerce")
+    fixkosten_monat = fixkosten_df[
+        (fixkosten_df["datum"] <= monat_ende) &
+        ((fixkosten_df["stoppdatum"].isna()) | (fixkosten_df["stoppdatum"] >= monat_start))
+    ]
+    gesamt_fixkosten = fixkosten_monat["betrag"].sum() if "betrag" in fixkosten_monat.columns else 0.0
+else:
+    gesamt_fixkosten = 0.0
 
 # -----------------------------
-# Monatliches Budget (speicherbar)
+# Monatliches Budget
 # -----------------------------
 st.subheader("💶 Monatliches Budget")
-budgets = data[data["typ"] == "budget"]
-aktuelles_budget_row = budgets[budgets["monat"] == gewaehlter_monat]
-
+budgets = data[data["typ"] == "budget"] if not data.empty else pd.DataFrame()
+aktuelles_budget_row = budgets[budgets["monat"] == gewaehlter_monat] if not budgets.empty else pd.DataFrame()
 vorgabe = aktuelles_budget_row["budget"].iloc[0] if not aktuelles_budget_row.empty else 0.0
 neues_budget = st.number_input("Budget für den Monat (CHF)", min_value=0.0, value=vorgabe, step=50.0, format="%.2f")
 
 if st.button("💾 Budget speichern"):
-    # Budget als separaten typ speichern
     neues_record = {
         "typ": "budget",
         "monat": gewaehlter_monat,
         "budget": neues_budget,
         "timestamp": str(datetime.today().date())
     }
-    # Alte Zeile ggf. entfernen
     st.session_state.data_df = st.session_state.data_df[
         ~((st.session_state.data_df["typ"] == "budget") & (st.session_state.data_df["monat"] == gewaehlter_monat))
     ]
@@ -97,37 +97,43 @@ if st.button("💾 Budget speichern"):
     st.rerun()
 
 # -----------------------------
-# Übersicht
+# Finanzübersicht
 # -----------------------------
 aktueller_stand = neues_budget + gesamt_einnahmen - gesamt_fixkosten - gesamt_ausgaben
-
 st.subheader(f"📊 Finanzübersicht für {gewaehlter_monat}")
 st.metric("💰 Verfügbar", f"{aktueller_stand:.2f} CHF")
 st.caption(f"(Fixkosten in Höhe von {gesamt_fixkosten:.2f} CHF berücksichtigt)")
 
 # -----------------------------
-# Letzte Ausgaben anzeigen
+# Hilfsfunktion für sichere Tabellenanzeige
 # -----------------------------
-st.subheader("🧾 Übersicht letzte Ausgaben")
-if not ausgaben_monat.empty:
-    df = ausgaben_monat.sort_values("timestamp", ascending=False).tail(5).iloc[::-1]
-    df.index = range(1, len(df) + 1)
-    df = df.rename(columns={"kategorie": "Kategorie", "betrag": "Betrag", "beschreibung": "Beschreibung", "timestamp": "Datum"})
-    st.table(df[["Kategorie", "Betrag", "Beschreibung", "Datum"]])
-else:
-    st.info("Keine Ausgaben in diesem Monat.")
+def sichere_tabelle(df, title):
+    st.subheader(title)
+    if not df.empty:
+        required_columns = ["kategorie", "betrag", "beschreibung", "timestamp"]
+        for col in required_columns:
+            if col not in df.columns:
+                df[col] = ""
+        df = df.rename(columns={
+            "kategorie": "Kategorie",
+            "betrag": "Betrag",
+            "beschreibung": "Beschreibung",
+            "timestamp": "Datum"
+        })
+        df["Beschreibung"] = df["Beschreibung"].fillna("-")
+        df["Betrag"] = pd.to_numeric(df["Betrag"], errors="coerce").fillna(0.0).round(2)
+        df["Datum"] = pd.to_datetime(df["Datum"], errors="coerce").dt.date.fillna("-")
+        df = df.sort_values("Datum", ascending=False).tail(5).iloc[::-1]
+        df.index = range(1, len(df) + 1)
+        st.table(df[["Kategorie", "Betrag", "Beschreibung", "Datum"]])
+    else:
+        st.info("Keine Daten in diesem Monat.")
 
 # -----------------------------
-# Letzte Einnahmen anzeigen
+# Letzte Ausgaben und Einnahmen anzeigen
 # -----------------------------
-st.subheader("💵 Übersicht letzte Einnahmen")
-if not einnahmen_monat.empty:
-    df = einnahmen_monat.sort_values("timestamp", ascending=False).tail(5).iloc[::-1]
-    df.index = range(1, len(df) + 1)
-    df = df.rename(columns={"kategorie": "Kategorie", "betrag": "Betrag", "beschreibung": "Beschreibung", "timestamp": "Datum"})
-    st.table(df[["Kategorie", "Betrag", "Beschreibung", "Datum"]])
-else:
-    st.info("Keine Einnahmen in diesem Monat.")
+sichere_tabelle(ausgaben_monat, "🧾 Übersicht letzte Ausgaben")
+sichere_tabelle(einnahmen_monat, "💵 Übersicht letzte Einnahmen")
 
 # -----------------------------
 # Navigation
