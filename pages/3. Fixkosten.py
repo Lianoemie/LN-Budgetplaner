@@ -17,7 +17,7 @@ st.title("📆 Fixkosten verwalten")
 # -------------------------------------
 # DataManager Initialisierung
 # -------------------------------------
-data_manager = DataManager(fs_protocol='webdav', fs_root_folder="BMLD_App_DB")
+data_manager = DataManager(fs_protocol='webdav', fs_root_folder="Studibudget")
 
 # -------------------------------------
 # Fixkosten aus persistentem Speicher laden
