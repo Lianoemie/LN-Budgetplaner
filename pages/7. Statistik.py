@@ -12,7 +12,7 @@ from utils.helpers import ch_now
 
 LoginManager().go_to_login('Start.py')
 
-# ====== Daten korrekt laden ======
+# ====== Daten laden ======
 dm = DataManager()
 dm.load_app_data(
     session_state_key='data_df',
@@ -23,15 +23,20 @@ dm.load_app_data(
 
 data = st.session_state.get('data_df', pd.DataFrame())
 
-# Einnahmen, Ausgaben, Fixkosten sauber aus dem gemeinsamen DataFrame filtern
+# Einnahmen, Ausgaben, Fixkosten extrahieren
 df_einnahmen = data[data['typ'] == 'einnahme'].copy()
 df_ausgaben = data[data['typ'] == 'ausgabe'].copy()
 df_fixkosten = data[data['typ'] == 'fixkosten'].copy()
 
-# Spalte 'timestamp' in 'Datum' umbenennen für Kompatibilität
+# Spalte 'timestamp' → 'Datum'
 for df in [df_einnahmen, df_ausgaben, df_fixkosten]:
     if 'timestamp' in df.columns:
         df['Datum'] = pd.to_datetime(df['timestamp'], errors='coerce')
+
+# ✅ Spalte 'betrag' in 'Betrag (CHF)' umbenennen
+for df in [df_einnahmen, df_ausgaben, df_fixkosten]:
+    if 'betrag' in df.columns:
+        df.rename(columns={'betrag': 'Betrag (CHF)'}, inplace=True)
 
 st.title("📊 Statistiken")
 
@@ -100,12 +105,12 @@ else:
 # ----------------------------------------
 st.subheader(f"📤 Ausgaben (inkl. Fixkosten) im {ausgewaehlter_monat}")
 
-# Fixkosten als "Fixkosten" markieren, falls keine Kategorie vorhanden
+# Fixkosten: Kategorie auf 'Fixkosten' setzen, falls leer
 if not df_fixkosten_monat.empty:
     df_fixkosten_monat = df_fixkosten_monat.copy()
     df_fixkosten_monat['Kategorie'] = df_fixkosten_monat['Kategorie'].fillna('Fixkosten')
 
-# Gesamtausgaben zusammenfassen
+# Gesamtausgaben kombinieren
 df_gesamtausgaben_monat = pd.concat([df_ausgaben_monat, df_fixkosten_monat], ignore_index=True)
 
 if not df_gesamtausgaben_monat.empty:
