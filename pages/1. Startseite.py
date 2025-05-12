@@ -123,14 +123,14 @@ col1, col2 = st.columns(2)
 
 with col1:
     if st.button("➕ Einmalige Ausgabe"):
-        st.switch_page("6. Ausgaben hinzufügen")
+        st.switch_page("pages/6_Ausgaben_hinzufügen.py")
 
 with col2:
     if st.button("📈 Statistik"):
-        st.switch_page("7. Statistik")
+        st.switch_page("pages/7_Statistik.py")
 
 if st.button("💡 Spartipps"):
-    st.switch_page("8. Spartipps")
+    st.switch_page("pages/8_Spartipps.py")
 
 if st.button("👤 Mein Profil"):
-    st.switch_page("9. Mein Profil")
+    st.switch_page("pages/9_Mein_Profil.py")
