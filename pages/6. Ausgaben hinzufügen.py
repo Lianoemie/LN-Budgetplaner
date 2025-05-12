@@ -58,13 +58,20 @@ ausgaben_df = data[data['typ'] == 'ausgabe']
 
 if not ausgaben_df.empty:
     st.subheader("📋 Übersicht deiner Ausgaben")
-    ausgaben_df_display = ausgaben_df.copy()
+
+    # Nur relevante Spalten auswählen & formatieren
+    ausgaben_df_display = ausgaben_df[["timestamp", "kategorie", "betrag", "beschreibung"]].copy()
+    ausgaben_df_display.columns = ["Datum", "Kategorie", "Betrag", "Beschreibung"]
     ausgaben_df_display.index = range(1, len(ausgaben_df_display) + 1)
-    gesamt = ausgaben_df_display["betrag"].sum()
+
+    # Gesamtsumme anzeigen
+    gesamt = ausgaben_df_display["Betrag"].sum()
     st.metric("💸 Gesamtausgaben", f"{gesamt:.2f} CHF")
+
+    # Tabelle anzeigen
     st.dataframe(ausgaben_df_display, use_container_width=True)
 
-    # Alle Ausgaben löschen
+    # Button zum Löschen aller Ausgaben
     if st.button("❌ Alle Ausgaben löschen"):
         st.session_state.data_df = data[data['typ'] != 'ausgabe']
         DataManager().save_app_data('data_df', 'data.csv')
@@ -72,4 +79,3 @@ if not ausgaben_df.empty:
         st.rerun()
 else:
     st.info("Noch keine Ausgaben eingetragen.")
-
