@@ -13,6 +13,13 @@ LoginManager().go_to_login('Start.py')
 
 dm = DataManager()
 
+# 🟢 Registrierung des Keys im DataManager
+dm.register_data(
+    session_state_key='kategorien_df',
+    file_name='kategorien.csv',
+    initial_value=pd.DataFrame(columns=["kategorie", "typ", "zeitpunkt"])
+)
+
 # Session-State initialisieren
 if 'kategorien_einnahmen' not in st.session_state:
     st.session_state.kategorien_einnahmen = ["Lohn", "Stipendium"]
