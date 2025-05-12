@@ -66,16 +66,8 @@ st.markdown("---")
 st.subheader("🗑️ Kategorie löschen")
 
 with st.form("kategorie_loeschen"):
-    loesch_typ = st.selectbox(
-        "Art der Kategorie", 
-        ["Einnahme", "Ausgabe"], 
-        key="loesch_typ"
-    )
-    # Manuelles Neuladen, wenn die Auswahl geändert wird
-    if st.session_state.get("loesch_typ_last") != loesch_typ:
-        st.session_state["loesch_typ_last"] = loesch_typ
-        st.experimental_rerun()
-
+    # DIREKT den Wert aus der Selectbox nutzen!
+    loesch_typ = st.selectbox("Art der Kategorie", ["Einnahme", "Ausgabe"])
 
     # Richtige Kategorien abhängig von der Auswahl
     if loesch_typ == "Einnahme":
