@@ -13,8 +13,8 @@ LoginManager().go_to_login('Start.py')
 
 # ====== App-Daten laden ======
 DataManager().load_app_data(
-    session_state_key='ausgaben_df', 
-    file_name='ausgaben.csv', 
+    session_state_key='data_df', 
+    file_name='data.csv', 
     initial_value=pd.DataFrame(), 
     parse_dates=['timestamp']
 )
@@ -37,7 +37,7 @@ with st.form("ausgaben_formular"):
 
     if abschicken and betrag > 0:
         neue_ausgabe = {
-            "typ": "Ausgabe",
+            "typ": "ausgabe",
             "kategorie": kategorie,
             "betrag": betrag,
             "beschreibung": beschreibung,
@@ -72,3 +72,4 @@ if not ausgaben_df.empty:
         st.rerun()
 else:
     st.info("Noch keine Ausgaben eingetragen.")
+
