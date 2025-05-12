@@ -9,33 +9,31 @@ st.set_page_config(page_title="Statistiken", page_icon="📊")
 from utils.login_manager import LoginManager
 from utils.data_manager import DataManager
 from utils.helpers import ch_now
-LoginManager().go_to_login('Start.py') 
 
-# ====== End Login Block ======
+LoginManager().go_to_login('Start.py')
+
+# ====== Daten korrekt laden ======
+dm = DataManager()
+dm.load_app_data(
+    session_state_key='data_df',
+    file_name='data.csv',
+    initial_value=pd.DataFrame(),
+    parse_dates=['timestamp']
+)
+
+data = st.session_state.get('data_df', pd.DataFrame())
+
+# Einnahmen, Ausgaben, Fixkosten sauber aus dem gemeinsamen DataFrame filtern
+df_einnahmen = data[data['typ'] == 'einnahme'].copy()
+df_ausgaben = data[data['typ'] == 'ausgabe'].copy()
+df_fixkosten = data[data['typ'] == 'fixkosten'].copy()
+
+# Spalte 'timestamp' in 'Datum' umbenennen für Kompatibilität
+for df in [df_einnahmen, df_ausgaben, df_fixkosten]:
+    if 'timestamp' in df.columns:
+        df['Datum'] = pd.to_datetime(df['timestamp'], errors='coerce')
 
 st.title("📊 Statistiken")
-
-# ----------------------------------------
-# Sicherstellen, dass Daten vorhanden sind
-# ----------------------------------------
-if 'einnahmen' not in st.session_state:
-    st.session_state.einnahmen = []
-if 'ausgaben' not in st.session_state:
-    st.session_state.ausgaben = []
-if 'fixkosten' not in st.session_state:
-    st.session_state.fixkosten = []
-
-# ----------------------------------------
-# Daten vorbereiten
-# ----------------------------------------
-df_einnahmen = pd.DataFrame(st.session_state.einnahmen)
-df_ausgaben = pd.DataFrame(st.session_state.ausgaben)
-df_fixkosten = pd.DataFrame(st.session_state.fixkosten)
-
-# Datum in datetime-Format umwandeln (nur wenn Spalte vorhanden)
-for df in [df_einnahmen, df_ausgaben, df_fixkosten]:
-    if 'Datum' in df.columns:
-        df['Datum'] = pd.to_datetime(df['Datum'], errors='coerce')
 
 # ----------------------------------------
 # Monat-Auswahl vorbereiten
@@ -50,7 +48,7 @@ if daten_quellen:
     alle_monate = alle_monate.dt.to_period('M').sort_values().unique()
     alle_monate_str = [str(monat) for monat in alle_monate]
 else:
-    st.warning("Noch keine Einnahmen oder Ausgaben/Fixkosten vorhanden.")
+    st.warning("Noch keine Einnahmen, Ausgaben oder Fixkosten vorhanden.")
     st.stop()
 
 aktueller_monat = datetime.now().strftime('%Y-%m')
@@ -71,12 +69,12 @@ df_ausgaben_monat = df_ausgaben[(df_ausgaben['Datum'] >= monat_start) & (df_ausg
 df_fixkosten_monat = df_fixkosten[(df_fixkosten['Datum'] >= monat_start) & (df_fixkosten['Datum'] <= monat_ende)] if 'Datum' in df_fixkosten.columns else pd.DataFrame()
 
 # ----------------------------------------
-# Kuchendiagramm: Einnahmen
+# 📥 Kuchendiagramm: Einnahmen
 # ----------------------------------------
 st.subheader(f"📥 Einnahmen im {ausgewaehlter_monat}")
 if not df_einnahmen_monat.empty:
     gruppiert_einnahmen = df_einnahmen_monat.groupby("Kategorie")["Betrag (CHF)"].sum().reset_index()
-    
+
     fig_e = go.Figure(
         data=[go.Pie(
             labels=gruppiert_einnahmen["Kategorie"],
@@ -98,7 +96,7 @@ else:
     st.info("Keine Einnahmen für diesen Monat.")
 
 # ----------------------------------------
-# Kuchendiagramm: Ausgaben (inkl. Fixkosten)
+# 📤 Kuchendiagramm: Ausgaben (inkl. Fixkosten)
 # ----------------------------------------
 st.subheader(f"📤 Ausgaben (inkl. Fixkosten) im {ausgewaehlter_monat}")
 
@@ -112,7 +110,7 @@ df_gesamtausgaben_monat = pd.concat([df_ausgaben_monat, df_fixkosten_monat], ign
 
 if not df_gesamtausgaben_monat.empty:
     gruppiert_ausgaben = df_gesamtausgaben_monat.groupby("Kategorie")["Betrag (CHF)"].sum().reset_index()
-    
+
     fig_a = go.Figure(
         data=[go.Pie(
             labels=gruppiert_ausgaben["Kategorie"],
