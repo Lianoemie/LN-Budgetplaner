@@ -1,4 +1,6 @@
 import streamlit as st
+import pandas as pd
+
 
 st.set_page_config(page_title="Kategorien verwalten", page_icon="🗂️")
 
@@ -29,22 +31,33 @@ with st.form("neue_kategorie"):
     kategorie_typ = st.selectbox("Für was ist die Kategorie gedacht?", ["Einnahme", "Ausgabe"])
     hinzufügen = st.form_submit_button("Hinzufügen")
 
-    if hinzufügen:
-        if not kategorie:
-            st.error("Bitte gib einen Namen ein.")
+if hinzufügen:
+    if not kategorie:
+        st.error("Bitte gib einen Namen ein.")
+    else:
+        liste = (
+            st.session_state.kategorien_einnahmen 
+            if kategorie_typ == "Einnahme" 
+            else st.session_state.kategorien_ausgaben
+        )
+
+        if kategorie in liste:
+            st.warning("Diese Kategorie existiert bereits.")
         else:
-            liste = st.session_state.kategorien_einnahmen if kategorie_typ == "Einnahme" else st.session_state.kategorien_ausgaben
-            if kategorie in liste:
-                st.warning("Diese Kategorie existiert bereits.")
-            else:
-                liste.append(kategorie)
-                result = {
-                    "kategorie": kategorie,
-                    "typ": kategorie_typ,
-                    "zeitpunkt": ch_now()  # Annahme: gibt aktuellen Timestamp als String zurück
-                }
-                dm.append_record(session_state_key='kategorien_df', record_dict=result)
-                st.success(f"Kategorie '{kategorie}' als {kategorie_typ} hinzugefügt.")
+            liste.append(kategorie)
+            
+            # Sicherstellen, dass 'kategorien_df' im Session State existiert
+            if "kategorien_df" not in st.session_state:
+                st.session_state["kategorien_df"] = pd.DataFrame(columns=["kategorie", "typ", "zeitpunkt"])
+
+            result = {
+                "kategorie": kategorie,
+                "typ": kategorie_typ,
+                "zeitpunkt": ch_now()  # Gibt aktuellen Timestamp als String zurück
+            }
+
+            dm.append_record(session_state_key='kategorien_df', record_dict=result)
+            st.success(f"Kategorie '{kategorie}' als {kategorie_typ} hinzugefügt.")
 
 # -----------------------------
 # Kategorie löschen
