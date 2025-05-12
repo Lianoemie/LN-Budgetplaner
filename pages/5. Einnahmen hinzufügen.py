@@ -8,15 +8,24 @@ st.set_page_config(page_title="Einnahmen hinzufügen", page_icon="💰")
 from utils.login_manager import LoginManager
 from utils.data_manager import DataManager
 from utils.helpers import ch_now
+
 LoginManager().go_to_login('Start.py') 
 
-# ====== End Login Block ======
+# ====== App-Daten laden ======
+DataManager().load_app_data(
+    session_state_key='data_df', 
+    file_name='data.csv', 
+    initial_value=pd.DataFrame(), 
+    parse_dates=['timestamp']
+)
 
+if 'kategorien_einnahmen' not in st.session_state:
+    st.session_state.kategorien_einnahmen = ["Lohn", "Stipendium"]
 
 st.title("💰 Einnahmen hinzufügen")
 
 # ----------------------------------------
-# Neue Einnahme erfassen
+# Neue Einnahme direkt speichern
 # ----------------------------------------
 with st.form("einnahmen_formular"):
     st.subheader("Neue Einnahme erfassen")
@@ -42,36 +51,24 @@ with st.form("einnahmen_formular"):
         st.rerun()
 
 # ----------------------------------------
-# Übersicht und Löschfunktionen
+# Übersicht der gespeicherten Einnahmen
 # ----------------------------------------
-if st.session_state.einnahmen:
+data = st.session_state.get('data_df', pd.DataFrame())
+einnahmen_df = data[data['typ'] == 'einnahme']
+
+if not einnahmen_df.empty:
     st.subheader("📋 Übersicht deiner Einnahmen")
-
-    for i, eintrag in enumerate(st.session_state.einnahmen):
-        cols = st.columns([3, 2, 3, 1])
-        cols[0].markdown(f"**{eintrag['Kategorie']}**")
-        cols[1].markdown(f"{eintrag['Betrag (CHF)']:.2f} CHF")
-        cols[2].markdown(eintrag.get("Beschreibung", "") + f" – {eintrag['Datum']}")
-        if cols[3].button("🗑️", key=f"loeschen_{i}"):
-            st.session_state.einnahmen.pop(i)
-            st.success("Einnahme gelöscht.")
-            st.rerun()
-
-    st.markdown("---")
-
-    # Gesamtsumme & DataFrame-Tabelle
-    df = pd.DataFrame(st.session_state.einnahmen)
-    df.index = range(1, len(df) + 1)
-    gesamt = df["Betrag (CHF)"].sum()
+    einnahmen_df_display = einnahmen_df.copy()
+    einnahmen_df_display.index = range(1, len(einnahmen_df_display) + 1)
+    gesamt = einnahmen_df_display["betrag"].sum()
     st.metric("💵 Gesamteinnahmen", f"{gesamt:.2f} CHF")
+    st.dataframe(einnahmen_df_display, use_container_width=True)
 
-    st.dataframe(df, use_container_width=True)
-
-    # Button: Alle löschen
+    # Alle Einnahmen löschen
     if st.button("❌ Alle Einnahmen löschen"):
-        st.session_state.einnahmen.clear()
+        st.session_state.data_df = data[data['typ'] != 'einnahme']
+        DataManager().save_app_data('data_df', 'data.csv')
         st.success("Alle Einnahmen wurden gelöscht.")
         st.rerun()
-
 else:
     st.info("Noch keine Einnahmen eingetragen.")
