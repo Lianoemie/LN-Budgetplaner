@@ -8,61 +8,110 @@ import os
 # ====== Login ======
 LoginManager().go_to_login('Start.py')
 
-# Nutzerdaten initialisieren
-if 'users' not in st.session_state:
-    st.session_state.users = {}
+import streamlit as st
+import pandas as pd
+
+# Session State Initialisierung
+if 'name' not in st.session_state:
+    st.session_state.name = ""
+if 'vorname' not in st.session_state:
+    st.session_state.vorname = ""
+if 'email' not in st.session_state:
+    st.session_state.email = ""
+if 'data_df' not in st.session_state:
+    st.session_state.data_df = pd.DataFrame()
+if 'kategorien_einnahmen' not in st.session_state:
+    st.session_state.kategorien_einnahmen = []
+if 'kategorien_ausgaben' not in st.session_state:
+    st.session_state.kategorien_ausgaben = []
 
 st.title("📘 StudiBudget")
 st.header("🧑‍💼 Mein Profil")
 
-# --- Login/E-Mail-Eingabe ---
-st.subheader("Identifikation")
-email = st.text_input("E-Mail", key="profil_email")
+# ----------------------------------------
+# Persönliche Informationen
+# ----------------------------------------
+st.subheader("Persönliche Informationen")
+st.write(f"**Nachname:** {st.session_state.name}")
+st.write(f"**Vorname:** {st.session_state.vorname}")
+st.write(f"**E-Mail:** {st.session_state.email}")
 
-# Benutzerdatensatz initialisieren, wenn E-Mail eingegeben
-if email:
-    if email not in st.session_state.users:
-        st.session_state.users[email] = {
-            "vorname": "",
-            "nachname": "",
-            "fixkosten": [],
-            "kategorien": [],
-            "sparziele": [],
-        }
+with st.expander("Profil bearbeiten"):
+    st.session_state.vorname = st.text_input("Vorname", value=st.session_state.vorname)
+    st.session_state.name = st.text_input("Nachname", value=st.session_state.name)
+    st.session_state.email = st.text_input("E-Mail", value=st.session_state.email)
 
-    user_data = st.session_state.users[email]
+st.divider()
 
-    # --- Profilfelder anzeigen & bearbeiten ---
-    st.subheader("Persönliche Informationen")
-    user_data["vorname"] = st.text_input("Vorname", value=user_data["vorname"])
-    user_data["nachname"] = st.text_input("Nachname", value=user_data["nachname"])
+# ----------------------------------------
+# Fixkosten Übersicht
+# ----------------------------------------
+st.subheader("🏠 Fixkosten")
+fixkosten_df = st.session_state.data_df
+fixkosten_df = fixkosten_df[fixkosten_df["typ"] == "fixkosten"]
 
-    # --- Übersicht: Fixkosten ---
-    st.subheader("🏠 Fixkosten")
-    for eintrag in user_data["fixkosten"]:
-        st.write(f"- {eintrag}")
-    if st.button("Fixkosten bearbeiten ✏️"):
-        st.session_state.current_user_email = email
-        st.switch_page("bearbeiten_fixkosten.py")
+if not fixkosten_df.empty:
+    for _, row in fixkosten_df.iterrows():
+        st.write(f"- {row['kategorie']}: {row['betrag']:.2f} CHF ({row['wiederholung']})")
+else:
+    st.info("Noch keine Fixkosten eingetragen.")
 
-    # --- Übersicht: Kategorien ---
-    st.subheader("📂 Kategorien")
-    for kategorie in user_data["kategorien"]:
-        st.write(f"- {kategorie}")
-    if st.button("Kategorien bearbeiten ✏️"):
-        st.session_state.current_user_email = email
-        st.switch_page("bearbeiten_kategorien.py")
+if st.button("Fixkosten bearbeiten ✏️"):
+    st.switch_page("pages/bearbeiten_fixkosten.py")
 
-    # --- Übersicht: Sparziele ---
-    st.subheader("💰 Sparziele")
-    for ziel in user_data["sparziele"]:
-        st.write(f"- {ziel}")
-    if st.button("Sparziele bearbeiten ✏️"):
-        st.session_state.current_user_email = email
-        st.switch_page("bearbeiten_sparziele.py")
+st.divider()
 
-    # --- Übersicht aller Daten ---
-    st.subheader("📊 Übersicht aller Daten")
-    st.write("**Fixkosten:**", ", ".join(user_data["fixkosten"]))
-    st.write("**Kategorien:**", ", ".join(user_data["kategorien"]))
-    st.write("**Sparziele:**", ", ".join(user_data["sparziele"]))
+# ----------------------------------------
+# Kategorien Übersicht
+# ----------------------------------------
+st.subheader("📂 Kategorien")
+
+st.write("**Einnahmen-Kategorien:**")
+if st.session_state.kategorien_einnahmen:
+    st.write(", ".join(st.session_state.kategorien_einnahmen))
+else:
+    st.info("Noch keine Einnahmen-Kategorien.")
+
+st.write("**Ausgaben-Kategorien:**")
+if st.session_state.kategorien_ausgaben:
+    st.write(", ".join(st.session_state.kategorien_ausgaben))
+else:
+    st.info("Noch keine Ausgaben-Kategorien.")
+
+if st.button("Kategorien bearbeiten ✏️"):
+    st.switch_page("pages/bearbeiten_kategorien.py")
+
+st.divider()
+
+# ----------------------------------------
+# Sparziele Übersicht
+# ----------------------------------------
+st.subheader("💰 Sparziele")
+sparziele_df = st.session_state.data_df
+sparziele_df = sparziele_df[sparziele_df["typ"] == "sparziel"]
+
+if not sparziele_df.empty:
+    for _, row in sparziele_df.iterrows():
+        st.write(f"- {row['name']}: Ziel {row['zielbetrag']:.2f} CHF, Gespart: {row['bisher_gespart']:.2f} CHF, Ziel-Datum: {row['zieldatum']}")
+else:
+    st.info("Noch keine Sparziele vorhanden.")
+
+if st.button("Sparziele bearbeiten ✏️"):
+    st.switch_page("pages/bearbeiten_sparziele.py")
+
+st.divider()
+
+# ----------------------------------------
+# Übersicht aller Daten
+# ----------------------------------------
+st.subheader("📊 Übersicht aller Daten")
+gesamt_fixkosten = fixkosten_df["betrag"].sum() if not fixkosten_df.empty else 0
+gesamt_sparziele = sparziele_df["zielbetrag"].sum() if not sparziele_df.empty else 0
+
+st.metric("💸 Gesamte Fixkosten", f"{gesamt_fixkosten:.2f} CHF")
+st.metric("🎯 Gesamte Sparziele", f"{gesamt_sparziele:.2f} CHF")
+
+if not st.session_state.data_df.empty:
+    st.dataframe(st.session_state.data_df, use_container_width=True)
+else:
+    st.info("Noch keine Transaktionen oder Daten vorhanden.")
