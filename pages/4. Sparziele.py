@@ -8,22 +8,19 @@ st.set_page_config(page_title="Sparziele", page_icon="🎯")
 from utils.login_manager import LoginManager
 from utils.data_manager import DataManager
 from utils.helpers import ch_now
-LoginManager().go_to_login('Start.py') 
+LoginManager().go_to_login('Start.py')
 
-# ====== End Login Block ======
-
-# -------------------------------
-# Session-State initialisieren
-# -------------------------------
-if 'sparziele' not in st.session_state:
-    st.session_state.sparziele = []
-
-# 🛡️ Sicherheits-Check für alte Einträge
-for ziel in st.session_state.sparziele:
-    if "Einzahlungen" not in ziel:
-        ziel["Einzahlungen"] = []
+# ====== App-Daten laden ======
+DataManager().load_app_data(
+    session_state_key='data_df',
+    file_name='data.csv',
+    initial_value=pd.DataFrame(),
+    parse_dates=['timestamp']
+)
 
 st.title("🎯 Sparziele verwalten")
+
+data = st.session_state.get('data_df', pd.DataFrame())
 
 # -----------------------------
 # Neues Sparziel erfassen
@@ -36,24 +33,26 @@ with st.form("sparziel_formular"):
     ziel_datum = st.date_input("Gewünschtes Ziel-Datum", value=datetime.today())
     sparziel_erstellen = st.form_submit_button("Sparziel hinzufügen")
 
-if 'sparziele' not in st.session_state:
-    try:
-        st.session_state.sparziele = DataManager().load_records(session_state_key='sparziele') or []
-    except ValueError:
-        st.session_state.sparziele = []
-
-# Sicherheits-Check für alte Einträge
-for ziel in st.session_state.sparziele:
-    if "Einzahlungen" not in ziel:
-        ziel["Einzahlungen"] = []
-
-
-st.title("🎯 Sparziele verwalten")
+    if sparziel_erstellen and name and zielbetrag > 0:
+        neues_ziel = {
+            "typ": "sparziel",
+            "name": name,
+            "zielbetrag": zielbetrag,
+            "bisher_gespart": aktueller_betrag,
+            "timestamp": str(datetime.today().date()),
+            "zieldatum": str(ziel_datum)
+        }
+        DataManager().append_record('data_df', neues_ziel)
+        st.success("Sparziel gespeichert!")
+        st.rerun()
 
 # -----------------------------
 # Übersicht Sparziele
 # -----------------------------
-if st.session_state.sparziele:
+sparziele = data[data["typ"] == "sparziel"].copy()
+einzahlungen = data[data["typ"] == "einzahlung"].copy()
+
+if not sparziele.empty:
     st.subheader("📋 Übersicht deiner Sparziele")
 
     def motivation(fortschritt):
@@ -68,58 +67,72 @@ if st.session_state.sparziele:
         else:
             return "✨ Jeder Franken zählt – bleib dran!"
 
-    for index, ziel in enumerate(st.session_state.sparziele):
-        st.markdown(f"### 🎯 {ziel['Name']}")
-        zielbetrag = ziel["Zielbetrag (CHF)"]
-        aktuell = ziel["Bisher gespart (CHF)"]
-        rest = max(zielbetrag - aktuell, 0)
-        fortschritt = min(aktuell / zielbetrag, 1.0)
+    for i, ziel in sparziele.iterrows():
+        zielname = ziel['name']
+        zielbetrag = ziel['zielbetrag']
 
-        st.text(f"Gespart: {aktuell:.2f} CHF von {zielbetrag:.2f} CHF")
+        # Zugehörige Einzahlungen summieren
+        einzahlungen_zum_ziel = einzahlungen[einzahlungen["zielname"] == zielname]
+        summe_einzahlungen = einzahlungen_zum_ziel["betrag"].sum()
+        gesamt_gespart = ziel["bisher_gespart"] + summe_einzahlungen
+
+        rest = max(zielbetrag - gesamt_gespart, 0)
+        fortschritt = min(gesamt_gespart / zielbetrag, 1.0)
+
+        st.markdown(f"### 🎯 {zielname}")
+        st.text(f"Gespart: {gesamt_gespart:.2f} CHF von {zielbetrag:.2f} CHF")
         st.progress(fortschritt)
         st.markdown(f"**💸 Noch fehlend:** {rest:.2f} CHF")
         st.markdown(f"{motivation(fortschritt)}")
 
         # Einzahlung hinzufügen
-        with st.expander(f"➕ Einzahlung hinzufügen für {ziel['Name']}"):
+        with st.expander(f"➕ Einzahlung hinzufügen für {zielname}"):
             betrag = st.number_input(
-                f"Betrag einzahlen für '{ziel['Name']}'",
+                f"Betrag einzahlen für '{zielname}'",
                 min_value=0.0,
                 step=10.0,
                 format="%.2f",
-                key=f"einzahlen_{index}"
+                key=f"einzahlen_{i}"
             )
-            if st.button(f"Einzahlen auf '{ziel['Name']}'", key=f"button_{index}"):
+            if st.button(f"Einzahlen auf '{zielname}'", key=f"button_{i}"):
                 if betrag > 0:
-                    ziel["Bisher gespart (CHF)"] += betrag
-                    ziel["Einzahlungen"].append({
-                        "Betrag (CHF)": betrag,
-                        "Datum": datetime.today().strftime("%Y-%m-%d")
-                    })
-                    st.success(f"{betrag:.2f} CHF erfolgreich auf '{ziel['Name']}' eingezahlt!")
+                    einzahlung = {
+                        "typ": "einzahlung",
+                        "zielname": zielname,
+                        "betrag": betrag,
+                        "timestamp": str(datetime.today().date())
+                    }
+                    DataManager().append_record('data_df', einzahlung)
+                    st.success(f"{betrag:.2f} CHF erfolgreich eingezahlt!")
                     st.rerun()
 
-        # Liste der Einzahlungen mit Lösch-Buttons
-        if ziel["Einzahlungen"]:
-            st.markdown(f"**Bisherige Einzahlungen für {ziel['Name']}:**")
-            for einzahl_index, einzahlung in enumerate(ziel["Einzahlungen"]):
+        # Liste der Einzahlungen anzeigen
+        if not einzahlungen_zum_ziel.empty:
+            st.markdown(f"**Bisherige Einzahlungen für {zielname}:**")
+            for j, row in einzahlungen_zum_ziel.iterrows():
                 cols = st.columns([3, 2, 1])
-                cols[0].markdown(f"- {einzahlung['Datum']}")
-                cols[1].markdown(f"{einzahlung['Betrag (CHF)']:.2f} CHF")
-                if cols[2].button("🗑️", key=f"delete_einzahlung_{index}_{einzahl_index}"):
-                    ziel["Bisher gespart (CHF)"] -= einzahlung["Betrag (CHF)"]
-                    ziel["Einzahlungen"].pop(einzahl_index)
+                cols[0].markdown(f"- {row['timestamp']}")
+                cols[1].markdown(f"{row['betrag']:.2f} CHF")
+                if cols[2].button("🗑️", key=f"delete_einzahlung_{i}_{j}"):
+                    st.session_state.data_df.drop(index=j, inplace=True)
+                    DataManager().save_app_data('data_df', 'data.csv')
                     st.success("Einzahlung gelöscht.")
                     st.rerun()
 
-        # Button zum Sparziel löschen
-        if st.button(f"❌ Sparziel '{ziel['Name']}' löschen", key=f"delete_sparziel_{index}"):
-            st.session_state.sparziele.pop(index)
-            st.success(f"Sparziel '{ziel['Name']}' wurde gelöscht.")
+        # Sparziel löschen
+        if st.button(f"❌ Sparziel '{zielname}' löschen", key=f"delete_sparziel_{i}"):
+            # Ziel + zugehörige Einzahlungen löschen
+            st.session_state.data_df = st.session_state.data_df[
+                ~(
+                    ((st.session_state.data_df["typ"] == "sparziel") & (st.session_state.data_df["name"] == zielname)) |
+                    ((st.session_state.data_df["typ"] == "einzahlung") & (st.session_state.data_df["zielname"] == zielname))
+                )
+            ]
+            DataManager().save_app_data('data_df', 'data.csv')
+            st.success(f"Sparziel '{zielname}' wurde gelöscht.")
             st.rerun()
 
         st.divider()
-
 else:
     st.info("Noch keine Sparziele vorhanden. Lege eines an!")
 
