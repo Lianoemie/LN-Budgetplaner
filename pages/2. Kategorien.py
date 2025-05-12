@@ -1,117 +1,101 @@
 import streamlit as st
 import pandas as pd
+from datetime import datetime
+from utils.data_manager import DataManager
+from utils.login_manager import LoginManager
+from utils.helpers import ch_now
 
-
-st.set_page_config(page_title="Kategorien verwalten", page_icon="🗂️")
+st.set_page_config(page_title="Fixkosten", page_icon="📆")
 
 # ====== Start Login Block ======
-from utils.login_manager import LoginManager
-from utils.data_manager import DataManager
-from utils.helpers import ch_now
 LoginManager().go_to_login('Start.py') 
-
 # ====== End Login Block ======
 
-dm = DataManager()
+st.title("📆 Fixkosten verwalten")
 
-# Session-State initialisieren
-if 'kategorien_einnahmen' not in st.session_state:
-    st.session_state.kategorien_einnahmen = ["Lohn", "Stipendium"]
-if 'kategorien_ausgaben' not in st.session_state:
-    st.session_state.kategorien_ausgaben = ["Lebensmittel", "Miete", "Freizeit", "Transport"]
+# DataManager Instanz (SwitchDrive via WebDAV)
+data_manager = DataManager(fs_protocol='webdav', fs_root_folder="BMLD_App_DB")
 
-st.title("🗂️ Kategorien verwalten")
+# Session-State initialisieren und Daten laden
+if 'fixkosten_df' not in st.session_state:
+    data_manager.load_app_data(
+        session_state_key='fixkosten_df',
+        file_name='fixkosten.csv',
+        initial_value=pd.DataFrame(columns=["Kategorie", "Betrag (CHF)", "Wiederholung", "Datum", "Stoppdatum"])
+    )
 
-# -----------------------------
-# Neue Kategorie hinzufügen
-# -----------------------------
-with st.form("neue_kategorie"):
-    st.subheader("➕ Neue Kategorie erfassen")
-    kategorie = st.text_input("Name der neuen Kategorie")
-    kategorie_typ = st.selectbox("Für was ist die Kategorie gedacht?", ["Einnahme", "Ausgabe"])
-    hinzufügen = st.form_submit_button("Hinzufügen")
+# Formular zur Eingabe neuer Fixkosten
+with st.form("fixkosten_formular"):
+    st.subheader("➕ Neue Fixkosten hinzufügen")
+    kategorie = st.text_input("Kategorie (z. B. Miete, Versicherung)")
+    betrag = st.number_input("Monatlicher Betrag (CHF)", min_value=0.0, format="%.2f")
+    wiederholung = st.radio(
+        "Wiederholung auswählen",
+        options=[
+            "Keine Wiederholung", "Wöchentlich", "Zweiwöchentlich",
+            "Monatlich", "Halbjährlich", "Jährlich"
+        ],
+        index=3
+    )
+    datum = st.date_input("Startdatum der Fixkosten", value=datetime.today())
+    stopp_aktiv = st.checkbox("Stoppdatum setzen?")
+    stoppdatum = st.date_input("Stoppdatum auswählen") if stopp_aktiv else None
 
-if hinzufügen:
-    if not kategorie:
-        st.error("Bitte gib einen Namen ein.")
-    else:
-        liste = (
-            st.session_state.kategorien_einnahmen 
-            if kategorie_typ == "Einnahme" 
-            else st.session_state.kategorien_ausgaben
-        )
+    hinzugefügt = st.form_submit_button("Hinzufügen")
 
-        if kategorie in liste:
-            st.warning("Diese Kategorie existiert bereits.")
-        else:
-            liste.append(kategorie)
-            
-            # Sicherstellen, dass 'kategorien_df' im Session State existiert
-            if "kategorien_df" not in st.session_state:
-                st.session_state["kategorien_df"] = pd.DataFrame(columns=["kategorie", "typ", "zeitpunkt"])
-
-            result = {
-                "kategorie": kategorie,
-                "typ": kategorie_typ,
-                "zeitpunkt": ch_now()  # Gibt aktuellen Timestamp als String zurück
-            }
-
-            dm.append_record(session_state_key='kategorien_df', record_dict=result)
-            st.success(f"Kategorie '{kategorie}' als {kategorie_typ} hinzugefügt.")
-
-# -----------------------------
-# Kategorie löschen
-# -----------------------------
-st.markdown("---")
-st.subheader("🗑️ Kategorie löschen")
-
-with st.form("kategorie_loeschen"):
-    # DIREKT den Wert aus der Selectbox nutzen!
-    loesch_typ = st.selectbox("Art der Kategorie", ["Einnahme", "Ausgabe"])
-
-    # Richtige Kategorien abhängig von der Auswahl
-    if loesch_typ == "Einnahme":
-        kategorien = st.session_state.kategorien_einnahmen
-    else:
-        kategorien = st.session_state.kategorien_ausgaben
-
-    if kategorien:
-        auswahl = st.selectbox("Kategorie wählen", kategorien)
-    else:
-        auswahl = None
-        st.info(f"Keine {loesch_typ}-Kategorien vorhanden.")
-
-    loeschen = st.form_submit_button("Löschen")
-
-    if loeschen and auswahl:
-        kategorien.remove(auswahl)
-        # ✅ Optional: Auch die Löschung im gespeicherten DataFrame vermerken
-        result = {
-            "kategorie": auswahl,
-            "typ": loesch_typ,
-            "aktion": "gelöscht",
-            "zeitpunkt": ch_now()
+if hinzugefügt:
+    if kategorie and betrag > 0:
+        neuer_eintrag = {
+            "Kategorie": kategorie,
+            "Betrag (CHF)": betrag,
+            "Wiederholung": wiederholung,
+            "Datum": str(datum),
+            "Stoppdatum": str(stoppdatum) if stoppdatum else None
         }
-        dm.append_record(session_state_key='kategorien_df', record_dict=result)
-        st.success(f"Kategorie '{auswahl}' wurde gelöscht.")
+        # Direkt speichern über DataManager
+        data_manager.append_record(session_state_key='fixkosten_df', record_dict=neuer_eintrag)
+        st.success(f"Fixkosten '{kategorie}' gespeichert.")
         st.rerun()
-
-
-# -----------------------------
-# Kategorien anzeigen (Badges)
-# -----------------------------
-st.markdown("---")
-
-def zeige_kategorien(titel, kategorien, farbe):
-    st.markdown(f"### {titel}")
-    if kategorien:
-        badges = " ".join([
-            f"<span style='background-color:{farbe}; padding:4px 12px; border-radius:20px; color:white; font-size:14px; margin-right:6px'>{k}</span>"
-            for k in kategorien
-        ])
-        st.markdown(badges, unsafe_allow_html=True)
     else:
-        st.write("Noch keine Kategorien vorhanden.")
+        st.warning("Bitte Kategorie und Betrag korrekt ausfüllen.")
 
-zeige_kategorien("📥 Einnahmen-Kategorien", st.session_state.kategorien_einnahmen, farbe="#4CAF50")
-zeige_kategorien("📤 Ausgaben-Kategorien", st.session_state.kategorien_ausgaben, farbe="#F44336")
+# Anzeige der gespeicherten Fixkosten
+df = st.session_state.fixkosten_df
+
+if not df.empty:
+    st.subheader("📋 Deine aktuellen Fixkosten")
+    for i, row in df.iterrows():
+        cols = st.columns([3, 2, 2, 2, 2, 1])
+        cols[0].markdown(f"**{row['Kategorie']}**")
+        cols[1].markdown(f"{row['Betrag (CHF)']:.2f} CHF")
+        cols[2].markdown(row["Wiederholung"])
+        cols[3].markdown(f"📅 Start: {row['Datum']}")
+        stopp = row["Stoppdatum"] if pd.notna(row["Stoppdatum"]) else '❌'
+        cols[4].markdown(f"📅 Stopp: {stopp}")
+
+        if cols[5].button("🗑️", key=f"loeschen_{i}"):
+            df.drop(index=i, inplace=True)
+            df.reset_index(drop=True, inplace=True)
+            data_manager.save_app_data(
+                session_state_key='fixkosten_df',
+                file_name='fixkosten.csv',
+                dataframe=df
+            )
+            st.success("Fixkosten gelöscht.")
+            st.rerun()
+
+    st.markdown("---")
+    gesamt_fixkosten = df["Betrag (CHF)"].sum()
+    st.metric("💸 Gesamte Fixkosten (alle)", f"{gesamt_fixkosten:.2f} CHF")
+
+    if st.button("❌ Alle Fixkosten löschen"):
+        st.session_state.fixkosten_df = pd.DataFrame(columns=df.columns)
+        data_manager.save_app_data(
+            session_state_key='fixkosten_df',
+            file_name='fixkosten.csv',
+            dataframe=st.session_state.fixkosten_df
+        )
+        st.success("Alle Fixkosten wurden gelöscht.")
+        st.rerun()
+else:
+    st.info("Noch keine Fixkosten eingetragen.")
