@@ -23,7 +23,13 @@ DataManager().load_app_data(
 st.title("🏠 Startseite – Studibudget")
 
 # -----------------------------
-# Monat auswählen
+# Session-State initialisieren
+# -----------------------------
+if 'monatliches_budget' not in st.session_state:
+    st.session_state.monatliches_budget = 0.0
+
+# -----------------------------
+# Feste Monatsauswahl (ab Jan 2025)
 # -----------------------------
 st.subheader("📅 Monat auswählen")
 
@@ -38,7 +44,7 @@ monat_start = datetime(jahr, monat, 1)
 monat_ende = datetime(jahr, monat, calendar.monthrange(jahr, monat)[1])
 
 # -----------------------------
-# Budget setzen
+# Monatliches Budget eingeben
 # -----------------------------
 st.subheader("💶 Monatliches Budget")
 
@@ -46,31 +52,30 @@ data = st.session_state.get('data_df', pd.DataFrame())
 budget_df = data[(data['typ'] == 'budget') & (data['monat'] == gewaehlter_monat)]
 
 aktuelles_budget = float(budget_df['budget'].iloc[0]) if not budget_df.empty else 0.0
+st.session_state.monatliches_budget = aktuelles_budget
 
-with st.form("budget_formular"):
-    budget = st.number_input(
-        "Budget für den Monat (CHF)", 
-        min_value=0.0, 
-        value=aktuelles_budget, 
-        step=50.0, 
-        format="%.2f"
-    )
-    speichern = st.form_submit_button("💾 Budget speichern")
-    if speichern:
-        neues_budget = {
-            "typ": "budget",
-            "monat": gewaehlter_monat,
-            "budget": budget,
-            "timestamp": str(ch_now())
-        }
-        # Entferne bestehendes Budget für den Monat, bevor ein neues hinzugefügt wird
-        st.session_state.data_df = data[data[['typ', 'monat']].ne(['budget', gewaehlter_monat]).any(1)]
-        DataManager().append_record('data_df', neues_budget)
-        st.success("Budget gespeichert!")
-        st.rerun()
+st.session_state.monatliches_budget = st.number_input(
+    "Budget für den Monat (CHF)",
+    min_value=0.0,
+    value=st.session_state.monatliches_budget,
+    step=50.0,
+    format="%.2f"
+)
+
+if st.button("💾 Budget speichern"):
+    neues_budget = {
+        "typ": "budget",
+        "monat": gewaehlter_monat,
+        "budget": st.session_state.monatliches_budget,
+        "timestamp": str(ch_now())
+    }
+    st.session_state.data_df = data[~((data['typ'] == 'budget') & (data['monat'] == gewaehlter_monat))]
+    DataManager().append_record('data_df', neues_budget)
+    st.success("Budget gespeichert!")
+    st.rerun()
 
 # -----------------------------
-# Fixkosten für den Monat berechnen
+# Fixkosten filtern (Start- und Enddatum prüfen)
 # -----------------------------
 fixkosten_df = data[data['typ'] == 'fixkosten'].copy()
 
@@ -89,19 +94,20 @@ else:
 st.metric("📋 Fixkosten im gewählten Monat", f"{gesamt_fixkosten:.2f} CHF")
 
 # -----------------------------
-# Einnahmen & Ausgaben im Monat berechnen
+# Einnahmen & Ausgaben filtern
 # -----------------------------
-einnahmen_df = data[data['typ'] == 'einnahme'].copy()
-ausgaben_df = data[data['typ'] == 'ausgabe'].copy()
-
-def filter_monat(df):
-    if df.empty:
+def berechne_summe(df, typ):
+    df_filtered = df[df['typ'] == typ].copy()
+    if df_filtered.empty:
         return 0.0
-    df["timestamp"] = pd.to_datetime(df["timestamp"])
-    return df[(df["timestamp"] >= monat_start) & (df["timestamp"] <= monat_ende)]["betrag"].sum()
+    df_filtered["timestamp"] = pd.to_datetime(df_filtered["timestamp"])
+    return df_filtered[
+        (df_filtered["timestamp"] >= monat_start) & 
+        (df_filtered["timestamp"] <= monat_ende)
+    ]["betrag"].sum()
 
-gesamt_einnahmen = filter_monat(einnahmen_df)
-gesamt_ausgaben = filter_monat(ausgaben_df)
+gesamt_einnahmen = berechne_summe(data, 'einnahme')
+gesamt_ausgaben = berechne_summe(data, 'ausgabe')
 
 col1, col2 = st.columns(2)
 with col1:
@@ -110,8 +116,21 @@ with col2:
     st.metric("📉 Gesamtausgaben", f"{gesamt_ausgaben:.2f} CHF")
 
 # -----------------------------
-# Budget-Übersicht
+# Navigation (Buttons)
 # -----------------------------
-verfügbares_budget = budget - gesamt_fixkosten - gesamt_ausgaben + gesamt_einnahmen
-st.subheader("📊 Budgetübersicht")
-st.metric("💰 Verfügbares Budget", f"{verfügbares_budget:.2f} CHF")
+st.markdown("---")
+col1, col2 = st.columns(2)
+
+with col1:
+    if st.button("➕ Einmalige Ausgabe"):
+        st.switch_page("6. Ausgaben hinzufügen")
+
+with col2:
+    if st.button("📈 Statistik"):
+        st.switch_page("7. Statistik")
+
+if st.button("💡 Spartipps"):
+    st.switch_page("8. Spartipps")
+
+if st.button("👤 Mein Profil"):
+    st.switch_page("9. Mein Profil")
