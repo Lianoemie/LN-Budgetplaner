@@ -32,31 +32,20 @@ st.subheader("👤 Persönliche Informationen")
 
 import streamlit as st
 
-# Session State Initialisierung
-if 'voller_name' not in st.session_state:
-    st.session_state.voller_name = ""
-if 'email' not in st.session_state:
-    st.session_state.email = ""
-
-st.title("📘 StudiBudget")
-st.header("🧑‍💼 Mein Profil")
-
-# ----------------------------------------
-# Persönliche Informationen
-# ----------------------------------------
 st.subheader("👤 Persönliche Informationen")
 
-# Namen aufteilen (Standard: erster Teil = Vorname, letzter Teil = Nachname)
-name_parts = st.session_state.voller_name.strip().split()
-vorname = name_parts[0] if name_parts else ""
-nachname = name_parts[-1] if len(name_parts) > 1 else ""
-
-st.write(f"**Vorname:** {vorname}")
-st.write(f"**Nachname:** {nachname}")
+# Anzeige
+st.write(f"**Nachname:** {st.session_state.name}")
+st.write(f"**Vorname:** {st.session_state.vorname}")
 st.write(f"**E-Mail:** {st.session_state.email}")
 
+# Bearbeitung
 with st.expander("📋 Profil bearbeiten"):
-    st.session_state.voller_name = st.text_input("Voller Name (z.B. Max Mustermann)", value=st.session_state.voller_name)
+    col1, col2 = st.columns(2)
+    with col1:
+        st.session_state.vorname = st.text_input("Vorname", value=st.session_state.vorname)
+    with col2:
+        st.session_state.name = st.text_input("Nachname", value=st.session_state.name)
     st.session_state.email = st.text_input("E-Mail", value=st.session_state.email)
 
 
