@@ -15,10 +15,19 @@ LoginManager().go_to_login('Start.py')
 st.title("📆 Fixkosten verwalten")
 
 # -------------------------------------
-# Session-State initialisieren
+# DataManager Initialisierung
+# -------------------------------------
+data_manager = DataManager(fs_protocol='webdav', fs_root_folder="BMLD_App_DB")
+
+# -------------------------------------
+# Fixkosten aus persistentem Speicher laden
 # -------------------------------------
 if 'fixkosten' not in st.session_state:
-    st.session_state.fixkosten = []
+    data_manager.load_app_data(
+        session_state_key='fixkosten',
+        file_name='fixkosten.csv',
+        initial_value=[],
+    )
 
 # 🔐 Sicherheits-Update für ältere Einträge
 for eintrag in st.session_state.fixkosten:
