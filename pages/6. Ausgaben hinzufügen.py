@@ -37,11 +37,11 @@ with st.form("ausgaben_formular"):
 
     if abschicken and betrag > 0:
         neue_ausgabe = {
-            "Typ": "Ausgabe",
-            "Kategorie": kategorie,
-            "Betrag": betrag,
-            "Beschreibung": beschreibung,
-            "Timestamp": str(datum)
+            "typ": "Ausgabe",
+            "kategorie": kategorie,
+            "betrag": betrag,
+            "beschreibung": beschreibung,
+            "timestamp": str(datum)
         }
         DataManager().append_record(
             session_state_key='data_df',
