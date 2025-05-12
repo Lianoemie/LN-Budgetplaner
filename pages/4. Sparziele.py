@@ -14,10 +14,14 @@ LoginManager().go_to_login('Start.py')
 # Session-State initialisieren
 # -------------------------------
 if 'sparziele' not in st.session_state:
+    data_manager = DataManager()
     try:
-        st.session_state.sparziele = DataManager().load_records(session_state_key='sparziele') or []
+        st.session_state.sparziele = data_manager.load_records(session_state_key='sparziele')
     except ValueError:
+        # Initialisierung für append_record erforderlich
         st.session_state.sparziele = []
+        data_manager.save_records(session_state_key='sparziele', records=[])
+
 
 # Sicherheits-Check für alte Einträge
 for ziel in st.session_state.sparziele:
