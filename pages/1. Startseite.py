@@ -49,7 +49,14 @@ monat_ende = datetime(jahr, monat, calendar.monthrange(jahr, monat)[1])
 st.subheader("💶 Monatliches Budget")
 
 data = st.session_state.get('data_df', pd.DataFrame())
-budget_df = data[(data['typ'] == 'budget') & (data['monat'] == gewaehlter_monat)]
+
+# Debug-Ausgabe zur Kontrolle der Spalten
+st.write("📄 Verfügbare Spalten im DataFrame:", list(data.columns))
+
+if {'typ', 'monat'}.issubset(data.columns):
+    budget_df = data[(data['typ'] == 'budget') & (data['monat'] == gewaehlter_monat)]
+else:
+    budget_df = pd.DataFrame()
 
 aktuelles_budget = float(budget_df['budget'].iloc[0]) if not budget_df.empty else 0.0
 st.session_state.monatliches_budget = aktuelles_budget
@@ -69,22 +76,28 @@ if st.button("💾 Budget speichern"):
         "budget": st.session_state.monatliches_budget,
         "timestamp": str(ch_now())
     }
-    st.session_state.data_df = data[~((data['typ'] == 'budget') & (data['monat'] == gewaehlter_monat))]
+    if {'typ', 'monat'}.issubset(data.columns):
+        st.session_state.data_df = data[~((data['typ'] == 'budget') & (data['monat'] == gewaehlter_monat))]
+    else:
+        st.session_state.data_df = data  # Falls Spalten fehlen, einfach übernehmen
     DataManager().append_record('data_df', neues_budget)
     st.success("Budget gespeichert!")
     st.rerun()
 
 # -----------------------------
-# Fixkosten filtern (Start- und Enddatum prüfen)
+# Fixkosten filtern
 # -----------------------------
-fixkosten_df = data[data['typ'] == 'fixkosten'].copy()
+if 'typ' in data.columns:
+    fixkosten_df = data[data['typ'] == 'fixkosten'].copy()
+else:
+    fixkosten_df = pd.DataFrame()
 
 if not fixkosten_df.empty:
     fixkosten_df["timestamp"] = pd.to_datetime(fixkosten_df["timestamp"])
     fixkosten_df["stoppdatum"] = pd.to_datetime(fixkosten_df["stoppdatum"], errors='coerce')
 
     aktiv_fixkosten = fixkosten_df[
-        (fixkosten_df["timestamp"] <= monat_ende) & 
+        (fixkosten_df["timestamp"] <= monat_ende) &
         (fixkosten_df["stoppdatum"].isna() | (fixkosten_df["stoppdatum"] >= monat_start))
     ]
     gesamt_fixkosten = aktiv_fixkosten["betrag"].sum()
@@ -97,12 +110,14 @@ st.metric("📋 Fixkosten im gewählten Monat", f"{gesamt_fixkosten:.2f} CHF")
 # Einnahmen & Ausgaben filtern
 # -----------------------------
 def berechne_summe(df, typ):
+    if 'typ' not in df.columns:
+        return 0.0
     df_filtered = df[df['typ'] == typ].copy()
     if df_filtered.empty:
         return 0.0
     df_filtered["timestamp"] = pd.to_datetime(df_filtered["timestamp"])
     return df_filtered[
-        (df_filtered["timestamp"] >= monat_start) & 
+        (df_filtered["timestamp"] >= monat_start) &
         (df_filtered["timestamp"] <= monat_ende)
     ]["betrag"].sum()
 
