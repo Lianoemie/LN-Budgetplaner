@@ -13,8 +13,8 @@ LoginManager().go_to_login('Start.py')
 
 # ====== App-Daten laden ======
 DataManager().load_app_data(
-    session_state_key='einnahmen_df', 
-    file_name='einnahmen.csv', 
+    session_state_key='data_df', 
+    file_name='data.csv', 
     initial_value=pd.DataFrame(), 
     parse_dates=['timestamp']
 )
