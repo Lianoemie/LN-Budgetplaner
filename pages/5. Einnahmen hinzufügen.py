@@ -12,13 +12,6 @@ LoginManager().go_to_login('Start.py')
 
 # ====== End Login Block ======
 
-# ----------------------------------------
-# Session-State initialisieren
-# ----------------------------------------
-if 'einnahmen' not in st.session_state:
-    st.session_state.einnahmen = []
-if 'kategorien_einnahmen' not in st.session_state:
-    st.session_state.kategorien_einnahmen = ["Lohn", "Stipendium"]
 
 st.title("💰 Einnahmen hinzufügen")
 
@@ -33,25 +26,21 @@ with st.form("einnahmen_formular"):
     datum = st.date_input("Datum", value=datetime.today())
     abschicken = st.form_submit_button("Hinzufügen")
 
-if st.button("💾 Einnahmen speichern"):
-    if st.session_state.einnahmen:
-        for einnahme in st.session_state.einnahmen:
-            result = {
-                "typ": "einnahme",
-                "kategorie": einnahme["Kategorie"],
-                "betrag": einnahme["Betrag (CHF)"],
-                "beschreibung": einnahme.get("Beschreibung", ""),
-                "timestamp": einnahme["Datum"]
-            }
-            DataManager().append_record(
-                session_state_key='data_df',
-                record_dict=result
-            )
-        st.session_state.einnahmen.clear()
-        st.success("Einnahmen gespeichert!")
+    if abschicken and betrag > 0:
+        neue_einnahme = {
+            "typ": "einnahme",
+            "kategorie": kategorie,
+            "betrag": betrag,
+            "beschreibung": beschreibung,
+            "timestamp": str(datum)
+        }
+        DataManager().append_record(
+            session_state_key='data_df',
+            record_dict=neue_einnahme
+        )
+        st.success("Einnahme gespeichert!")
         st.rerun()
-    else:
-        st.warning("Keine Einnahmen zum Speichern vorhanden.")
+
 # ----------------------------------------
 # Übersicht und Löschfunktionen
 # ----------------------------------------
