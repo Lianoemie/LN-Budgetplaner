@@ -74,7 +74,6 @@ if st.button("💾 Budget speichern"):
     st.success("Budget gespeichert!")
     st.rerun()
 
-
 # -----------------------------
 # Fixkosten filtern
 # -----------------------------
@@ -84,8 +83,18 @@ else:
     fixkosten_df = pd.DataFrame()
 
 if not fixkosten_df.empty:
-    fixkosten_df["timestamp"] = pd.to_datetime(fixkosten_df["timestamp"])
-    fixkosten_df["stoppdatum"] = pd.to_datetime(fixkosten_df["stoppdatum"], errors='coerce')
+    # Fehlerresistente Konvertierung
+    fixkosten_df["timestamp"] = pd.to_datetime(fixkosten_df["timestamp"], errors='coerce')
+    fixkosten_df["stoppdatum"] = pd.to_datetime(fixkosten_df.get("stoppdatum"), errors='coerce')
+
+    # Optional: Warnung bei ungültigen Zeitstempeln
+    invalid_timestamps = fixkosten_df[fixkosten_df["timestamp"].isna()]
+    if not invalid_timestamps.empty:
+        st.warning("⚠️ Ungültige Zeitstempel in den Fixkosten gefunden (werden ignoriert):")
+        st.write(invalid_timestamps)
+
+    # Nur gültige Einträge berücksichtigen
+    fixkosten_df = fixkosten_df[fixkosten_df["timestamp"].notna()]
 
     aktiv_fixkosten = fixkosten_df[
         (fixkosten_df["timestamp"] <= monat_ende) &
@@ -106,7 +115,8 @@ def berechne_summe(df, typ):
     df_filtered = df[df['typ'] == typ].copy()
     if df_filtered.empty:
         return 0.0
-    df_filtered["timestamp"] = pd.to_datetime(df_filtered["timestamp"])
+    df_filtered["timestamp"] = pd.to_datetime(df_filtered["timestamp"], errors='coerce')
+    df_filtered = df_filtered[df_filtered["timestamp"].notna()]
     return df_filtered[
         (df_filtered["timestamp"] >= monat_start) &
         (df_filtered["timestamp"] <= monat_ende)
