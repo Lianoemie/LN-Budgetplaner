@@ -14,7 +14,7 @@ LoginManager().go_to_login('Start.py')
 
 # ====== Daten laden ======
 dm = DataManager()
-dm.load_app_data(
+dm.load_user_data(
     session_state_key='data_df',
     file_name='data.csv',
     initial_value=pd.DataFrame(),

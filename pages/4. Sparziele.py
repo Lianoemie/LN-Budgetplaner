@@ -11,7 +11,7 @@ from utils.helpers import ch_now
 LoginManager().go_to_login('Start.py')
 
 # ====== App-Daten laden ======
-DataManager().load_app_data(
+DataManager().load_user_data(
     session_state_key='data_df',
     file_name='data.csv',
     initial_value=pd.DataFrame(),
