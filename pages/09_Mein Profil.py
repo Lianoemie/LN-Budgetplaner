@@ -97,19 +97,3 @@ else:
 if st.button("Sparziele bearbeiten ✏️"):
     st.switch_page("pages/bearbeiten_sparziele.py")
 
-st.divider()
-
-# ----------------------------------------
-# Übersicht aller Daten
-# ----------------------------------------
-st.subheader("📊 Übersicht aller Daten")
-gesamt_fixkosten = fixkosten_df["betrag"].sum() if not fixkosten_df.empty else 0
-gesamt_sparziele = sparziele_df["zielbetrag"].sum() if not sparziele_df.empty else 0
-
-st.metric("💸 Gesamte Fixkosten", f"{gesamt_fixkosten:.2f} CHF")
-st.metric("🎯 Gesamte Sparziele", f"{gesamt_sparziele:.2f} CHF")
-
-if not st.session_state.data_df.empty:
-    st.dataframe(st.session_state.data_df, use_container_width=True)
-else:
-    st.info("Noch keine Transaktionen oder Daten vorhanden.")
