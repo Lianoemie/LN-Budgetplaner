@@ -21,9 +21,9 @@ data_manager.load_user_data(
 
 # --- Welcome Page ---
 st.title('Studibudget 📅')
-
 st.markdown("""
 # Willkommen bei **Studibudget** 🎉
+
 
 Schön, dass du hier bist!  
 **Studibudget** hilft dir dabei, deine **Einnahmen**, **Ausgaben** und **Sparziele** einfach und strukturiert zu verwalten – damit du jederzeit den Überblick über deine Finanzen behältst.
