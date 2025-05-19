@@ -32,8 +32,7 @@ st.subheader("👤 Persönliche Informationen")
 
 
 # Anzeige
-st.write(f"**Nachname:** {st.session_state.name}")
-st.write(f"**Vorname:** {st.session_state.vorname}")
+st.write(f"**Name:** {st.session_state.vorname} {st.session_state.name}")
 st.write(f"**E-Mail:** {st.session_state.email}")
 
 # Bearbeitung
