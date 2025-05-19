@@ -55,7 +55,7 @@ else:
     st.info("Noch keine Fixkosten eingetragen.")
 
 if st.button("Fixkosten bearbeiten ✏️"):
-    st.switch_page("pages/03_fixkosten.py")
+    st.switch_page("pages/03_Fixkosten.py")
 
 st.divider()
 
@@ -77,7 +77,7 @@ else:
     st.info("Noch keine Ausgaben-Kategorien.")
 
 if st.button("Kategorien bearbeiten ✏️"):
-    st.switch_page("pages/02_kategorien.py")
+    st.switch_page("pages/02_Kategorien.py")
 
 st.divider()
 
@@ -95,5 +95,5 @@ else:
     st.info("Noch keine Sparziele vorhanden.")
 
 if st.button("Sparziele bearbeiten ✏️"):
-    st.switch_page("pages/04_sparziele.py")
+    st.switch_page("pages/04_Sparziele.py")
 
