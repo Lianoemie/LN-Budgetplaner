@@ -37,11 +37,7 @@ st.write(f"**E-Mail:** {st.session_state.email}")
 
 # Bearbeitung
 with st.expander("📋 Profil bearbeiten"):
-    col1, col2 = st.columns(2)
-    with col1:
-        st.session_state.vorname = st.text_input("Vorname", value=st.session_state.vorname)
-    with col2:
-        st.session_state.name = st.text_input("Nachname", value=st.session_state.name)
+    st.session_state.name = st.text_input("Name", value=st.session_state.name)
     st.session_state.email = st.text_input("E-Mail", value=st.session_state.email)
 
 
