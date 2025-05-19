@@ -19,6 +19,13 @@ DataManager().load_user_data(
     initial_value=pd.DataFrame(),
     parse_dates=['timestamp']
 )
+initial_df = pd.DataFrame(columns=["timestamp", "typ", "monat", "kategorie", "beschreibung", "betrag", "budget", "stoppdatum"])
+DataManager().load_user_data(
+    session_state_key='data_df',
+    file_name='data.csv',
+    initial_value=initial_df,
+    parse_dates=['timestamp', 'stoppdatum']
+)
 
 st.title("🏠 Startseite – Studibudget")
 
