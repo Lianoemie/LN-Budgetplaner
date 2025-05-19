@@ -101,11 +101,11 @@ else:
     st.info("Keine Einnahmen für diesen Monat.")
 
 # ----------------------------------------
-# 📤 Kuchendiagramm: Ausgaben (inkl. Fixkosten)
+# 📤 Kuchendiagramm & Ausgabenliste
 # ----------------------------------------
 st.subheader(f"📤 Ausgaben (inkl. Fixkosten) im {ausgewaehlter_monat}")
 
-# Fixkosten: Kategorie auf 'Fixkosten' setzen, falls leer
+# Fixkosten-Kategorie ergänzen
 if not df_fixkosten_monat.empty:
     df_fixkosten_monat = df_fixkosten_monat.copy()
     df_fixkosten_monat['Kategorie'] = df_fixkosten_monat['Kategorie'].fillna('Fixkosten')
@@ -128,10 +128,14 @@ if not df_gesamtausgaben_monat.empty:
     fig_a.update_layout(title="Ausgaben nach Kategorie (inkl. Fixkosten)")
     st.plotly_chart(fig_a, use_container_width=True)
 
+    # 💬 Einzelne Ausgaben anzeigen
+    st.markdown("#### 💬 Einzelne Ausgaben im Monat")
     st.dataframe(
         df_gesamtausgaben_monat[['Datum', 'Kategorie', 'Betrag (CHF)', 'Beschreibung']],
         use_container_width=True
     )
+
     st.metric("💸 Gesamtausgaben (inkl. Fixkosten)", f"{df_gesamtausgaben_monat['Betrag (CHF)'].sum():.2f} CHF")
 else:
     st.info("Keine Ausgaben/Fixkosten für diesen Monat.")
+
