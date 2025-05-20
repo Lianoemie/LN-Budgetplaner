@@ -97,16 +97,18 @@ if not einnahmen_df.empty:
 
     # Tabellenzeilen mit 🗑️
     for idx, row in einnahmen_df.iterrows():
-        cols = st.columns([2, 2, 2, 3, 1])
-        cols[0].write(row["timestamp"].date())
-        cols[1].write(row["kategorie"])
-        cols[2].write(f"{row['betrag']:.2f} CHF")
-        cols[3].write(row["beschreibung"] if row["beschreibung"] else "-")
-        if cols[4].button("🗑️", key=f"delete_einnahme_{idx}"):
-            st.session_state.data_df.drop(index=row["original_index"], inplace=True)
-            DataManager().save_data("data_df")
-            st.success("Einnahme gelöscht.")
-            st.rerun()
+    cols = st.columns([2, 2, 2, 3, 1])
+    datum_str = row["timestamp"].strftime("%d.%m.%Y")
+    cols[0].markdown(datum_str)
+    cols[1].write(row["kategorie"])
+    cols[2].write(f"{row['betrag']:.2f} CHF")
+    cols[3].write(row["beschreibung"] if row["beschreibung"] else "-")
+    if cols[4].button("🗑️", key=f"delete_einnahme_{idx}"):
+        st.session_state.data_df.drop(index=row["original_index"], inplace=True)
+        DataManager().save_data("data_df")
+        st.success("Einnahme gelöscht.")
+        st.rerun()
+
 
     st.divider()
 
