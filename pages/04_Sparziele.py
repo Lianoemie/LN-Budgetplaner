@@ -49,8 +49,8 @@ with st.form("sparziel_formular"):
 # -----------------------------
 # Übersicht Sparziele
 # -----------------------------
-sparziele = data[data["typ"] == "sparziel"].copy()
-einzahlungen = data[data["typ"] == "einzahlung"].copy()
+sparziele = data[data["typ"] == "sparziel"].copy() if "typ" in data.columns else pd.DataFrame()
+einzahlungen = data[data["typ"] == "einzahlung"].copy() if "typ" in data.columns else pd.DataFrame()
 
 # Sicherheits-Check: Spalte "zielname" ergänzen, falls nicht vorhanden
 if "zielname" not in einzahlungen.columns:
@@ -119,11 +119,11 @@ if not sparziele.empty:
                 cols[1].markdown(f"{row['betrag']:.2f} CHF")
                 if cols[2].button("🗑️", key=f"delete_einzahlung_{i}_{j}"):
                     st.session_state.data_df.drop(index=j, inplace=True)
-                    DataManager().save_app_data('data_df', 'data.csv')
+                    DataManager().save_data("data_df")
                     st.success("Einzahlung gelöscht.")
                     st.rerun()
 
-        # Sparziel löschen (mit Sicherheitsprüfung)
+        # Sparziel löschen (sicher & robust)
         if st.button(f"❌ Sparziel '{zielname}' löschen", key=f"delete_sparziel_{i}"):
             df = st.session_state.data_df
 
@@ -132,14 +132,13 @@ if not sparziele.empty:
                 if col not in df.columns:
                     df[col] = ""
 
-            # Filter anwenden und Daten neu setzen
             mask = ~(
                 ((df["typ"] == "sparziel") & (df["name"] == zielname)) |
                 ((df["typ"] == "einzahlung") & (df["zielname"] == zielname))
             )
             st.session_state.data_df = df[mask]
 
-            DataManager().save_app_data('data_df', 'data.csv')
+            DataManager().save_data("data_df")
             st.success(f"Sparziel '{zielname}' wurde gelöscht.")
             st.rerun()
 
