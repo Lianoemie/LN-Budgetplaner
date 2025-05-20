@@ -70,6 +70,13 @@ st.session_state.monatliches_budget = st.number_input(
     format="%.2f"
 )
 
+if st.button("💡 Budget automatisch berechnen"):
+    vorgeschlagenes_budget = gesamt_einnahmen - gesamt_fixkosten - (0.1 * gesamt_einnahmen)
+    vorgeschlagenes_budget = max(0.0, vorgeschlagenes_budget)  # Kein negatives Budget
+    st.session_state.monatliches_budget = round(vorgeschlagenes_budget, 2)
+    st.success(f"Automatisch berechnetes Budget: {vorgeschlagenes_budget:.2f} CHF")
+
+
 if st.button("💾 Budget speichern"):
     neues_budget = {
         "typ": "budget",
