@@ -55,6 +55,7 @@ with st.form("einnahmen_formular"):
 # ----------------------------------------
 data = st.session_state.get('data_df', pd.DataFrame())
 einnahmen_df = data[data['typ'] == 'einnahme'].copy()
+einnahmen_df = einnahmen_df.sort_values(by="timestamp", ascending=False)
 
 if not einnahmen_df.empty:
     st.subheader("📋 Übersicht deiner Einnahmen")
