@@ -119,7 +119,7 @@ with col5:
 with col6:
     st.markdown(
     f"""
-    <div style="font-size: 16px;">🛒 Dein Budget für diesen Monat</div>
+    <div style="font-size: 15px;">🛒 Dein Budget für diesen Monat</div>
     <div style="font-size: 32px; font-weight: 600; color: red;">{budget_verfuegbar:.2f} CHF</div>
     """,
     unsafe_allow_html=True
