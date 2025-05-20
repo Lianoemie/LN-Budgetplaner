@@ -49,6 +49,9 @@ monat_ende = datetime(jahr, monat, calendar.monthrange(jahr, monat)[1])
 # -----------------------------
 # Monatliches Budget eingeben
 # -----------------------------
+gesamt_einnahmen = berechne_summe(data, 'einnahme')
+gesamt_ausgaben = berechne_summe(data, 'ausgabe')
+
 st.subheader("💶 Monatliches Budget")
 
 data = st.session_state.get('data_df', initial_df)
@@ -136,8 +139,6 @@ def berechne_summe(df, typ):
         (df_filtered["timestamp"] <= monat_ende)
     ]["betrag"].sum()
 
-gesamt_einnahmen = berechne_summe(data, 'einnahme')
-gesamt_ausgaben = berechne_summe(data, 'ausgabe')
 
 col1, col2, col3 = st.columns(3)
 
