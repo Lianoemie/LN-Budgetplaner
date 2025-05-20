@@ -117,7 +117,14 @@ with col5:
     st.metric("💡 Diesen Betrag spare ich", f"{sparbetrag:.2f} CHF")
 
 with col6:
-    st.metric("🛒 Dein Budget für diesen Monat", f"{budget_verfuegbar:.2f} CHF")
+    st.markdown(
+    f"""
+    <div style="font-size: 16px;">🛒 Dein Budget für diesen Monat</div>
+    <div style="font-size: 32px; font-weight: 600; color: red;">{budget_verfuegbar:.2f} CHF</div>
+    """,
+    unsafe_allow_html=True
+)
+
 
 # -----------------------------
 # Navigation (Buttons)
