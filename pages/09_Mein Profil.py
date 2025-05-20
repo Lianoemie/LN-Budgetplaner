@@ -89,8 +89,22 @@ sparziele_df = st.session_state.data_df
 sparziele_df = sparziele_df[sparziele_df["typ"] == "sparziel"]
 
 if not sparziele_df.empty:
+    einzahlungen_df = st.session_state.data_df
+    einzahlungen_df = einzahlungen_df[einzahlungen_df["typ"] == "einzahlung"].copy()
+
     for _, row in sparziele_df.iterrows():
-        st.write(f"- {row['name']}: Ziel {row['zielbetrag']:.2f} CHF, Gespart: {row['bisher_gespart']:.2f} CHF, Ziel-Datum: {row['zieldatum']}")
+        zielname = row["name"]
+        zielbetrag = row["zielbetrag"]
+        startbetrag = row.get("bisher_gespart", 0.0)
+
+        einzahlungen_summe = einzahlungen_df[einzahlungen_df["zielname"] == zielname]["betrag"].sum()
+        gesamt_gespart = startbetrag + einzahlungen_summe
+
+        st.write(f"- {zielname}: Ziel {zielbetrag:.2f} CHF, Gespart: {gesamt_gespart:.2f} CHF, Ziel-Datum: {row['zieldatum']}")
+        if gesamt_gespart >= zielbetrag:
+            st.success(f"🎉 Ziel erreicht: {zielname}!")
+        else:
+            st.warning(f"🚧 Ziel noch nicht erreicht: {zielname}." )
 else:
     st.info("Noch keine Sparziele vorhanden.")
 
