@@ -4,6 +4,9 @@ import pandas as pd
 from utils.data_manager import DataManager
 from utils.login_manager import LoginManager
 
+from utils.style import set_background
+set_background()
+
 # Initialize the data manager
 data_manager = DataManager(fs_protocol='webdav', fs_root_folder="Studibudget")
 

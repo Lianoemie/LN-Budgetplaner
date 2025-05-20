@@ -1,5 +1,8 @@
 import streamlit as st
 import pandas as pd
+from utils.style import set_background
+set_background()
+
 
 st.set_page_config(page_title="Kategorien verwalten", page_icon="🗂️")
 
