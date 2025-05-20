@@ -25,6 +25,22 @@ if 'kategorien_ausgaben' not in st.session_state:
 st.title("💸 Ausgaben hinzufügen")
 
 # ----------------------------------------
+# 📅 Monat auswählen
+# ----------------------------------------
+data = st.session_state.get('data_df', pd.DataFrame())
+data["timestamp"] = pd.to_datetime(data["timestamp"], errors="coerce")
+
+alle_monate = data[data["typ"] == "ausgabe"]["timestamp"].dropna().dt.to_period("M").sort_values().unique()
+alle_monate_str = [str(monat) for monat in alle_monate]
+
+aktueller_monat = datetime.now().strftime("%Y-%m")
+ausgewaehlter_monat = st.selectbox(
+    "Monat auswählen",
+    options=alle_monate_str if alle_monate_str else [aktueller_monat],
+    index=alle_monate_str.index(aktueller_monat) if aktueller_monat in alle_monate_str else 0
+)
+
+# ----------------------------------------
 # Neue Ausgabe direkt speichern
 # ----------------------------------------
 with st.form("ausgaben_formular"):
@@ -51,20 +67,21 @@ with st.form("ausgaben_formular"):
         st.rerun()
 
 # ----------------------------------------
-# Übersicht der gespeicherten Ausgaben
+# Übersicht der Ausgaben im gewählten Monat
 # ----------------------------------------
-data = st.session_state.get('data_df', pd.DataFrame())
-ausgaben_df = data[data['typ'] == 'ausgabe'].copy()
+ausgaben_df = data[
+    (data['typ'] == 'ausgabe') & 
+    (data['timestamp'].dt.to_period("M") == ausgewaehlter_monat)
+].copy()
 
 if not ausgaben_df.empty:
-    st.subheader("📋 Übersicht deiner Ausgaben")
+    st.subheader(f"📋 Ausgaben im Monat {ausgewaehlter_monat}")
 
     # Nach Datum sortieren (neueste zuerst)
     ausgaben_df = ausgaben_df.sort_values(by="timestamp", ascending=False)
 
     # Leere Beschreibungen durch Punkt ersetzen
     ausgaben_df["beschreibung"] = ausgaben_df["beschreibung"].fillna("-")
-
 
     # Originalindex merken für Löschen
     ausgaben_df["original_index"] = ausgaben_df.index
@@ -85,7 +102,7 @@ if not ausgaben_df.empty:
     # Zeilen mit 🗑️
     for idx, row in ausgaben_df.iterrows():
         cols = st.columns([2, 2, 2, 3, 1])
-        cols[0].write(row["timestamp"])
+        cols[0].write(row["timestamp"].date())
         cols[1].write(row["kategorie"])
         cols[2].write(f"{row['betrag']:.2f} CHF")
         cols[3].write(row["beschreibung"] if row["beschreibung"] else "-")
@@ -97,11 +114,12 @@ if not ausgaben_df.empty:
 
     st.divider()
 
-    # Alle Ausgaben löschen
-    if st.button("❌ Alle Ausgaben löschen"):
-        st.session_state.data_df = data[data['typ'] != 'ausgabe']
+    # Alle Ausgaben des Monats löschen
+    if st.button("❌ Alle Ausgaben für diesen Monat löschen"):
+        indices_loeschen = ausgaben_df["original_index"].tolist()
+        st.session_state.data_df.drop(index=indices_loeschen, inplace=True)
         DataManager().save_data("data_df")
-        st.success("Alle Ausgaben wurden gelöscht.")
+        st.success("Alle Ausgaben für diesen Monat wurden gelöscht.")
         st.rerun()
 else:
-    st.info("Noch keine Ausgaben eingetragen.")
+    st.info(f"Keine Ausgaben im Monat {ausgewaehlter_monat}.")
