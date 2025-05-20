@@ -17,9 +17,9 @@ def load_lottieurl(url: str):
         return None
     return r.json()
 
-lottie_animation = load_lottieurl("https://assets10.lottiefiles.com/packages/lf20_qp1q7mct.json")
+# Beispiel: Finanz-Animation
+lottie_animation = load_lottieurl("https://assets2.lottiefiles.com/packages/lf20_qp1q7mct.json")
 
-# Animation anzeigen
 st_lottie(lottie_animation, speed=1, reverse=False, loop=True, quality="low", height=300)
 
 
