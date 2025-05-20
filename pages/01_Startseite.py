@@ -37,9 +37,9 @@ if 'monatliches_budget' not in st.session_state:
 st.subheader("📅 Monat auswählen")
 
 von_jahr = 2025
-bis_jahr = 2026
+bis_jahr = 2030
 alle_monate = [f"{jahr}-{monat:02d}" for jahr in range(von_jahr, bis_jahr + 1) for monat in range(1, 13)]
-standard_monat = "2025-01"
+standard_monat = datetime.now().strftime("%Y-%m")  # ← dynamisch aktueller Monat
 
 gewaehlter_monat = st.selectbox("Wähle einen Monat", alle_monate, index=alle_monate.index(standard_monat))
 jahr, monat = map(int, gewaehlter_monat.split("-"))
