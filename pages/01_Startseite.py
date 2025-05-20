@@ -93,7 +93,7 @@ verfuegbar = gesamt_einnahmen - gesamt_fixkosten - gesamt_ausgaben
 # -----------------------------
 st.subheader("💶 Monatliches Budget & Sparen")
 
-sparquote = st.slider("Wie viel % möchtest du sparen?", min_value=0, max_value=100, value=10, step=5)
+sparquote = st.slider("Wie viel % möchtest du sparen?", min_value=0, max_value=100, value=30, step=5)
 sparbetrag = max(0.0, verfuegbar * (sparquote / 100))
 budget_verfuegbar = max(0.0, verfuegbar - sparbetrag)
 
