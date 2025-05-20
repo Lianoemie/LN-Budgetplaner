@@ -54,31 +54,30 @@ with st.form("einnahmen_formular"):
 # Übersicht der gespeicherten Einnahmen
 # ----------------------------------------
 data = st.session_state.get('data_df', pd.DataFrame())
-einnahmen_df = data[data['typ'] == 'einnahme']
+einnahmen_df = data[data['typ'] == 'einnahme'].copy()
 
 if not einnahmen_df.empty:
     st.subheader("📋 Übersicht deiner Einnahmen")
 
-    # Nur relevante Spalten und schöne Beschriftung
-    einnahmen_df_display = einnahmen_df[["timestamp", "kategorie", "betrag", "beschreibung"]].copy()
-    einnahmen_df_display.columns = ["Datum", "Kategorie", "Betrag", "Beschreibung"]
-    einnahmen_df_display.index = range(1, len(einnahmen_df_display) + 1)
-
-    # Gesamtsumme anzeigen
-    gesamt = einnahmen_df_display["Betrag"].sum()
-    st.metric("💵 Gesamteinnahmen", f"{gesamt:.2f} CHF")
-
-    # Tabelle anzeigen
-    st.dataframe(einnahmen_df_display, use_container_width=True)
-
-    # 🔻 Ergänzung: Einzelne Einnahmen löschen
-    st.markdown("#### Einzelne Einnahmen löschen")
-
+    # Originalindex speichern für Löschung
     einnahmen_df["original_index"] = einnahmen_df.index
     einnahmen_df.index = range(1, len(einnahmen_df) + 1)
 
+    # Gesamtsumme anzeigen
+    gesamt = einnahmen_df["betrag"].sum()
+    st.metric("💵 Gesamteinnahmen", f"{gesamt:.2f} CHF")
+
+    # Tabellenkopf
+    header = st.columns([2, 2, 2, 3, 1])
+    header[0].markdown("**Datum**")
+    header[1].markdown("**Kategorie**")
+    header[2].markdown("**Betrag**")
+    header[3].markdown("**Beschreibung**")
+    header[4].markdown("")
+
+    # Tabellenzeilen mit 🗑️
     for idx, row in einnahmen_df.iterrows():
-        cols = st.columns([3, 2, 3, 3, 1])
+        cols = st.columns([2, 2, 2, 3, 1])
         cols[0].write(row["timestamp"])
         cols[1].write(row["kategorie"])
         cols[2].write(f"{row['betrag']:.2f} CHF")
@@ -88,6 +87,8 @@ if not einnahmen_df.empty:
             DataManager().save_data("data_df")
             st.success("Einnahme gelöscht.")
             st.rerun()
+
+    st.divider()
 
     # Alle Einnahmen löschen
     if st.button("❌ Alle Einnahmen löschen"):
