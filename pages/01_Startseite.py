@@ -25,12 +25,6 @@ DataManager().load_user_data(
 st.title("🏠 Startseite – Studibudget")
 
 # -----------------------------
-# Session-State initialisieren
-# -----------------------------
-if 'monatliches_budget' not in st.session_state:
-    st.session_state.monatliches_budget = 0.0
-
-# -----------------------------
 # Dynamisch aktuellen Monat vorauswählen
 # -----------------------------
 st.subheader("📅 Monat auswählen")
@@ -46,44 +40,9 @@ monat_start = datetime(jahr, monat, 1)
 monat_ende = datetime(jahr, monat, calendar.monthrange(jahr, monat)[1])
 
 # -----------------------------
-# Monatliches Budget eingeben
+# Datengrundlage
 # -----------------------------
-st.subheader("💶 Monatliches Budget")
-
 data = st.session_state.get('data_df', initial_df)
-
-if all(col in data.columns for col in ['typ', 'monat', 'budget']):
-    budget_df = data[(data['typ'] == 'budget') & (data['monat'] == gewaehlter_monat)]
-else:
-    budget_df = pd.DataFrame()
-
-aktuelles_budget = float(budget_df['budget'].iloc[0]) if not budget_df.empty else 0.0
-st.session_state.monatliches_budget = aktuelles_budget
-
-st.session_state.monatliches_budget = st.number_input(
-    "Budget für den Monat (CHF)",
-    min_value=0.0,
-    value=st.session_state.monatliches_budget,
-    step=50.0,
-    format="%.2f"
-)
-
-if st.button("💾 Budget speichern"):
-    neues_budget = {
-        "typ": "budget",
-        "monat": gewaehlter_monat,
-        "budget": st.session_state.monatliches_budget,
-        "timestamp": str(ch_now())
-    }
-
-    if all(col in data.columns for col in ['typ', 'monat']):
-        st.session_state.data_df = data[~((data['typ'] == 'budget') & (data['monat'] == gewaehlter_monat))]
-    else:
-        st.session_state.data_df = data
-
-    DataManager().append_record('data_df', neues_budget)
-    st.success("Budget gespeichert!")
-    st.rerun()
 
 # -----------------------------
 # Fixkosten berechnen
@@ -111,8 +70,6 @@ if not fixkosten_df.empty:
 else:
     gesamt_fixkosten = 0.0
 
-st.metric("📋 Fixkosten im gewählten Monat", f"{gesamt_fixkosten:.2f} CHF")
-
 # -----------------------------
 # Einnahmen & Ausgaben berechnen
 # -----------------------------
@@ -129,10 +86,17 @@ def berechne_summe(df, typ):
 
 gesamt_einnahmen = berechne_summe(data, 'einnahme')
 gesamt_ausgaben = berechne_summe(data, 'ausgabe')
+verfuegbar = gesamt_einnahmen - gesamt_fixkosten - gesamt_ausgaben
 
 # -----------------------------
-# Finanzübersicht: Einnahmen – Fixkosten – Ausgaben
+# Dynamisches Sparziel (%)
 # -----------------------------
+st.subheader("💶 Monatliches Budget & Sparen")
+
+sparquote = st.slider("Wie viel % möchtest du sparen?", min_value=0, max_value=100, value=10, step=5)
+sparbetrag = max(0.0, verfuegbar * (sparquote / 100))
+budget_verfuegbar = max(0.0, verfuegbar - sparbetrag)
+
 col1, col2, col3 = st.columns(3)
 
 with col1:
@@ -141,9 +105,19 @@ with col1:
 with col2:
     st.metric("📉 Gesamtausgaben", f"{gesamt_ausgaben:.2f} CHF")
 
-verfuegbar = gesamt_einnahmen - gesamt_fixkosten - gesamt_ausgaben
 with col3:
-    st.metric("💰 Verfügbar diesen Monat", f"{verfuegbar:.2f} CHF")
+    st.metric("📋 Fixkosten", f"{gesamt_fixkosten:.2f} CHF")
+
+col4, col5, col6 = st.columns(3)
+
+with col4:
+    st.metric("💰 Verfügbar (gesamt)", f"{verfuegbar:.2f} CHF")
+
+with col5:
+    st.metric("💡 Geplantes Sparen", f"{sparbetrag:.2f} CHF")
+
+with col6:
+    st.metric("🛒 Budgetierbar", f"{budget_verfuegbar:.2f} CHF")
 
 # -----------------------------
 # Navigation (Buttons)
