@@ -25,6 +25,22 @@ if 'kategorien_einnahmen' not in st.session_state:
 st.title("💰 Einnahmen hinzufügen")
 
 # ----------------------------------------
+# 📅 Monat auswählen
+# ----------------------------------------
+data = st.session_state.get('data_df', pd.DataFrame())
+data["timestamp"] = pd.to_datetime(data["timestamp"], errors="coerce")
+
+alle_monate = data[data["typ"] == "einnahme"]["timestamp"].dropna().dt.to_period("M").sort_values().unique()
+alle_monate_str = [str(monat) for monat in alle_monate]
+
+aktueller_monat = datetime.now().strftime("%Y-%m")
+ausgewaehlter_monat = st.selectbox(
+    "Monat auswählen",
+    options=alle_monate_str if alle_monate_str else [aktueller_monat],
+    index=alle_monate_str.index(aktueller_monat) if aktueller_monat in alle_monate_str else 0
+)
+
+# ----------------------------------------
 # Neue Einnahme direkt speichern
 # ----------------------------------------
 with st.form("einnahmen_formular"):
@@ -51,14 +67,17 @@ with st.form("einnahmen_formular"):
         st.rerun()
 
 # ----------------------------------------
-# Übersicht der gespeicherten Einnahmen
+# Übersicht der gefilterten Einnahmen
 # ----------------------------------------
-data = st.session_state.get('data_df', pd.DataFrame())
-einnahmen_df = data[data['typ'] == 'einnahme'].copy()
+einnahmen_df = data[
+    (data['typ'] == 'einnahme') & 
+    (data['timestamp'].dt.to_period("M") == ausgewaehlter_monat)
+].copy()
+
 einnahmen_df = einnahmen_df.sort_values(by="timestamp", ascending=False)
 
 if not einnahmen_df.empty:
-    st.subheader("📋 Übersicht deiner Einnahmen")
+    st.subheader(f"📋 Einnahmen im Monat {ausgewaehlter_monat}")
 
     # Originalindex speichern für Löschung
     einnahmen_df["original_index"] = einnahmen_df.index
@@ -79,7 +98,7 @@ if not einnahmen_df.empty:
     # Tabellenzeilen mit 🗑️
     for idx, row in einnahmen_df.iterrows():
         cols = st.columns([2, 2, 2, 3, 1])
-        cols[0].write(row["timestamp"])
+        cols[0].write(row["timestamp"].date())
         cols[1].write(row["kategorie"])
         cols[2].write(f"{row['betrag']:.2f} CHF")
         cols[3].write(row["beschreibung"] if row["beschreibung"] else "-")
@@ -91,11 +110,12 @@ if not einnahmen_df.empty:
 
     st.divider()
 
-    # Alle Einnahmen löschen
-    if st.button("❌ Alle Einnahmen löschen"):
-        st.session_state.data_df = data[data['typ'] != 'einnahme']
+    # Alle Einnahmen löschen (für gewählten Monat)
+    if st.button("❌ Alle Einnahmen für diesen Monat löschen"):
+        indices_loeschen = einnahmen_df["original_index"].tolist()
+        st.session_state.data_df.drop(index=indices_loeschen, inplace=True)
         DataManager().save_data("data_df")
-        st.success("Alle Einnahmen wurden gelöscht.")
+        st.success("Alle Einnahmen für diesen Monat wurden gelöscht.")
         st.rerun()
 else:
-    st.info("Noch keine Einnahmen eingetragen.")
+    st.info(f"Keine Einnahmen im Monat {ausgewaehlter_monat}.")
