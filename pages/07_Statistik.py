@@ -33,10 +33,12 @@ for df in [df_einnahmen, df_ausgaben, df_fixkosten]:
     if 'timestamp' in df.columns:
         df['Datum'] = pd.to_datetime(df['timestamp'], errors='coerce')
 
-# ✅ Spalte 'betrag' in 'Betrag (CHF)' umbenennen
+# ✅ Spalten umbenennen
 for df in [df_einnahmen, df_ausgaben, df_fixkosten]:
     if 'betrag' in df.columns:
         df.rename(columns={'betrag': 'Betrag (CHF)'}, inplace=True)
+    if 'kategorie' in df.columns:
+        df.rename(columns={'kategorie': 'Kategorie'}, inplace=True)
 
 st.title("📊 Statistiken")
 
@@ -95,7 +97,8 @@ if not df_einnahmen_monat.empty:
         st.plotly_chart(fig_e, use_container_width=True)
 
     st.dataframe(
-        df_einnahmen_monat[['Datum', 'Kategorie', 'Betrag (CHF)', 'Beschreibung']],
+        df_einnahmen_monat[['Datum', 'Kategorie', 'Betrag (CHF)', 'beschreibung']] \
+        .rename(columns={'beschreibung': 'Beschreibung'}),
         use_container_width=True
     )
     st.metric("💵 Gesamteinnahmen", f"{df_einnahmen_monat['Betrag (CHF)'].sum():.2f} CHF")
@@ -133,10 +136,10 @@ if not df_gesamtausgaben_monat.empty:
 
     st.markdown("#### 💬 Einzelne Ausgaben im Monat")
     st.dataframe(
-        df_gesamtausgaben_monat[['Datum', 'Kategorie', 'Betrag (CHF)', 'Beschreibung']],
+        df_gesamtausgaben_monat[['Datum', 'Kategorie', 'Betrag (CHF)', 'beschreibung']] \
+        .rename(columns={'beschreibung': 'Beschreibung'}),
         use_container_width=True
     )
     st.metric("💸 Gesamtausgaben", f"{df_gesamtausgaben_monat['Betrag (CHF)'].sum():.2f} CHF")
 else:
     st.info("Keine Ausgaben oder Fixkosten für diesen Monat.")
-
