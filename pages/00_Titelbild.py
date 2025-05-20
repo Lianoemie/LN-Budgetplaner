@@ -8,7 +8,7 @@ set_background()
 
 # Titelbild anzeigen
 bild = Image.open("docs/Fotos/Titelbild.png")
-st.image(bild, use_column_width=True)
+st.image(bild, use_container_width=True)
 
 # Lottie-Animation laden
 def load_lottieurl(url: str):
@@ -18,7 +18,7 @@ def load_lottieurl(url: str):
     return r.json()
 
 # Beispiel: Finanz-Animation
-lottie_animation = load_lottieurl("https://assets2.lottiefiles.com/packages/lf20_qp1q7mct.json")
+lottie_animation = load_lottieurl("https://assets10.lottiefiles.com/packages/lf20_qp1q7mct.json")
 
 st_lottie(lottie_animation, speed=1, reverse=False, loop=True, quality="low", height=300)
 
