@@ -132,11 +132,17 @@ def berechne_summe(df, typ):
 gesamt_einnahmen = berechne_summe(data, 'einnahme')
 gesamt_ausgaben = berechne_summe(data, 'ausgabe')
 
-col1, col2 = st.columns(2)
+col1, col2, col3 = st.columns(3)
+
 with col1:
     st.metric("📈 Gesamteinnahmen", f"{gesamt_einnahmen:.2f} CHF")
+
 with col2:
     st.metric("📉 Gesamtausgaben", f"{gesamt_ausgaben:.2f} CHF")
+
+verfuegbar = gesamt_einnahmen - gesamt_fixkosten - gesamt_ausgaben
+with col3:
+    st.metric("💰 Verfügbar diesen Monat", f"{verfuegbar:.2f} CHF")
 
 # -----------------------------
 # Navigation (Buttons)
