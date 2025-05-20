@@ -26,15 +26,6 @@ if 'kategorien_fixkosten' not in st.session_state:
 st.title("📆 Fixkosten verwalten")
 
 # ----------------------------------------
-# Live UI: Stoppdatum-Checkbox und Eingabefeld
-# ----------------------------------------
-st.markdown("#### 🕒 Wiederholung & Stoppdatum")
-
-st.checkbox("Stoppdatum setzen?", key="stopp_checkbox")
-if st.session_state.get("stopp_checkbox", False):
-    st.date_input("Stoppdatum auswählen", key="stoppdatum_input")
-
-# ----------------------------------------
 # Formular zur Eingabe
 # ----------------------------------------
 with st.form("fixkosten_formular"):
@@ -57,17 +48,13 @@ with st.form("fixkosten_formular"):
     abschicken = st.form_submit_button("Hinzufügen")
 
     if abschicken and betrag > 0:
-        stopp_aktiv = st.session_state.get("stopp_checkbox", False)
-        stoppdatum = st.session_state.get("stoppdatum_input", None)
-
         neue_fixkosten = {
             "typ": "fixkosten",
             "kategorie": kategorie,
             "betrag": betrag,
             "wiederholung": wiederholung,
             "beschreibung": "",
-            "timestamp": str(datum),
-            "stoppdatum": str(stoppdatum) if stopp_aktiv and stoppdatum else None
+            "timestamp": str(datum)
         }
         DataManager().append_record('data_df', neue_fixkosten)
         st.success("Fixkosten gespeichert!")
@@ -89,19 +76,12 @@ if not fixkosten_df.empty:
     st.metric("💸 Gesamte Fixkosten (alle)", f"{gesamt:.2f} CHF")
 
     for idx, row in fixkosten_df.iterrows():
-        col1, col2, col3, col4, col5, col6 = st.columns([2, 2, 2, 2, 2, 1])
+        col1, col2, col3, col4, col5 = st.columns([2, 2, 2, 3, 1])
         col1.write(str(row["timestamp"]))
         col2.write(row["kategorie"])
         col3.write(f"{row['betrag']:.2f} CHF")
         col4.write(row["wiederholung"])
-
-        # Stoppdatum anzeigen oder ❌
-        if pd.isna(row["stoppdatum"]) or row["stoppdatum"] in [None, "None", "nan", ""]:
-            col5.markdown("❌")
-        else:
-            col5.write(str(row["stoppdatum"]))
-
-        if col6.button("🗑️", key=f"delete_fixkosten_{idx}"):
+        if col5.button("🗑️", key=f"delete_fixkosten_{idx}"):
             original_index = row["original_index"]
             st.session_state.data_df.drop(index=original_index, inplace=True)
             DataManager().save_data("data_df")
