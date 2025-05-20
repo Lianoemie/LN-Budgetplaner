@@ -95,8 +95,8 @@ if not einnahmen_df.empty:
     header[3].markdown("**Beschreibung**")
     header[4].markdown("")
 
-    # Tabellenzeilen mit 🗑️
-    for idx, row in einnahmen_df.iterrows():
+   # Tabellenzeilen mit 🗑️
+for idx, row in einnahmen_df.iterrows():
     cols = st.columns([2, 2, 2, 3, 1])
     datum_str = row["timestamp"].strftime("%d.%m.%Y")
     cols[0].markdown(datum_str)
@@ -108,6 +108,9 @@ if not einnahmen_df.empty:
         DataManager().save_data("data_df")
         st.success("Einnahme gelöscht.")
         st.rerun()
+
+st.divider()
+
 
 
     st.divider()
