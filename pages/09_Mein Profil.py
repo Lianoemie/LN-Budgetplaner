@@ -5,7 +5,7 @@ from utils.helpers import ch_now
 import json
 import os
 from utils.style import set_background #Hintergrundfarbe
-set_background()
+set_background() # Hintergrundfarbe anzeigen
 
 
 # ====== Login ======

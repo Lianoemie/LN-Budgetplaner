@@ -4,8 +4,8 @@ import requests
 from PIL import Image
 import time
 
-from utils.style import set_background
-set_background()
+from utils.style import set_background # Hintergrundfarbe
+set_background() # Hintergrundfarbe anzeigen
 
 # Titelbild anzeigen
 bild = Image.open("docs/Fotos/Titelbild.png")

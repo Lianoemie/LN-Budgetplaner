@@ -1,6 +1,7 @@
 import streamlit as st
+import time
 from utils.style import set_background #Hintergrundfarbe
-set_background()
+set_background() # Hintergrundfarbe anzeigen
 
 # ====== Start Login Block ======
 from utils.login_manager import LoginManager
@@ -19,6 +20,17 @@ st.markdown("""
 
 Hier findest du hilfreiche Tipps, wie du im Alltag einfach und effektiv Geld sparen kannst – ohne auf alles verzichten zu müssen.
 """)
+
+# Schriftzug mit Typewriter-Effekt
+def typewriter(text, delay=0.1):
+    output = ""
+    placeholder = st.empty()
+    for char in text:
+        output += char
+        placeholder.markdown(f"<h1 style='text-align:center;'>{output}</h1>", unsafe_allow_html=True)
+        time.sleep(delay)
+
+typewriter("Du kannst das schaffen!", delay=0.15)
 
 st.markdown("""
 ### 🛒 Einkaufen

@@ -4,7 +4,8 @@ import pandas as pd
 from utils.style import set_background #Hintergrundfarbe
 
 st.set_page_config(page_title="Kategorien verwalten", page_icon="🗂️")
-set_background() # Hintergrundfarbe
+set_background() # Hintergrundfarbe anzeigen
+
 # ====== Start Login Block ======
 from utils.login_manager import LoginManager
 from utils.data_manager import DataManager
