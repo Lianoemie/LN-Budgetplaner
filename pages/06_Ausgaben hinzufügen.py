@@ -62,6 +62,10 @@ if not ausgaben_df.empty:
     # Nach Datum sortieren (neueste zuerst)
     ausgaben_df = ausgaben_df.sort_values(by="timestamp", ascending=False)
 
+    # Leere Beschreibungen durch Punkt ersetzen
+    ausgaben_df["beschreibung"] = ausgaben_df["beschreibung"].fillna("-")
+
+
     # Originalindex merken für Löschen
     ausgaben_df["original_index"] = ausgaben_df.index
     ausgaben_df.index = range(1, len(ausgaben_df) + 1)
