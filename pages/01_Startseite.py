@@ -54,6 +54,13 @@ gesamt_ausgaben = berechne_summe(data, 'ausgabe')
 
 st.subheader("💶 Monatliches Budget")
 
+if st.button("💡 Budget automatisch berechnen"):
+    vorgeschlagenes_budget = gesamt_einnahmen - gesamt_fixkosten - (0.1 * gesamt_einnahmen)
+    vorgeschlagenes_budget = max(0.0, vorgeschlagenes_budget)  # Kein negatives Budget
+    st.session_state.monatliches_budget = round(vorgeschlagenes_budget, 2)
+    st.success(f"Automatisch berechnetes Budget: {vorgeschlagenes_budget:.2f} CHF")
+
+
 data = st.session_state.get('data_df', initial_df)
 
 # Budgetdaten absichern
@@ -72,12 +79,6 @@ st.session_state.monatliches_budget = st.number_input(
     step=50.0,
     format="%.2f"
 )
-
-if st.button("💡 Budget automatisch berechnen"):
-    vorgeschlagenes_budget = gesamt_einnahmen - gesamt_fixkosten - (0.1 * gesamt_einnahmen)
-    vorgeschlagenes_budget = max(0.0, vorgeschlagenes_budget)  # Kein negatives Budget
-    st.session_state.monatliches_budget = round(vorgeschlagenes_budget, 2)
-    st.success(f"Automatisch berechnetes Budget: {vorgeschlagenes_budget:.2f} CHF")
 
 
 if st.button("💾 Budget speichern"):
