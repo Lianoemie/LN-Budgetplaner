@@ -111,13 +111,13 @@ with col3:
 col4, col5, col6 = st.columns(3)
 
 with col4:
-    st.metric("💰 Verfügbar (gesamt)", f"{verfuegbar:.2f} CHF")
+    st.metric("💰 Total noch verfügbar", f"{verfuegbar:.2f} CHF")
 
 with col5:
-    st.metric("💡 Geplantes Sparen", f"{sparbetrag:.2f} CHF")
+    st.metric("💡 Diesen Betrag spare ich", f"{sparbetrag:.2f} CHF")
 
 with col6:
-    st.metric("🛒 Budgetierbar", f"{budget_verfuegbar:.2f} CHF")
+    st.metric("🛒 Dein Budget für diesen Monat", f"{budget_verfuegbar:.2f} CHF")
 
 # -----------------------------
 # Navigation (Buttons)
