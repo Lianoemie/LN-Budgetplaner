@@ -30,8 +30,15 @@ st.title("📆 Fixkosten verwalten")
 # ----------------------------------------
 with st.form("fixkosten_formular"):
     st.subheader("➕ Neue Fixkosten hinzufügen")
-    kategorie = st.selectbox("Kategorie", st.session_state.kategorien_fixkosten)
+
+    kategorie = st.text_input(
+        "Kategorie",
+        placeholder="z. B. Miete, Strom, Handy...",
+        help=f"Vorhandene Kategorien: {', '.join(st.session_state.kategorien_fixkosten)}"
+    )
+
     betrag = st.number_input("Monatlicher Betrag (CHF)", min_value=0.0, step=1.0, format="%.2f")
+    
     wiederholung = st.radio(
         "Wiederholung auswählen",
         options=[
@@ -44,10 +51,16 @@ with st.form("fixkosten_formular"):
         ],
         index=3
     )
+    
     datum = st.date_input("Startdatum der Fixkosten", value=datetime.today())
+
     abschicken = st.form_submit_button("Hinzufügen")
 
-    if abschicken and betrag > 0:
+    if abschicken and betrag > 0 and kategorie:
+        # Neue Kategorie automatisch speichern
+        if kategorie not in st.session_state.kategorien_fixkosten:
+            st.session_state.kategorien_fixkosten.append(kategorie)
+
         neue_fixkosten = {
             "typ": "fixkosten",
             "kategorie": kategorie,
@@ -97,3 +110,17 @@ if not fixkosten_df.empty:
         st.rerun()
 else:
     st.info("Noch keine Fixkosten eingetragen.")
+
+# ----------------------------------------
+# Kategorien verwalten
+# ----------------------------------------
+with st.expander("🗂️ Kategorien verwalten"):
+    st.markdown("#### Aktuelle Kategorien:")
+
+    for i, kat in enumerate(st.session_state.kategorien_fixkosten):
+        col1, col2 = st.columns([4, 1])
+        col1.markdown(f"- {kat}")
+        if col2.button("❌", key=f"delete_kategorie_{i}"):
+            st.session_state.kategorien_fixkosten.remove(kat)
+            st.success(f"Kategorie '{kat}' gelöscht.")
+            st.rerun()
