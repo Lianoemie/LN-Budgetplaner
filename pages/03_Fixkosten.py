@@ -62,10 +62,7 @@ with st.form("fixkosten_formular"):
             "timestamp": str(datum),
             "stoppdatum": str(stoppdatum) if stoppdatum else None
         }
-        DataManager().append_record(
-            session_state_key='data_df',
-            record_dict=neue_fixkosten
-        )
+        DataManager().append_record('data_df', neue_fixkosten)
         st.success("Fixkosten gespeichert!")
         st.rerun()
 
@@ -73,23 +70,34 @@ with st.form("fixkosten_formular"):
 # Übersicht der gespeicherten Fixkosten
 # ----------------------------------------
 data = st.session_state.get('data_df', pd.DataFrame())
-fixkosten_df = data[data['typ'] == 'fixkosten']
+fixkosten_df = data[data['typ'] == 'fixkosten'].copy()
 
 if not fixkosten_df.empty:
     st.subheader("📋 Deine aktuellen Fixkosten")
 
-    fixkosten_df_display = fixkosten_df[["timestamp", "kategorie", "betrag", "wiederholung", "stoppdatum"]].copy()
-    fixkosten_df_display.columns = ["Startdatum", "Kategorie", "Betrag", "Wiederholung", "Stoppdatum"]
-    fixkosten_df_display.index = range(1, len(fixkosten_df_display) + 1)
+    fixkosten_df.index = range(1, len(fixkosten_df) + 1)
 
-    gesamt = fixkosten_df_display["Betrag"].sum()
+    gesamt = fixkosten_df["betrag"].sum()
     st.metric("💸 Gesamte Fixkosten (alle)", f"{gesamt:.2f} CHF")
 
-    st.dataframe(fixkosten_df_display, use_container_width=True)
+    for idx, row in fixkosten_df.iterrows():
+        col1, col2, col3, col4, col5, col6 = st.columns([2, 2, 2, 2, 2, 1])
+        col1.write(str(row["timestamp"]))
+        col2.write(row["kategorie"])
+        col3.write(f"{row['betrag']:.2f} CHF")
+        col4.write(row["wiederholung"])
+        col5.write(str(row["stoppdatum"]) if row["stoppdatum"] else "None")
+        if col6.button("🗑️", key=f"delete_fixkosten_{idx}"):
+            st.session_state.data_df.drop(index=row.name, inplace=True)
+            DataManager().save_data("data_df")
+            st.success(f"Fixkosten-Eintrag '{row['kategorie']}' gelöscht.")
+            st.rerun()
+
+    st.divider()
 
     if st.button("❌ Alle Fixkosten löschen"):
         st.session_state.data_df = data[data['typ'] != 'fixkosten']
-        DataManager().save_app_data('data_df', 'data.csv')
+        DataManager().save_data("data_df")
         st.success("Alle Fixkosten wurden gelöscht.")
         st.rerun()
 else:
