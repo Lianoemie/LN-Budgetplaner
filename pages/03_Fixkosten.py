@@ -48,7 +48,7 @@ with st.form("fixkosten_formular"):
     stopp_aktiv = st.checkbox("Stoppdatum setzen?")
     stoppdatum = None
     if stopp_aktiv:
-        stoppdatum = st.date_input("Stoppdatum auswählen")
+        stoppdatum = st.date_input("Stoppdatum auswählen", key="stoppdatum_input")
 
     abschicken = st.form_submit_button("Hinzufügen")
 
@@ -75,7 +75,6 @@ fixkosten_df = data[data['typ'] == 'fixkosten'].copy()
 if not fixkosten_df.empty:
     st.subheader("📋 Deine aktuellen Fixkosten")
 
-    # Original-Index sichern
     fixkosten_df["original_index"] = fixkosten_df.index
     fixkosten_df.index = range(1, len(fixkosten_df) + 1)
 
@@ -88,7 +87,13 @@ if not fixkosten_df.empty:
         col2.write(row["kategorie"])
         col3.write(f"{row['betrag']:.2f} CHF")
         col4.write(row["wiederholung"])
-        col5.write(str(row["stoppdatum"]) if row["stoppdatum"] else "None")
+
+        # Stoppdatum richtig anzeigen
+        if pd.isna(row["stoppdatum"]) or row["stoppdatum"] in [None, "None", "nan", ""]:
+            col5.markdown("❌")
+        else:
+            col5.write(str(row["stoppdatum"]))
+
         if col6.button("🗑️", key=f"delete_fixkosten_{idx}"):
             original_index = row["original_index"]
             st.session_state.data_df.drop(index=original_index, inplace=True)
