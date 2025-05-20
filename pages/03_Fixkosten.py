@@ -75,6 +75,8 @@ fixkosten_df = data[data['typ'] == 'fixkosten'].copy()
 if not fixkosten_df.empty:
     st.subheader("📋 Deine aktuellen Fixkosten")
 
+    # Original-Index sichern
+    fixkosten_df["original_index"] = fixkosten_df.index
     fixkosten_df.index = range(1, len(fixkosten_df) + 1)
 
     gesamt = fixkosten_df["betrag"].sum()
@@ -88,7 +90,8 @@ if not fixkosten_df.empty:
         col4.write(row["wiederholung"])
         col5.write(str(row["stoppdatum"]) if row["stoppdatum"] else "None")
         if col6.button("🗑️", key=f"delete_fixkosten_{idx}"):
-            st.session_state.data_df.drop(index=row.name, inplace=True)
+            original_index = row["original_index"]
+            st.session_state.data_df.drop(index=original_index, inplace=True)
             DataManager().save_data("data_df")
             st.success(f"Fixkosten-Eintrag '{row['kategorie']}' gelöscht.")
             st.rerun()
