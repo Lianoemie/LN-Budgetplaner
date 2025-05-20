@@ -19,13 +19,23 @@ DataManager().load_user_data(
     parse_dates=['timestamp']
 )
 
+# ====== Kategorien initialisieren ======
 if 'kategorien_fixkosten' not in st.session_state:
     st.session_state.kategorien_fixkosten = ["Miete", "Versicherung", "ÖV", "Streaming"]
 
 st.title("📆 Fixkosten verwalten")
 
 # ----------------------------------------
-# Neue Fixkosten direkt speichern
+# Live UI: Stoppdatum-Checkbox und Eingabefeld
+# ----------------------------------------
+st.markdown("#### 🕒 Wiederholung & Stoppdatum")
+
+st.checkbox("Stoppdatum setzen?", key="stopp_checkbox")
+if st.session_state.get("stopp_checkbox", False):
+    st.date_input("Stoppdatum auswählen", key="stoppdatum_input")
+
+# ----------------------------------------
+# Formular zur Eingabe
 # ----------------------------------------
 with st.form("fixkosten_formular"):
     st.subheader("➕ Neue Fixkosten hinzufügen")
@@ -44,16 +54,12 @@ with st.form("fixkosten_formular"):
         index=3
     )
     datum = st.date_input("Startdatum der Fixkosten", value=datetime.today())
-
-    # 👉 Checkbox + Datum direkt vor Button
-    stopp_aktiv = st.checkbox("Stoppdatum setzen?")
-    stoppdatum = None
-    if stopp_aktiv:
-        stoppdatum = st.date_input("Stoppdatum auswählen")
-
     abschicken = st.form_submit_button("Hinzufügen")
 
     if abschicken and betrag > 0:
+        stopp_aktiv = st.session_state.get("stopp_checkbox", False)
+        stoppdatum = st.session_state.get("stoppdatum_input", None)
+
         neue_fixkosten = {
             "typ": "fixkosten",
             "kategorie": kategorie,
@@ -61,7 +67,7 @@ with st.form("fixkosten_formular"):
             "wiederholung": wiederholung,
             "beschreibung": "",
             "timestamp": str(datum),
-            "stoppdatum": str(stoppdatum) if stoppdatum else None
+            "stoppdatum": str(stoppdatum) if stopp_aktiv and stoppdatum else None
         }
         DataManager().append_record('data_df', neue_fixkosten)
         st.success("Fixkosten gespeichert!")
