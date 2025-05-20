@@ -1,7 +1,6 @@
+import streamlit as st
 from utils.style import set_background #Hintergrundfarbe
 set_background()
-import streamlit as st
-
 
 # ====== Start Login Block ======
 from utils.login_manager import LoginManager
