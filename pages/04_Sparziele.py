@@ -139,7 +139,7 @@ if not sparziele.empty:
             )
             st.session_state.data_df = df[mask]
 
-            DataManager().save_user_data('data_df', 'data.csv')
+            DataManager().save_app_data('data_df', 'data.csv')
             st.success(f"Sparziel '{zielname}' wurde gelöscht.")
             st.rerun()
 
