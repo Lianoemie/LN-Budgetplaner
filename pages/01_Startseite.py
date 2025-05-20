@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 from datetime import datetime
 import calendar
-from utils.style import set_background
+from utils.style import set_background #Hintergrundfarbe
 set_background()
 
 

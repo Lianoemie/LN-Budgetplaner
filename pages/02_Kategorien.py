@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-from utils.style import set_background
+from utils.style import set_background #Hintergrundfarbe
 set_background()
 
 
