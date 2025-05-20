@@ -7,7 +7,7 @@ from utils.style import set_background
 set_background()
 
 # Titelbild anzeigen
-bild = Image.open("images/titelseite.png")
+bild = Image.open("docs/Fotos/Titelbild.png")
 st.image(bild, use_column_width=True)
 
 # Lottie-Animation laden
