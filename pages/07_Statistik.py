@@ -1,9 +1,10 @@
+from utils.style import set_background #Hintergrundfarbe
+set_background()
 import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
 from datetime import datetime
-from utils.style import set_background #Hintergrundfarbe
-set_background()
+
 
 st.set_page_config(page_title="Statistiken", page_icon="📊")
 

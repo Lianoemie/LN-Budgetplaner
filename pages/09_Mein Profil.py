@@ -1,11 +1,12 @@
+from utils.style import set_background #Hintergrundfarbe
+set_background()
 import streamlit as st
 from utils.login_manager import LoginManager
 from utils.data_manager import DataManager
 from utils.helpers import ch_now
 import json
 import os
-from utils.style import set_background #Hintergrundfarbe
-set_background()
+
 
 # ====== Login ======
 LoginManager().go_to_login('Start.py')

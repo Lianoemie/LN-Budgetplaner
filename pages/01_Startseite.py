@@ -1,9 +1,10 @@
+from utils.style import set_background #Hintergrundfarbe
+set_background()
 import streamlit as st
 import pandas as pd
 from datetime import datetime
 import calendar
-from utils.style import set_background #Hintergrundfarbe
-set_background()
+
 
 
 st.set_page_config(page_title="Startseite", page_icon="🏠")
