@@ -123,15 +123,22 @@ if not sparziele.empty:
                     st.success("Einzahlung gelöscht.")
                     st.rerun()
 
-        # Sparziel löschen
+        # Sparziel löschen (mit Sicherheitsprüfung)
         if st.button(f"❌ Sparziel '{zielname}' löschen", key=f"delete_sparziel_{i}"):
-            # Ziel + zugehörige Einzahlungen löschen
-            st.session_state.data_df = st.session_state.data_df[
-                ~(
-                    ((st.session_state.data_df["typ"] == "sparziel") & (st.session_state.data_df["name"] == zielname)) |
-                    ((st.session_state.data_df["typ"] == "einzahlung") & (st.session_state.data_df["zielname"] == zielname))
-                )
-            ]
+            df = st.session_state.data_df
+
+            # Spalten ergänzen, falls sie fehlen
+            for col in ["typ", "zielname", "name"]:
+                if col not in df.columns:
+                    df[col] = ""
+
+            # Filter anwenden und Daten neu setzen
+            mask = ~(
+                ((df["typ"] == "sparziel") & (df["name"] == zielname)) |
+                ((df["typ"] == "einzahlung") & (df["zielname"] == zielname))
+            )
+            st.session_state.data_df = df[mask]
+
             DataManager().save_app_data('data_df', 'data.csv')
             st.success(f"Sparziel '{zielname}' wurde gelöscht.")
             st.rerun()
@@ -139,4 +146,3 @@ if not sparziele.empty:
         st.divider()
 else:
     st.info("Noch keine Sparziele vorhanden. Lege eines an!")
-
