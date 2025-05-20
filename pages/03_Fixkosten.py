@@ -25,15 +25,6 @@ if 'kategorien_fixkosten' not in st.session_state:
 st.title("📆 Fixkosten verwalten")
 
 # ----------------------------------------
-# UI-Elemente vor dem Formular: Reaktive Stoppdatum-Steuerung
-# ----------------------------------------
-stopp_aktiv = st.checkbox("Stoppdatum setzen?", key="stopp_aktiv_checkbox")
-if stopp_aktiv:
-    stoppdatum = st.date_input("Stoppdatum auswählen", key="stoppdatum_input")
-else:
-    stoppdatum = None
-
-# ----------------------------------------
 # Neue Fixkosten direkt speichern
 # ----------------------------------------
 with st.form("fixkosten_formular"):
@@ -53,6 +44,12 @@ with st.form("fixkosten_formular"):
         index=3
     )
     datum = st.date_input("Startdatum der Fixkosten", value=datetime.today())
+
+    # 👉 Checkbox + Datum direkt vor Button
+    stopp_aktiv = st.checkbox("Stoppdatum setzen?")
+    stoppdatum = None
+    if stopp_aktiv:
+        stoppdatum = st.date_input("Stoppdatum auswählen")
 
     abschicken = st.form_submit_button("Hinzufügen")
 
