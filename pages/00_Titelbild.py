@@ -22,3 +22,14 @@ def typewriter(text, delay=0.1):
 
 typewriter("Try it out! 🚀", delay=0.15)
 
+st.markdown("""
+    <style>
+    div.stButton > button:first-child {
+        background-color: #ffcccc;
+        color: black;
+        font-size: 18px;
+        padding: 0.75em 2em;
+        border-radius: 12px;
+    }
+    </style>
+""", unsafe_allow_html=True)
