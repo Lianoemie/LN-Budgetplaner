@@ -25,11 +25,15 @@ data_manager.load_user_data(
     )
 
 # --- Welcome Page ---
-col1, col2 = st.columns([11, 1])
-with col1:
-    st.title("Studibudget")
-with col2:
-    st.image("docs/Fotos/Logo.png", width=100)
+st.markdown(
+    """
+    <div style="display: flex; align-items: center;">
+        <h1 style="margin-right: 10px;">Studibudget</h1>
+        <img src="docs/Fotos/Logo.png" width="60">
+    </div>
+    """,
+    unsafe_allow_html=True
+)
 
 st.markdown("""
 # Willkommen bei **Studibudget** 🎉
