@@ -1,6 +1,7 @@
 
 import streamlit as st
 import pandas as pd
+import os
 
 from utils.data_manager import DataManager
 from utils.login_manager import LoginManager
@@ -24,15 +25,13 @@ data_manager.load_user_data(
     )
 
 # --- Welcome Page ---
-st.markdown(
-    """
-    <div style="display: flex; align-items: center;">
-        <h1 style="margin-right: 10px;">Studibudget</h1>
-        <img src="docs/Fotos/Logo.png" width="50">
-    </div>
-    """,
-    unsafe_allow_html=True
-)
+logo_path = os.path.join("docs", "Fotos", "logo.png")
+
+col1, col2 = st.columns([9, 1])
+with col1:
+    st.title("Studibudget")
+with col2:
+    st.image(logo_path, width=100)
 
 st.markdown("""
 # Willkommen bei **Studibudget** 🎉
