@@ -24,14 +24,15 @@ data_manager.load_user_data(
     )
 
 # --- Welcome Page ---
-# Zwei Spalten nebeneinander: Titel links, Logo rechts
-col1, col2 = st.columns([8, 6]) 
-
-with col1:
-    st.title("Studibudget")
-
-with col2:
-    st.image("docs/Fotos/Logo.png", width=80) 
+st.markdown(
+    """
+    <div style="display: flex; align-items: center;">
+        <h1 style="margin-right: 10px;">Studibudget</h1>
+        <img src="docs/Fotos/Logo.png" width="50">
+    </div>
+    """,
+    unsafe_allow_html=True
+)
 
 st.markdown("""
 # Willkommen bei **Studibudget** 🎉
