@@ -8,15 +8,9 @@ from utils.login_manager import LoginManager
 from utils.style import set_background #Hintergrundfarbe
 set_background()
 
-# Logo in rechter oberer Ecke anzeigen
-st.markdown(
-    """
-    <div style="position: absolute; top: 1rem; right: 1rem;">
-        <img src="docs/Fotos/Logo.png" width="100">
-    </div>
-    """,
-    unsafe_allow_html=True
-)
+col1, col2 = st.columns([9, 1])
+with col2:
+    st.image("docs/Fotos/Logo.png", width=80)
 
 # Initialize the data manager
 data_manager = DataManager(fs_protocol='webdav', fs_root_folder="Studibudget")
