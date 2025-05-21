@@ -22,5 +22,23 @@ def typewriter(text, delay=0.1):
 
 typewriter("Try it out! 🚀", delay=0.15)
 
+st.markdown("""
+    <div style="display: flex; justify-content: center; margin-top: 2em;">
+        <form action="/?page=1_Kategorie" target="_self">
+            <button style="
+                background-color: #ffccdd;
+                color: black;
+                font-size: 20px;
+                padding: 0.8em 2em;
+                border-radius: 12px;
+                border: none;
+                cursor: pointer;
+            ">
+                👉 Beginne hier
+            </button>
+        </form>
+    </div>
+""", unsafe_allow_html=True)
+
 if st.button("👉 Beginne hier"):
     st.switch_page("pages/02_Kategorien.py")
