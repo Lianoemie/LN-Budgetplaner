@@ -3,6 +3,10 @@ import time
 from utils.style import set_background #Hintergrundfarbe
 set_background() # Hintergrundfarbe anzeigen
 
+col1, col2 = st.columns([9, 1])     #Logo oben rechts
+with col2:
+    st.image("docs/Fotos/Logo.png", width=100)
+
 # ====== Start Login Block ======
 from utils.login_manager import LoginManager
 from utils.data_manager import DataManager

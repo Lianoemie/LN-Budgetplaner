@@ -4,9 +4,13 @@ from utils.data_manager import DataManager
 from utils.helpers import ch_now
 import json
 import os
+
 from utils.style import set_background #Hintergrundfarbe
 set_background() # Hintergrundfarbe anzeigen
 
+col1, col2 = st.columns([9, 1])     #Logo oben rechts
+with col2:
+    st.image("docs/Fotos/Logo.png", width=100)
 
 # ====== Login ======
 LoginManager().go_to_login('Start.py')

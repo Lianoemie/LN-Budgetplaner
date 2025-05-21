@@ -25,14 +25,14 @@ data_manager.load_user_data(
 
 # --- Welcome Page ---
 # Zwei Spalten nebeneinander: Titel links, Logo rechts
-col1, col2 = st.columns([8, 1]) 
+col1, col2 = st.columns([8, 7]) 
 
 with col1:
     st.title("Studibudget")
 
 with col2:
     st.image("docs/Fotos/Logo.png", width=80) 
-    
+
 st.markdown("""
 # Willkommen bei **Studibudget** 🎉
 
