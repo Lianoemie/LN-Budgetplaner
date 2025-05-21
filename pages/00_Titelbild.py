@@ -22,31 +22,5 @@ def typewriter(text, delay=0.1):
 
 typewriter("Try it out! 🚀", delay=0.15)
 
-# ➕ HTML-zentrierter Button mit Streamlit-Callback
-st.markdown("""
-    <style>
-    .center-button {
-        display: flex;
-        justify-content: center;
-        margin-top: 3em;
-    }
-    .center-button button {
-        background-color: #ffccd5;
-        color: black;
-        font-size: 20px;
-        padding: 0.8em 2.5em;
-        border-radius: 12px;
-        border: none;
-        cursor: pointer;
-    }
-    </style>
-    <div class="center-button">
-        <form action="" method="post">
-            <button name="start" type="submit">👉 Beginne hier</button>
-        </form>
-    </div>
-""", unsafe_allow_html=True)
-
-# Interaktion abfangen
-if "start" in st.session_state or st.experimental_get_query_params().get("start"):
-    st.switch_page("pages/1_Kategorie.py")
+if st.button("👉 Beginne hier"):    #Button zur Kategorienpage
+    st.switch_page("pages/02_Kategorien.py")
