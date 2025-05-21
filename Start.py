@@ -25,13 +25,11 @@ data_manager.load_user_data(
     )
 
 # --- Welcome Page ---
-logo_path = os.path.join("docs", "Fotos", "logo.png")
-
 col1, col2 = st.columns([9, 1])
 with col1:
     st.title("Studibudget")
 with col2:
-    st.image(logo_path, width=100)
+    st.image("docs/Fotos/Logo.png", width=100)
 
 st.markdown("""
 # Willkommen bei **Studibudget** 🎉
