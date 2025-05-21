@@ -8,6 +8,16 @@ from utils.login_manager import LoginManager
 from utils.style import set_background #Hintergrundfarbe
 set_background()
 
+# Logo in rechter oberer Ecke anzeigen
+st.markdown(
+    """
+    <div style="position: absolute; top: 1rem; right: 1rem;">
+        <img src="https://raw.githubusercontent.com/DEIN_USERNAME/DEIN_REPO/main/images/logo.png" width="100">
+    </div>
+    """,
+    unsafe_allow_html=True
+)
+
 # Initialize the data manager
 data_manager = DataManager(fs_protocol='webdav', fs_root_folder="Studibudget")
 
