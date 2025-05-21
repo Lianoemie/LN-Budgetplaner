@@ -25,7 +25,7 @@ data_manager.load_user_data(
 
 # --- Welcome Page ---
 # Zwei Spalten nebeneinander: Titel links, Logo rechts
-col1, col2 = st.columns([8, 7]) 
+col1, col2 = st.columns([8, 6]) 
 
 with col1:
     st.title("Studibudget")

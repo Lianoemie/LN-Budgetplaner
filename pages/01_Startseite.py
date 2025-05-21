@@ -8,6 +8,10 @@ from utils.style import set_background #Hintergrundfarbe
 st.set_page_config(page_title="Startseite", page_icon="🏠")
 set_background() # Hintergrundfarbe anzeigen
 
+col1, col2 = st.columns([9, 1])     #Logo oben rechts
+with col2:
+    st.image("docs/Fotos/Logo.png", width=150)
+
 # ====== Start Login Block ======
 from utils.login_manager import LoginManager
 from utils.data_manager import DataManager
