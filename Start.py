@@ -25,7 +25,7 @@ data_manager.load_user_data(
     )
 
 # --- Welcome Page ---
-col1, col2 = st.columns([9, 1])
+col1, col2 = st.columns([10, 0.3])
 with col1:
     st.title("Studibudget")
 with col2:
