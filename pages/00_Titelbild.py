@@ -22,8 +22,7 @@ def typewriter(text, delay=0.1):
 
 typewriter("Try it out! 🚀", delay=0.15)
 
-# ➕ ZENTRIERTER BUTTON mit Columns
-col1, col2, col3 = st.columns([1,2,1])
+col1, col2, col3 = st.columns([4, 1, 4])  # schmaler mittlerer Block
 with col2:
     if st.button("👉 Beginne hier"):
-        st.switch_page("pages/02_Kategorien.py")  
+        st.switch_page("pages/02_Kategorien.py")
