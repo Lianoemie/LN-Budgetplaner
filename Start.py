@@ -29,7 +29,7 @@ col1, col2 = st.columns([4, 7])  #Logo neben dem Titel
 with col1:
     st.title("Studibudget")
 with col2:
-    st.image("docs/Fotos/Logo.png", width=100)
+    st.image("docs/Fotos/Logo.png", width=80)
 
 st.markdown("""
 # Willkommen bei **Studibudget** 🎉
