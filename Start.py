@@ -12,7 +12,7 @@ set_background()
 st.markdown(
     """
     <div style="position: absolute; top: 1rem; right: 1rem;">
-        <img src="https://raw.githubusercontent.com/DEIN_USERNAME/DEIN_REPO/main/images/logo.png" width="100">
+        <img src="docs/Fotos/Logo.png" width="100">
     </div>
     """,
     unsafe_allow_html=True
