@@ -1,14 +1,15 @@
 # Konnte das MVP V 3.0 wie geplant umgesetzt werden?
-Nicht alle unsere erwünschten Features konnten umgesetzt werden, da wir Vorstellungen hatten, die nicht möglich sind. Wir haben die App in Version 2.0 schon so gestaltet, dass die wichtigsten Funktionen drin sind und sie kontuinierlich verfeinert. Dabei haben wir nützliche Funktionen eingebaut, die nun mit MVP V 3.0 inkompetabel sind (siehe unten). Wir möchten die durchdachten, nützlichen Funktionen aber beibehalten, da sie für die App mehr Sinn machen. Deshalb haben wir die Roadmap dementsprechend angepasst.
+Nicht alle unsere erwünschten Features konnten umgesetzt werden, da wir Vorstellungen hatten, die nicht möglich sind. Die App haben wir bereits in Version 2.0 schon so gestaltet, dass die wichtigsten Funktionen darin enthalten sind und haben diese im Verlauf kontuinierlich verbessert und durch zusätzliche, durchdachte Funktionen ergänzt – auch wenn diese teilweise nicht mit der ursprünglich geplanten MVP V 3.0 kompatibel sind (siehe unten). Da diese neuen Funktionen für die Nutzenden jedoch sinnvoller sind, haben wir die Roadmap entsprechend angepasst.
 
 # was konnte nicht umgesetzt werden?
-- Export der Finanzübersicht (z. B. als PDF) -> konnte leider nicht umgesetzt werden, da wir die Tabelle nicht schön auf das PDF brachten und nur die Diagramme auf dem PDF macht keinen Sinn
-- anstelle eines direkten Vergleichs zwischen zwei Monaten, programmierten wir den Wechsel zwischen verschiedenen Monaten. Somit kann jeder einzelne Monat im Detail eingesehen werden.
+- Export der Finanzübersicht (z. B. als PDF) -> Dieses Feature konnte leider nicht umgesetzt werden, da sich die Tabelle mit den eingegebenen Werten nicht schön formatieren ließ. Auch die Diagramme allein hätten ohne erläuternde Daten wenig Aussagekraft auf dem PDF gehabt.
+
+- Anstelle eines automatisierten Vergleichs zwischen zwei Monaten haben wir eine Funktion programmiert, mit der man manuell zwischen den einzelnen Monaten wechseln kann. Dadurch lässt sich jeder Monat detailliert analysieren
 
 # Müssen wir die Roadmap anpassen und falls ja, wie?
-Ja, wir haben die Roadmap realistisch angepasst und haben wenige Funktionen in die zusätzlichen Features gepackt
+Ja. Wir haben die Roadmap realistisch angepasst und einzelne Funktionen, in den Abschnitt „Weiterführende Features“ verschoben.
 
 # Fazit
-Wir sind sehr zufrieden mit dem Endergebnis und freuen uns darüber, dass unsere bisherigen Nutzer unsere Studibudget-App genau so toll fanden. Vielleicht können wir in der Zukunft die zusätzlichen Features auch noch umsetzen, um alle zu begeistern.
+Wir sind sehr zufrieden mit dem Endergebnis und freuen uns über das positive Feedback unserer bisherigen Nutzer. Vielleicht werden wir in Zukunft noch weitere Features umsetzen können – mit dem Ziel, die App für Studierende noch hilfreicher zu gestalten.
 
 

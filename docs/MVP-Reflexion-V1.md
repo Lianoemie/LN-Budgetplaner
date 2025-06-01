@@ -1,5 +1,5 @@
 # Konnte das MVP V 1.0 wie geplant umgesetzt werden?
-- Unser Ziel war es, das der User die Einnahmen und Ausgaben, sowie Kategorien erfassen kann. Dies konnten wir erfolgreich programmieren und in unsere App implementieren. Dabei ist noch zu ergänzen, dass für das V 1.0 nur die Erfassung der Daten wichtig war, und nicht die Datenspeicherung ins Switchdrive.
+- Unser Ziel war es, dass der User die Einnahmen und Ausgaben, sowie Kategorien erfassen kann. Dies konnten wir erfolgreich programmieren und in unsere App implementieren. Dabei ist noch zu ergänzen, dass für das V 1.0 nur die Erfassung der Daten wichtig war, und nicht die Datenspeicherung ins Switchdrive.
 
 # was konnte nicht umgesetzt werden?
 - Die Ziele, welche wir uns vorgenommen haben für die V 1.0 konnten alle umgesetzt werden.
