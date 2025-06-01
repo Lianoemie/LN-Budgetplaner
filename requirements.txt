@@ -7,4 +7,5 @@ matplotlib
 numpy
 plotly
 fpdf2
+kaleido
 
