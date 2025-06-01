@@ -2,7 +2,11 @@ import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
 from datetime import datetime
+import os
+from fpdf import FPDF
+import plotly.io as pio
 from utils.style import set_background #Hintergrundfarbe
+
 
 st.set_page_config(page_title="Statistiken", page_icon="📊")
 set_background()# Hintergrundfarbe anzeigen
@@ -149,3 +153,30 @@ if not df_gesamtausgaben_monat.empty:
     st.metric("💸 Gesamtausgaben", f"{df_gesamtausgaben_monat['Betrag (CHF)'].sum():.2f} CHF")
 else:
     st.info("Keine Ausgaben oder Fixkosten für diesen Monat.")
+
+
+def export_charts_to_pdf(einnahmen_fig, ausgaben_fig, filename="statistik_export.pdf"):
+    # Speichere die Charts als Bild
+    einnahmen_fig.write_image("einnahmen.png", format="png", width=800, height=600)
+    ausgaben_fig.write_image("ausgaben.png", format="png", width=800, height=600)
+
+    # Erstelle ein PDF und füge Bilder ein
+    pdf = FPDF()
+    pdf.add_page()
+    pdf.set_font("Arial", size=16)
+    pdf.cell(200, 10, txt="Statistikbericht", ln=True, align='C')
+    pdf.ln(10)
+
+    pdf.image("einnahmen.png", w=180)
+    pdf.ln(10)
+    pdf.image("ausgaben.png", w=180)
+
+    pdf.output(filename)
+    return filename
+
+# Export-Button in Streamlit
+if not df_einnahmen_monat.empty and not df_gesamtausgaben_monat.empty:
+    if st.button("📄 Statistik als PDF exportieren"):
+        export_charts_to_pdf(fig_e, fig_a)
+        with open("statistik_export.pdf", "rb") as f:
+            st.download_button("📥 PDF herunterladen", f, file_name="statistik_export.pdf")
