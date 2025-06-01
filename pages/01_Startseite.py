@@ -16,7 +16,6 @@ from utils.login_manager import LoginManager
 from utils.data_manager import DataManager
 from utils.helpers import ch_now
 
-LoginManager().go_to_login('Start.py')
 
 if "user" in st.session_state:
     with st.sidebar:
@@ -25,6 +24,8 @@ if "user" in st.session_state:
             st.session_state.clear()
             st.experimental_rerun()
 
+
+LoginManager().go_to_login('Start.py')
 
 
 # ====== App-Daten laden ======
