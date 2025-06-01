@@ -3,7 +3,6 @@ import streamlit as st
 import pandas as pd
 import os
 import requests
-from PIL import Image
 import time
 
 from utils.data_manager import DataManager
@@ -34,9 +33,6 @@ with col1:
 with col2:
     st.image("docs/Fotos/Logo.png", width=80)
 
-# Titelbild anzeigen
-bild = Image.open("docs/Fotos/Titelbild.png")
-st.image(bild, use_container_width=True)
 
 st.markdown("""
 # Willkommen bei **Studibudget** 🎉
@@ -48,8 +44,8 @@ Schön, dass du hier bist!
 st.markdown("""
 ### ✨ Mit Studibudget kannst du:
 
-- 💰 **Persönliche Einnahmen erfassen:**  
-  Trage regelmäßige oder einmalige Einnahmen wie Lohn, Stipendien oder Geschenke ein und verfolge deine monatlichen Einnahmen übersichtlich.
+- 💰 **Persönliche Einnahmen und Ausgaben erfassen:**  
+  Trage regelmäßige oder einmalige Einnahmen wie Lohn, Stipendien und auch Ausgaben ein und verfolge deine monatlichen Finanzbewegungen übersichtlich.
 
 - 🧾 **Fixkosten verwalten:**  
   Halte deine wiederkehrenden Ausgaben wie Miete, Versicherungen oder Handyabos fest und plane dadurch besser dein monatliches Budget.
@@ -61,13 +57,15 @@ st.markdown("""
   Analysiere deine Ausgaben- und Einnahmenentwicklung mithilfe von Grafiken und Auswertungen.
 
 - 📂 **Kategorien individuell anpassen:**  
-  Erstelle eigene Kategorien, um deine Einnahmen und Ausgaben genau so zu ordnen, wie es für dich am besten passt.
+  Erstelle eigene Kategorien, um deine Einnahmen und Ausgaben genau so zu ordnen, wie es für dich am besten passt. Ein paar Beispiele, die du auch wieder löschen kannst, haben wir bereits für dich vorbereitet.
 
 - 📚 **Spartipps entdecken:**  
   Lass dich von unseren Spartipps inspirieren, um deine Ausgaben weiter zu optimieren.
 
 - 👤 **Dein Profil personalisieren:**  
   Verwalte persönliche Informationen und passe deine App-Einstellungen an.
+            
+Alle deine Eingaben werden gespeichert und sind jederzeit auf der **Startseite** einsehbar.
 """)
 
 st.info("""
