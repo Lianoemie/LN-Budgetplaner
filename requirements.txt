@@ -6,3 +6,5 @@ fsspec
 matplotlib
 numpy
 plotly
+fpdf2
+
