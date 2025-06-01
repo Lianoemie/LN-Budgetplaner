@@ -19,6 +19,13 @@ from utils.helpers import ch_now
 LoginManager().go_to_login('Start.py')
 dm = DataManager()
 
+
+from utils.sidebar import show_sidebar_userbox
+show_sidebar_userbox()
+
+# … restlicher Seiteninhalt …
+
+
 # ====== App-Daten laden ======
 dm.load_user_data(
     session_state_key='data_df',
