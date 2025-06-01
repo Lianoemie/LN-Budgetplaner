@@ -16,16 +16,17 @@ from utils.login_manager import LoginManager
 from utils.data_manager import DataManager
 from utils.helpers import ch_now
 
-
+# 👉 Sidebar anzeigen, wenn eingeloggt
 if "user" in st.session_state:
     with st.sidebar:
-        st.markdown(f"👤 Eingeloggt als: {st.session_state['user']}")
+        st.markdown(f"👤 Eingeloggt als: **{st.session_state['user']}**")
         if st.button("🚪 Logout"):
             st.session_state.clear()
             st.experimental_rerun()
 
-
+# 👉 Danach erst Login prüfen (damit Logout funktioniert)
 LoginManager().go_to_login('Start.py')
+
 
 
 # ====== App-Daten laden ======
