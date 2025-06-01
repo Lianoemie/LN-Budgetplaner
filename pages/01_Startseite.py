@@ -18,14 +18,13 @@ from utils.helpers import ch_now
 
 LoginManager().go_to_login('Start.py')
 
-# Nur anzeigen, wenn eingeloggt
 if "user" in st.session_state:
-
     with st.sidebar:
-        st.markdown(f"👤 **Eingeloggt als:** {st.session_state['user']}")
+        st.markdown(f"👤 Eingeloggt als: {st.session_state['user']}")
         if st.button("🚪 Logout"):
             st.session_state.clear()
             st.experimental_rerun()
+
 
 
 # ====== App-Daten laden ======
@@ -140,8 +139,7 @@ with col6:
     """,
     unsafe_allow_html=True
 )
-
-
+    
 # -----------------------------
 # Navigation (Buttons)
 # -----------------------------
