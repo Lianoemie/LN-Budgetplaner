@@ -26,15 +26,18 @@ Ein paar Beschreibungen in der App würde die Testperson anders formulieren oder
 - Bei Quelle (bei Einnahme/Ausgabe) gab es kurze Verwirrung - besser anders benennen
 - Es fehlt die Angabe, dass der Budgetplaner monatlich ist - Daten fehlen auch
 - Button für Spartips fehlt, wie kommt man auf die Seite?
+
 ## Neue Ideen?
 - Unterkategorien - z.B. Fortbewegung - Auto/Öffentlicher Verkehr
 - Review auf ältere Monate und Vergleich
 - Funktion Hintergrundbild oder Schriftart/farbe ändern
 - Eine Verbindung von der App zur Bank wäre sehr nützlich, aber es ist der Testnutzerin bewusst, dass dies in unserem Fall nicht  möglich ist
+
 ## Neue Probleme?
 - Button für "Mein Profil" fehlt, wie kommt man auf das eigene Profil? Der Button sollte am besten auf jeder Seite verfügbar sein.
 - Weitere Profilangaben (z.B. Name) fehlen - Kann man diese im Nachhinein noch bearbeiten? 
 - Als was kann man die Finanzdatei exportieren? PDF, Excel? Was ist alles möglich? Was ist alles drauf?
 - Es sollte möglich sein Kategorien abzuwählen oder 0 CHF einzutragen, falls die Person nichts ausgibt für das
+
 ## Fazit
 - Die zuvor genannten Probleme betrafen die fehlende Profil-Schaltfläche, unklare Exportmöglichkeiten für Finanzdaten, fehlende Profilangaben sowie eingeschränkte Kategoriewahl. Diese Punkte wurden behoben: Der "Mein Profil"-Button ist nun auf jeder Seite sichtbar, Exportformate wie PDF und Excel sind klar ausgewiesen, Kategorien können frei gewählt oder abgewählt werden, und zusätzliche Profilangaben lassen sich ergänzen. Die Nutzerfreundlichkeit wurde damit deutlich verbessert.

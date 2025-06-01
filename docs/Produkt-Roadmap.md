@@ -14,11 +14,12 @@
 
   
 ## Version 3.0
-- Wiederkehrende Einnahmen/Ausgaben automatisch erkennen  
-- Export der Finanzübersicht (z. B. als PDF)
-- Nach Registrierung automatisch eingeloggt
+- Wiederkehrende Ausgaben hinzufügen
 - Budgetziele setzen (z. B. Sparziele, evtl. Limit pro Kategorie)
-- Monatsvergleich: Ausgaben im Vergleich zu Vormonaten
+- Monatsvergleich: Ausgaben/Einnahmen im Vergleich zu Vormonaten
+- Spartipps für Studenten einbauen
+
 
 ## Weiterführende Features
 - Passwort vergessen-Funktion im Login  
+- Export der Finanzübersicht (z. B. als PDF)
