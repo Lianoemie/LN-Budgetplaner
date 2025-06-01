@@ -63,9 +63,9 @@ st.markdown("""
   Lass dich von unseren Spartipps inspirieren, um deine Ausgaben weiter zu optimieren.
 
 - 👤 **Dein Profil personalisieren:**  
-  Verwalte persönliche Informationen und passe deine App-Einstellungen an.
+  Verwalte persönliche Informationen oder Eingaben und passe deine App-Einstellungen an.
             
-Alle deine Eingaben werden gespeichert und sind jederzeit auf der **Startseite** einsehbar.
+Alle deine Eingaben werden gespeichert und zentrale Werte sind jederzeit auf der **Startseite** einsehbar.
 """)
 
 st.info("""

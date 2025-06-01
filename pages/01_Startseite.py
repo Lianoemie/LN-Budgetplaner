@@ -4,7 +4,6 @@ from datetime import datetime
 import calendar
 from utils.style import set_background #Hintergrundfarbe
 
-
 st.set_page_config(page_title="Startseite", page_icon="🏠")
 set_background() # Hintergrundfarbe anzeigen
 
@@ -18,6 +17,16 @@ from utils.data_manager import DataManager
 from utils.helpers import ch_now
 
 LoginManager().go_to_login('Start.py')
+
+# Nur anzeigen, wenn eingeloggt
+if "user" in st.session_state:
+
+    with st.sidebar:
+        st.markdown(f"👤 **Eingeloggt als:** {st.session_state['user']}")
+        if st.button("🚪 Logout"):
+            st.session_state.clear()
+            st.experimental_rerun()
+
 
 # ====== App-Daten laden ======
 initial_df = pd.DataFrame(columns=["timestamp", "typ", "monat", "budget", "betrag", "beschreibung", "stoppdatum"])
